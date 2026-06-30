@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar sesión — HogarPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    body { background: var(--gray-50); min-height: 100vh; display: flex; flex-direction: column; }
+    .auth-nav { background: white; border-bottom: 1px solid var(--gray-200); padding: 0.9rem 5%; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .logo { font-size: 1.4rem; font-weight: 900; color: var(--primary); text-decoration: none; }
+    .logo span { color: var(--accent); }
+
+    .auth-layout { flex: 1; display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 61px); }
+
+    /* LEFT PANEL */
+    .auth-left {
+      background: linear-gradient(145deg, #042f2e 0%, #134e4a 35%, #0d9488 70%, #06b6d4 100%);
+      padding: 3.5rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; overflow: hidden;
+    }
+    .auth-left::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+      top: -200px; right: -150px;
+      pointer-events: none;
+    }
+    .auth-left::after {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 50%;
+      bottom: -100px; left: -80px;
+      pointer-events: none;
+    }
+    .auth-left-inner { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; justify-content: space-between; }
+
+    .left-brand { margin-bottom: 3rem; }
+    .left-brand .brand-name { font-size: 1.6rem; font-weight: 900; color: white; margin-bottom: 0.2rem; }
+    .left-brand .brand-name span { color: #fbbf24; }
+    .left-brand .brand-sub { font-size: 0.82rem; color: rgba(255,255,255,0.5); }
+
+    .left-headline { margin-bottom: 2.5rem; }
+    .left-headline h2 { font-size: 2.1rem; color: white; font-weight: 900; line-height: 1.25; margin-bottom: 0.8rem; }
+    .left-headline p { color: #99f6e4; font-size: 0.93rem; line-height: 1.7; }
+
+    .feature-list { list-style: none; margin-bottom: 2.5rem; }
+    .feature-list li {
+      display: flex; align-items: center; gap: 0.9rem;
+      color: #ccfbf1; font-size: 0.88rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .feature-list li:last-child { border-bottom: none; }
+    .feature-list .ficon {
+      width: 32px; height: 32px; background: rgba(255,255,255,0.12);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem; flex-shrink: 0;
+    }
+
+    /* STATS */
+    .left-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-box { background: rgba(255,255,255,0.08); border-radius: var(--radius); padding: 0.9rem 0.6rem; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+    .stat-box .sv { font-size: 1.3rem; font-weight: 900; color: white; }
+    .stat-box .sl { font-size: 0.68rem; color: rgba(255,255,255,0.55); margin-top: 0.2rem; }
+
+    /* TESTIMONIAL */
+    .testimonial-card { background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-lg); padding: 1.2rem; }
+    .testimonial-card .t-text { font-size: 0.85rem; color: #ccfbf1; line-height: 1.6; font-style: italic; margin-bottom: 0.8rem; }
+    .testimonial-card .t-author { display: flex; align-items: center; gap: 0.7rem; }
+    .testimonial-card .t-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#10b981,#059669); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; color: white; }
+    .testimonial-card .t-name { font-size: 0.82rem; font-weight: 700; color: white; }
+    .testimonial-card .t-role { font-size: 0.73rem; color: rgba(255,255,255,0.5); }
+    .testimonial-card .t-stars { color: #fbbf24; font-size: 0.75rem; }
+
+    /* RIGHT PANEL */
+    .auth-right { display: flex; align-items: center; justify-content: center; padding: 3rem 2rem; background: white; }
+    .auth-box { width: 100%; max-width: 420px; }
+
+    .auth-box-logo { display: none; margin-bottom: 1.5rem; font-size: 1.4rem; font-weight: 900; color: var(--primary); }
+    .auth-box-logo span { color: var(--accent); }
+
+    .auth-box h1 { font-size: 1.75rem; font-weight: 900; color: var(--gray-900); margin-bottom: 0.3rem; }
+    .auth-box .sub { color: var(--gray-500); font-size: 0.88rem; margin-bottom: 2rem; }
+
+    /* ROLE TABS */
+    .role-tabs { display: flex; gap: 0; margin-bottom: 2rem; background: var(--gray-100); padding: 0.3rem; border-radius: var(--radius); }
+    .role-tab {
+      flex: 1; text-align: center; padding: 0.6rem 0.4rem;
+      border-radius: calc(var(--radius) - 2px); font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; color: var(--gray-500);
+      display: flex; align-items: center; justify-content: center; gap: 0.3rem;
+    }
+    .role-tab svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .role-tab.active { background: white; color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+    /* SOCIAL */
+    .social-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-bottom: 1.5rem; }
+    .social-btn {
+      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+      border: 1.5px solid var(--gray-200); background: white;
+      padding: 0.75rem; border-radius: var(--radius); font-size: 0.83rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; font-family: inherit; color: var(--gray-700);
+    }
+    .social-btn:hover { border-color: var(--gray-400); background: var(--gray-50); box-shadow: var(--shadow-sm); }
+    .social-btn .s-ico { font-size: 1rem; }
+
+    .divider-text { display: flex; align-items: center; gap: 0.8rem; margin: 0 0 1.5rem; color: var(--gray-400); font-size: 0.8rem; }
+    .divider-text::before, .divider-text::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+
+    /* PASSWORD TOGGLE */
+    .pw-wrap { position: relative; }
+    .pw-wrap input { padding-right: 2.8rem; }
+    .pw-toggle { position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--gray-400); padding: 0; line-height: 1; font-size: 1rem; }
+    .pw-toggle:hover { color: var(--gray-600); }
+
+    .forgot { text-align: right; font-size: 0.8rem; margin-bottom: 1.2rem; }
+    .forgot a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .forgot a:hover { text-decoration: underline; }
+
+    .btn-block { width: 100%; justify-content: center; }
+
+    .switch-link { text-align: center; margin-top: 1.5rem; font-size: 0.86rem; color: var(--gray-500); }
+    .switch-link a { color: var(--primary); font-weight: 700; text-decoration: none; }
+
+    /* ERROR */
+    .form-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: var(--radius); padding: 0.7rem 1rem; font-size: 0.82rem; margin-bottom: 1rem; display: none; }
+
+    /* LOADING */
+    .btn-loading { position: relative; pointer-events: none; }
+    .btn-loading::after { content: ''; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+    @media (max-width: 768px) {
+      .auth-layout { grid-template-columns: 1fr; }
+      .auth-left { display: none; }
+      .auth-box-logo { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="auth-nav">
+  <a href="index.html" class="logo">Hogar<span>Pro</span></a>
+  <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.83rem;color:var(--gray-500);">
+    ¿No tienes cuenta?
+    <a href="register.html" class="btn btn-primary btn-sm">Regístrate gratis</a>
+  </div>
+</nav>
+
+<div class="auth-layout">
+
+  <!-- LEFT -->
+  <div class="auth-left">
+    <div class="auth-left-inner">
+      <div>
+        <div class="left-brand">
+          <div class="brand-name">Hogar<span>Pro</span></div>
+          <div class="brand-sub">La plataforma #1 de servicios del hogar en España</div>
+        </div>
+        <div class="left-headline">
+          <h2>Todo tu hogar,<br>bajo control</h2>
+          <p>Accede a tu panel y gestiona reservas, facturas y tus profesionales de confianza en un solo lugar.</p>
+        </div>
+        <ul class="feature-list">
+          <li><div class="ficon">📅</div> Reservas y cancelaciones en tiempo real</li>
+          <li><div class="ficon">💳</div> Pago seguro con tarjeta, Bizum o transferencia</li>
+          <li><div class="ficon">⭐</div> Valora y repite con el mismo profesional</li>
+          <li><div class="ficon">🔔</div> Recordatorios automáticos por WhatsApp</li>
+          <li><div class="ficon">🛡️</div> Garantía de devolución incluida</li>
+        </ul>
+      </div>
+      <div>
+        <div class="left-stats">
+          <div class="stat-box"><div class="sv">50K+</div><div class="sl">Reservas</div></div>
+          <div class="stat-box"><div class="sv">4.9★</div><div class="sl">Valoración</div></div>
+          <div class="stat-box"><div class="sv">74</div><div class="sl">Ciudades</div></div>
+        </div>
+        <div class="testimonial-card">
+          <div class="t-text">"Increíble plataforma. Reservé en 2 minutos y la profesional llegó puntual. ¡Volvería a usar HogarPro sin dudarlo!"</div>
+          <div class="t-author">
+            <div class="t-avatar">ML</div>
+            <div>
+              <div class="t-name">María López <span class="t-stars">★★★★★</span></div>
+              <div class="t-role">Clienta desde 2025 · Madrid</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="auth-right">
+    <div class="auth-box">
+      <div class="auth-box-logo">Hogar<span>Pro</span></div>
+      <h1>Bienvenido de nuevo</h1>
+      <p class="sub">Accede a tu cuenta para gestionar tus servicios</p>
+
+      <!-- ROLE TABS -->
+      <div class="role-tabs">
+        <div class="role-tab active" onclick="setRole(this,'client')">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Cliente
+        </div>
+        <div class="role-tab" onclick="setRole(this,'pro')">
+          <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          Profesional
+        </div>
+        <div class="role-tab" onclick="setRole(this,'admin')">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Admin
+        </div>
+      </div>
+
+      <!-- SOCIAL -->
+      <div class="social-btns">
+        <button class="social-btn"><span class="s-ico">🌐</span> Google</button>
+        <button class="social-btn"><span class="s-ico">📘</span> Facebook</button>
+      </div>
+      <div class="divider-text">o con tu email</div>
+
+      <div class="form-error" id="form-error">Email o contraseña incorrectos. Inténtalo de nuevo.</div>
+
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" id="login-email" placeholder="tu@email.com" required autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <div class="pw-wrap">
+            <input type="password" class="form-control" id="login-pw" placeholder="••••••••" required autocomplete="current-password" />
+            <button type="button" class="pw-toggle" onclick="togglePw('login-pw',this)" title="Mostrar contraseña">👁</button>
+          </div>
+        </div>
+        <div class="forgot"><a href="#">¿Olvidaste tu contraseña?</a></div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="login-btn">Iniciar sesión →</button>
+      </form>
+
+      <div class="switch-link">¿No tienes cuenta? <a href="register.html">Regístrate gratis</a></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let currentRole = 'client';
+
+  function setRole(el, role) {
+    document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    currentRole = role;
+  }
+
+  function togglePw(id, btn) {
+    const input = document.getElementById(id);
+    if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+    else { input.type = 'password'; btn.textContent = '👁'; }
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const btn = document.getElementById('login-btn');
+    btn.textContent = 'Iniciando sesión...';
+    btn.classList.add('btn-loading');
+    btn.disabled = true;
+    document.getElementById('form-error').style.display = 'none';
+    setTimeout(() => {
+      if (currentRole === 'admin') window.location.href = 'dashboard/admin.html';
+      else if (currentRole === 'pro') window.location.href = 'dashboard/pro.html';
+      else window.location.href = 'dashboard/client.html';
+    }, 900);
+  }
+</script>
+</body>
+</html>

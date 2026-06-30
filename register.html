@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crear cuenta — HogarPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    body { background: var(--gray-50); min-height: 100vh; display: flex; flex-direction: column; }
+    .auth-nav { background: white; border-bottom: 1px solid var(--gray-200); padding: 0.9rem 5%; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .logo { font-size: 1.4rem; font-weight: 900; color: var(--primary); text-decoration: none; }
+    .logo span { color: var(--accent); }
+
+    .auth-layout { flex: 1; display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 61px); }
+
+    /* LEFT PANEL */
+    .auth-left {
+      background: linear-gradient(145deg, #042f2e 0%, #134e4a 35%, #0d9488 70%, #06b6d4 100%);
+      padding: 3.5rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; overflow: hidden;
+    }
+    .auth-left::before { content:''; position:absolute; width:500px; height:500px; background:rgba(255,255,255,0.04); border-radius:50%; top:-200px; right:-150px; pointer-events:none; }
+    .auth-left::after  { content:''; position:absolute; width:300px; height:300px; background:rgba(255,255,255,0.03); border-radius:50%; bottom:-100px; left:-80px; pointer-events:none; }
+    .auth-left-inner { position:relative; z-index:1; display:flex; flex-direction:column; height:100%; justify-content:space-between; }
+
+    .left-brand .brand-name { font-size:1.6rem; font-weight:900; color:white; }
+    .left-brand .brand-name span { color:#fbbf24; }
+    .left-brand .brand-sub { font-size:0.82rem; color:rgba(255,255,255,0.5); margin-top:0.2rem; margin-bottom:2.5rem; }
+    .left-headline h2 { font-size:2rem; color:white; font-weight:900; line-height:1.25; margin-bottom:0.8rem; }
+    .left-headline p { color:#99f6e4; font-size:0.9rem; line-height:1.7; margin-bottom:2rem; }
+
+    .benefit-card { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:var(--radius-lg); padding:1rem 1.2rem; margin-bottom:0.8rem; display:flex; align-items:flex-start; gap:0.9rem; }
+    .benefit-card .b-ico { width:36px; height:36px; border-radius:var(--radius); background:rgba(255,255,255,0.12); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+    .benefit-card .b-title { font-size:0.87rem; font-weight:700; color:white; margin-bottom:0.2rem; }
+    .benefit-card .b-desc { font-size:0.77rem; color:rgba(255,255,255,0.6); line-height:1.5; }
+
+    .left-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0.8rem; margin-top:1.5rem; }
+    .stat-box { background:rgba(255,255,255,0.08); border-radius:var(--radius); padding:0.8rem 0.4rem; text-align:center; border:1px solid rgba(255,255,255,0.1); }
+    .stat-box .sv { font-size:1.25rem; font-weight:900; color:white; }
+    .stat-box .sl { font-size:0.66rem; color:rgba(255,255,255,0.5); margin-top:0.15rem; }
+
+    /* RIGHT PANEL */
+    .auth-right { background:white; overflow-y:auto; display:flex; align-items:flex-start; justify-content:center; padding:2.5rem 2rem; }
+    .auth-box { width:100%; max-width:460px; }
+
+    .auth-box-logo { display:none; margin-bottom:1.5rem; font-size:1.4rem; font-weight:900; color:var(--primary); }
+    .auth-box-logo span { color:var(--accent); }
+
+    .auth-box h1 { font-size:1.7rem; font-weight:900; color:var(--gray-900); margin-bottom:0.3rem; }
+    .auth-box .sub { color:var(--gray-500); font-size:0.88rem; margin-bottom:1.8rem; }
+
+    /* TYPE SELECT */
+    .type-select { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:1.8rem; }
+    .type-card { border:2px solid var(--gray-200); border-radius:var(--radius-lg); padding:1.1rem; text-align:center; cursor:pointer; transition:all 0.15s; }
+    .type-card:hover { border-color:var(--primary); background:var(--primary-light); }
+    .type-card.selected { border-color:var(--primary); background:var(--primary-light); }
+    .type-card .type-icon { font-size:1.8rem; margin-bottom:0.4rem; }
+    .type-card .type-name { font-weight:800; font-size:0.9rem; }
+    .type-card .type-desc { font-size:0.75rem; color:var(--gray-500); margin-top:0.15rem; }
+    .type-card.selected .type-desc { color:var(--primary); }
+
+    /* PROMO */
+    .promo-banner { background:linear-gradient(90deg,#fef3c7,#fde68a); border:1px solid #f59e0b; border-radius:var(--radius); padding:0.75rem 1rem; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.6rem; font-size:0.83rem; color:#92400e; font-weight:600; }
+
+    /* PRO EXTRAS */
+    .pro-section { display:none; border:1.5px solid var(--primary); background:var(--primary-light); border-radius:var(--radius-lg); padding:1.2rem; margin-bottom:1.2rem; }
+    .pro-section.show { display:block; }
+    .pro-section-title { font-weight:800; font-size:0.88rem; color:var(--primary); margin-bottom:1rem; display:flex; align-items:center; gap:0.4rem; }
+
+    /* PASSWORD */
+    .pw-wrap { position:relative; }
+    .pw-wrap input { padding-right:2.8rem; }
+    .pw-toggle { position:absolute; right:0.9rem; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--gray-400); padding:0; font-size:1rem; }
+    .pw-toggle:hover { color:var(--gray-600); }
+
+    /* STRENGTH */
+    .pw-strength { display:flex; gap:3px; margin-top:0.4rem; }
+    .pw-bar { height:3px; flex:1; border-radius:3px; background:var(--gray-200); transition:background 0.2s; }
+    .pw-bar.weak   { background:#ef4444; }
+    .pw-bar.ok     { background:#f59e0b; }
+    .pw-bar.strong { background:#10b981; }
+    .pw-label { font-size:0.72rem; color:var(--gray-400); margin-top:0.25rem; }
+
+    /* SOCIAL */
+    .social-btns { display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; margin-bottom:1.5rem; }
+    .social-btn { display:flex; align-items:center; justify-content:center; gap:0.6rem; border:1.5px solid var(--gray-200); background:white; padding:0.75rem; border-radius:var(--radius); font-size:0.83rem; font-weight:600; cursor:pointer; transition:all 0.15s; font-family:inherit; color:var(--gray-700); }
+    .social-btn:hover { border-color:var(--gray-400); background:var(--gray-50); }
+    .divider-text { display:flex; align-items:center; gap:0.8rem; margin:0 0 1.5rem; color:var(--gray-400); font-size:0.8rem; }
+    .divider-text::before, .divider-text::after { content:''; flex:1; height:1px; background:var(--gray-200); }
+
+    .terms { font-size:0.78rem; color:var(--gray-500); text-align:center; margin-top:1rem; line-height:1.6; }
+    .terms a { color:var(--primary); text-decoration:none; font-weight:600; }
+    .switch-link { text-align:center; margin-top:1.2rem; font-size:0.86rem; color:var(--gray-500); }
+    .switch-link a { color:var(--primary); font-weight:700; text-decoration:none; }
+
+    .btn-block { width:100%; justify-content:center; }
+    .btn-loading { pointer-events:none; position:relative; }
+    .btn-loading::after { content:''; position:absolute; right:1rem; top:50%; transform:translateY(-50%); width:16px; height:16px; border:2px solid rgba(255,255,255,0.4); border-top-color:white; border-radius:50%; animation:spin 0.6s linear infinite; }
+    @keyframes spin { to { transform:translateY(-50%) rotate(360deg); } }
+
+    /* SUCCESS */
+    .success-overlay { display:none; position:fixed; inset:0; background:white; z-index:999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem; }
+    .success-overlay.show { display:flex; }
+    .success-overlay .s-icon { font-size:5rem; margin-bottom:1.5rem; animation:pop 0.5s ease; }
+    @keyframes pop { 0%{transform:scale(0)} 80%{transform:scale(1.1)} 100%{transform:scale(1)} }
+    .success-overlay h2 { font-size:2rem; font-weight:900; margin-bottom:0.6rem; }
+    .success-overlay p { color:var(--gray-500); font-size:1rem; max-width:400px; line-height:1.7; margin-bottom:2rem; }
+
+    @media (max-width: 768px) {
+      .auth-layout { grid-template-columns:1fr; }
+      .auth-left { display:none; }
+      .auth-box-logo { display:block; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="auth-nav">
+  <a href="index.html" class="logo">Hogar<span>Pro</span></a>
+  <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.83rem;color:var(--gray-500);">
+    ¿Ya tienes cuenta?
+    <a href="login.html" class="btn btn-secondary btn-sm">Iniciar sesión</a>
+  </div>
+</nav>
+
+<div class="auth-layout">
+
+  <!-- LEFT -->
+  <div class="auth-left">
+    <div class="auth-left-inner">
+      <div>
+        <div class="left-brand">
+          <div class="brand-name">Hogar<span>Pro</span></div>
+          <div class="brand-sub">La plataforma #1 de servicios del hogar en España</div>
+        </div>
+        <div class="left-headline">
+          <h2 id="left-title">Tu hogar merece lo mejor</h2>
+          <p id="left-desc">Accede a más de 500 profesionales verificados en 74 ciudades. Reserva en minutos, paga seguro.</p>
+        </div>
+        <div id="benefits-client">
+          <div class="benefit-card"><div class="b-ico">⚡</div><div><div class="b-title">Reserva en menos de 2 min</div><div class="b-desc">Elige servicio, fecha y paga en 3 pasos simples</div></div></div>
+          <div class="benefit-card"><div class="b-ico">✅</div><div><div class="b-title">Profesionales 100% verificados</div><div class="b-desc">Antecedentes, seguros y documentación revisados</div></div></div>
+          <div class="benefit-card"><div class="b-ico">🛡️</div><div><div class="b-title">Garantía de devolución</div><div class="b-desc">Si no quedas satisfecho, te devolvemos el dinero</div></div></div>
+          <div class="benefit-card"><div class="b-ico">💬</div><div><div class="b-title">Soporte 24/7 por WhatsApp</div><div class="b-desc">Siempre alguien disponible para ayudarte</div></div></div>
+        </div>
+        <div id="benefits-pro" style="display:none;">
+          <div class="benefit-card"><div class="b-ico">💶</div><div><div class="b-title">Gana más y gestiona tu agenda</div><div class="b-desc">Tú pones el precio y el horario. Sin jefes.</div></div></div>
+          <div class="benefit-card"><div class="b-ico">📱</div><div><div class="b-title">Clientes llegan solos a ti</div><div class="b-desc">HogarPro te da visibilidad en toda España</div></div></div>
+          <div class="benefit-card"><div class="b-ico">📊</div><div><div class="b-title">Panel profesional completo</div><div class="b-desc">Estadísticas, valoraciones y pagos en un sitio</div></div></div>
+          <div class="benefit-card"><div class="b-ico">🏅</div><div><div class="b-title">Sello "Verificado HogarPro"</div><div class="b-desc">Genera confianza y consigue más contratos</div></div></div>
+        </div>
+      </div>
+      <div class="left-stats">
+        <div class="stat-box"><div class="sv">8K+</div><div class="sl">Usuarios</div></div>
+        <div class="stat-box"><div class="sv">500+</div><div class="sl">Profesionales</div></div>
+        <div class="stat-box"><div class="sv">74</div><div class="sl">Ciudades</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="auth-right">
+    <div class="auth-box">
+      <div class="auth-box-logo">Hogar<span>Pro</span></div>
+      <h1>Crea tu cuenta gratis</h1>
+      <p class="sub">Únete a más de 8,000 usuarios que ya confían en HogarPro</p>
+
+      <!-- PROMO BANNER -->
+      <div class="promo-banner" id="promo-banner">
+        🎁 <strong>¡Oferta de bienvenida!</strong> &mdash; 10€ de descuento en tu primera reserva
+      </div>
+
+      <!-- TYPE SELECT -->
+      <p style="font-size:0.83rem;font-weight:700;color:var(--gray-600);margin-bottom:0.7rem;">Quiero registrarme como:</p>
+      <div class="type-select">
+        <div class="type-card selected" id="type-client" onclick="selectType('client')">
+          <div class="type-icon">👤</div>
+          <div class="type-name">Cliente</div>
+          <div class="type-desc">Quiero contratar servicios</div>
+        </div>
+        <div class="type-card" id="type-pro" onclick="selectType('pro')">
+          <div class="type-icon">🔧</div>
+          <div class="type-name">Profesional</div>
+          <div class="type-desc">Quiero ofrecer servicios</div>
+        </div>
+      </div>
+
+      <!-- SOCIAL -->
+      <div class="social-btns">
+        <button class="social-btn">🌐 Google</button>
+        <button class="social-btn">📘 Facebook</button>
+      </div>
+      <div class="divider-text">o con tu email</div>
+
+      <form onsubmit="handleRegister(event)">
+        <!-- BASE FIELDS -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nombre</label>
+            <input type="text" class="form-control" placeholder="Tu nombre" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Apellidos</label>
+            <input type="text" class="form-control" placeholder="Tus apellidos" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" placeholder="tu@email.com" required autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono / WhatsApp</label>
+          <input type="tel" class="form-control" placeholder="+34 6XX XXX XXX" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ciudad</label>
+          <select class="form-control" required>
+            <option value="">Selecciona tu ciudad...</option>
+            <option>A Coruña</option><option>Aguilar de Campoo</option><option>Albacete</option>
+            <option>Alcalá de Guadaíra</option><option>Alcalá de Henares</option><option>Alcazar de San Juan</option>
+            <option>Alcobendas</option><option>Alcorcón</option><option>Alcoy</option>
+            <option>Algeciras</option><option>Alicante</option><option>Almería</option>
+            <option>Andújar</option><option>Antequera</option><option>Aranjuez</option>
+            <option>Arona</option><option>Arrecife</option><option>Avilés</option>
+            <option>Ávila</option><option>Azuqueca de Henares</option><option>Badajoz</option>
+            <option>Badalona</option><option>Barakaldo</option><option>Barcelona</option>
+            <option>Basauri</option><option>Benalmádena</option><option>Benidorm</option>
+            <option>Bilbao</option><option>Blanes</option><option>Burgos</option>
+            <option>Cáceres</option><option>Cádiz</option><option>Calahorra</option>
+            <option>Calpe</option><option>Cambrils</option><option>Cartagena</option>
+            <option>Castelldefels</option><option>Castellón de la Plana</option><option>Ceuta</option>
+            <option>Chiclana de la Frontera</option><option>Ciudad Real</option><option>Cieza</option>
+            <option>Collado Villalba</option><option>Córdoba</option><option>Cornellà de Llobregat</option>
+            <option>Cuenca</option><option>Dénia</option><option>Don Benito</option>
+            <option>Donostia-San Sebastián</option><option>Dos Hermanas</option><option>Durango</option>
+            <option>Écija</option><option>El Ejido</option><option>El Puerto de Santa María</option>
+            <option>Elche</option><option>Elda</option><option>Estepona</option>
+            <option>Ferrol</option><option>Fuengirola</option><option>Fuenlabrada</option>
+            <option>Gandía</option><option>Getafe</option><option>Getxo</option>
+            <option>Gijón</option><option>Girona</option><option>Granada</option>
+            <option>Granollers</option><option>Guadalajara</option><option>Hellín</option>
+            <option>Hospitalet de Llobregat</option><option>Huelva</option><option>Huesca</option>
+            <option>Ibiza</option><option>Irun</option><option>Jaén</option>
+            <option>Jerez de la Frontera</option><option>La Línea de la Concepción</option>
+            <option>La Orotava</option><option>Las Palmas de Gran Canaria</option>
+            <option>Las Rozas de Madrid</option><option>Leganés</option><option>León</option>
+            <option>Linares</option><option>Lleida</option><option>Lloret de Mar</option>
+            <option>Lorca</option><option>Logroño</option><option>Lugo</option>
+            <option>Madrid</option><option>Mairena del Aljarafe</option><option>Manresa</option>
+            <option>Marbella</option><option>Mataro</option><option>Melilla</option>
+            <option>Mérida</option><option>Mijas</option><option>Molina de Segura</option>
+            <option>Mollet del Vallès</option><option>Motril</option><option>Móstoles</option>
+            <option>Málaga</option><option>Murcia</option><option>Olot</option>
+            <option>Ourense</option><option>Oviedo</option><option>Palencia</option>
+            <option>Palma de Mallorca</option><option>Pamplona</option><option>Parla</option>
+            <option>Paterna</option><option>Plasencia</option><option>Pontevedra</option>
+            <option>Pozuelo de Alarcón</option><option>Puerto Real</option><option>Puertollano</option>
+            <option>Reus</option><option>Roquetas de Mar</option><option>Rubí</option>
+            <option>Sabadell</option><option>Salamanca</option><option>Salou</option>
+            <option>San Cristóbal de La Laguna</option><option>Sanlúcar de Barrameda</option>
+            <option>Santa Cruz de Tenerife</option><option>Santander</option>
+            <option>Santiago de Compostela</option><option>Segovia</option><option>Sevilla</option>
+            <option>Soria</option><option>Talavera de la Reina</option><option>Tarragona</option>
+            <option>Telde</option><option>Terrassa</option><option>Teruel</option>
+            <option>Toledo</option><option>Torrejón de Ardoz</option><option>Torremolinos</option>
+            <option>Torrent</option><option>Torrevieja</option><option>Tudela</option>
+            <option>Utrera</option><option>Valdemoro</option><option>Valencia</option>
+            <option>Valladolid</option><option>Vélez-Málaga</option><option>Vic</option>
+            <option>Vigo</option><option>Vila-real</option><option>Viladecans</option>
+            <option>Vilagarcía de Arousa</option><option>Vitoria-Gasteiz</option>
+            <option>Zamora</option><option>Zaragoza</option>
+          </select>
+        </div>
+
+        <!-- PRO EXTRAS -->
+        <div class="pro-section" id="pro-section">
+          <div class="pro-section-title">🔧 Datos profesionales</div>
+          <div class="form-group">
+            <label class="form-label">Tipo de servicio principal</label>
+            <select class="form-control" id="pro-service">
+              <option value="">Selecciona un servicio...</option>
+              <option>🧹 Limpieza</option>
+              <option>🔧 Fontanería</option>
+              <option>⚡ Electricidad</option>
+              <option>🎨 Pintura</option>
+              <option>🚚 Mudanzas</option>
+              <option>🌿 Jardinería</option>
+              <option>🪚 Bricolaje</option>
+              <option>🐶 Pet Sitting</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Años de experiencia</label>
+              <select class="form-control">
+                <option>Menos de 1 año</option>
+                <option>1-3 años</option>
+                <option selected>3-5 años</option>
+                <option>5-10 años</option>
+                <option>Más de 10 años</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tarifa hora (€)</label>
+              <input type="number" class="form-control" placeholder="Ej: 25" min="10" max="200" />
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Breve descripción de tus servicios</label>
+            <textarea class="form-control" rows="2" placeholder="Ej: Especialista en limpieza del hogar con 8 años de experiencia..." style="resize:vertical;"></textarea>
+          </div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <div class="pw-wrap">
+              <input type="password" class="form-control" id="reg-pw" placeholder="Mínimo 8 caracteres" required autocomplete="new-password" oninput="checkPwStrength(this.value)" />
+              <button type="button" class="pw-toggle" onclick="togglePw('reg-pw',this)">👁</button>
+            </div>
+            <div class="pw-strength"><div class="pw-bar" id="bar1"></div><div class="pw-bar" id="bar2"></div><div class="pw-bar" id="bar3"></div><div class="pw-bar" id="bar4"></div></div>
+            <div class="pw-label" id="pw-label">Introduce una contraseña</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirmar</label>
+            <div class="pw-wrap">
+              <input type="password" class="form-control" id="reg-pw2" placeholder="Repite la contraseña" required autocomplete="new-password" />
+              <button type="button" class="pw-toggle" onclick="togglePw('reg-pw2',this)">👁</button>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="reg-btn" style="margin-top:0.5rem;">Crear mi cuenta gratis →</button>
+      </form>
+
+      <div class="terms">
+        Al registrarte aceptas nuestros <a href="#">Términos de uso</a> y <a href="#">Política de privacidad</a>.<br>
+        Nunca compartiremos tus datos con terceros.
+      </div>
+      <div class="switch-link">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="success-overlay">
+  <div class="s-icon">🎉</div>
+  <h2>¡Cuenta creada!</h2>
+  <p id="success-msg">Bienvenido a HogarPro. Redirigiendo a tu panel...</p>
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+    <div class="btn btn-primary btn-lg">Ir a mi panel →</div>
+  </div>
+</div>
+
+<script>
+  let selectedType = 'client';
+
+  function selectType(type) {
+    selectedType = type;
+    document.getElementById('type-client').classList.toggle('selected', type === 'client');
+    document.getElementById('type-pro').classList.toggle('selected', type === 'pro');
+    document.getElementById('pro-section').classList.toggle('show', type === 'pro');
+
+    if (type === 'pro') {
+      document.getElementById('promo-banner').style.display = 'none';
+      document.getElementById('left-title').textContent = 'Trabaja con total libertad';
+      document.getElementById('left-desc').textContent = 'Únete a +500 profesionales que ya generan ingresos extra con HogarPro. Sin cuotas mensuales.';
+      document.getElementById('benefits-client').style.display = 'none';
+      document.getElementById('benefits-pro').style.display = 'block';
+      document.getElementById('reg-btn').textContent = 'Registrarme como profesional →';
+    } else {
+      document.getElementById('promo-banner').style.display = 'flex';
+      document.getElementById('left-title').textContent = 'Tu hogar merece lo mejor';
+      document.getElementById('left-desc').textContent = 'Accede a más de 500 profesionales verificados en 74 ciudades. Reserva en minutos, paga seguro.';
+      document.getElementById('benefits-client').style.display = 'block';
+      document.getElementById('benefits-pro').style.display = 'none';
+      document.getElementById('reg-btn').textContent = 'Crear mi cuenta gratis →';
+    }
+  }
+
+  function togglePw(id, btn) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+    btn.textContent = input.type === 'password' ? '👁' : '🙈';
+  }
+
+  function checkPwStrength(pw) {
+    const bars = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3'), document.getElementById('bar4')];
+    const label = document.getElementById('pw-label');
+    bars.forEach(b => b.className = 'pw-bar');
+    if (!pw) { label.textContent = 'Introduce una contraseña'; return; }
+    let score = 0;
+    if (pw.length >= 8) score++;
+    if (/[A-Z]/.test(pw)) score++;
+    if (/[0-9]/.test(pw)) score++;
+    if (/[^A-Za-z0-9]/.test(pw)) score++;
+    const cls = score <= 1 ? 'weak' : score <= 2 ? 'ok' : 'strong';
+    const labels = ['', 'Débil', 'Débil', 'Buena', 'Muy segura'];
+    for (let i = 0; i < score; i++) bars[i].classList.add(cls);
+    label.textContent = labels[score];
+    label.style.color = cls === 'weak' ? '#ef4444' : cls === 'ok' ? '#f59e0b' : '#10b981';
+  }
+
+  function handleRegister(e) {
+    e.preventDefault();
+    const btn = document.getElementById('reg-btn');
+    btn.textContent = 'Creando tu cuenta...';
+    btn.classList.add('btn-loading');
+    btn.disabled = true;
+    setTimeout(() => {
+      const overlay = document.getElementById('success-overlay');
+      document.getElementById('success-msg').textContent = selectedType === 'pro'
+        ? 'Cuenta profesional creada. Revisaremos tu documentación en 24h. Redirigiendo...'
+        : 'Bienvenido a HogarPro. Aquí tienes 10€ de descuento en tu primera reserva. Redirigiendo...';
+      overlay.classList.add('show');
+      setTimeout(() => {
+        window.location.href = selectedType === 'pro' ? 'dashboard/pro.html' : 'dashboard/client.html';
+      }, 2000);
+    }, 1000);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perfil Profesional — HogarPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0.9rem 5%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-size: 1.4rem; font-weight: 900; color: var(--primary); text-decoration: none; }
+    .logo span { color: var(--accent); }
+
+    .profile-hero {
+      background: linear-gradient(135deg, #134e4a, #0d9488);
+      padding: 3rem 5% 5rem;
+    }
+    .profile-hero-inner { max-width: 1100px; margin: 0 auto; }
+
+    .breadcrumb { display: flex; align-items: center; gap: 0.5rem; color: #a5b4fc; font-size: 0.82rem; margin-bottom: 2rem; }
+    .breadcrumb a { color: #a5b4fc; text-decoration: none; }
+    .breadcrumb a:hover { color: white; }
+
+    .profile-top { display: flex; align-items: flex-start; gap: 2rem; }
+    .profile-avt {
+      width: 100px; height: 100px; border-radius: 50%;
+      background: linear-gradient(135deg, #0d9488, #06b6d4);
+      border: 4px solid rgba(255,255,255,0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.9rem; font-weight: 900; color: white; letter-spacing: -1px;
+      flex-shrink: 0;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    }
+    .profile-avt-wrap { position: relative; flex-shrink: 0; }
+    .profile-avt-badge {
+      position: absolute; bottom: 4px; right: 4px;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--success); color: white;
+      border: 3px solid white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 900;
+    }
+    .profile-info h1 { color: white; font-size: 1.8rem; font-weight: 900; margin-bottom: 0.3rem; }
+    .profile-info .service-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(255,255,255,0.15); color: white;
+      padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.82rem; font-weight: 600;
+      margin-bottom: 0.8rem;
+    }
+    .profile-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .p-stat { color: #99f6e4; font-size: 0.85rem; }
+    .p-stat strong { color: white; display: block; font-size: 1.1rem; font-weight: 800; }
+
+    .profile-actions { margin-left: auto; display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .main-content {
+      max-width: 1100px;
+      margin: -2.5rem auto 0;
+      padding: 0 5% 4rem;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    /* BOOKING CARD */
+    .booking-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      position: sticky;
+      top: 80px;
+    }
+    .booking-card-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      padding: 1.5rem;
+      text-align: center;
+      color: white;
+    }
+    .booking-card-header .price { font-size: 2rem; font-weight: 900; }
+    .booking-card-header .price small { font-size: 0.85rem; font-weight: 400; opacity: 0.8; }
+    .booking-card-header .rating { font-size: 0.85rem; color: #99f6e4; margin-top: 0.3rem; }
+    .booking-card-body { padding: 1.5rem; }
+
+    .cal-picker { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.3rem; margin-bottom: 1rem; }
+    .cal-head { text-align: center; font-size: 0.65rem; color: var(--gray-400); font-weight: 700; padding: 0.3rem; }
+    .cal-cell {
+      text-align: center; padding: 0.4rem 0.2rem;
+      border-radius: 6px; font-size: 0.82rem;
+      cursor: pointer; transition: all 0.15s;
+      border: 1.5px solid transparent;
+    }
+    .cal-cell:hover { background: var(--primary-light); border-color: var(--primary); }
+    .cal-cell.selected { background: var(--primary); color: white; }
+    .cal-cell.disabled { color: var(--gray-300); cursor: not-allowed; }
+    .cal-cell.today { border-color: var(--primary); font-weight: 700; color: var(--primary); }
+
+    .time-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; margin-bottom: 1rem; }
+    .time-slot {
+      text-align: center; padding: 0.5rem;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px; font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; color: var(--gray-600);
+    }
+    .time-slot:hover { border-color: var(--primary); color: var(--primary); }
+    .time-slot.selected { background: var(--primary); color: white; border-color: var(--primary); }
+    .time-slot.booked { background: var(--gray-100); color: var(--gray-300); cursor: not-allowed; border-color: var(--gray-100); }
+
+    .price-breakdown { background: var(--gray-50); border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem; }
+    .price-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.4rem; color: var(--gray-600); }
+    .price-row:last-child { font-weight: 800; color: var(--gray-900); margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--gray-200); margin-bottom: 0; }
+
+    /* LEFT CONTENT */
+    .section-card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); margin-bottom: 1.2rem; overflow: hidden; }
+    .section-card-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--gray-100); }
+    .section-card-header h3 { font-size: 1rem; font-weight: 800; }
+    .section-card-body { padding: 1.5rem; }
+
+    .tag-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .skill-tag { background: var(--primary-light); color: var(--primary); padding: 0.35rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+
+    .review-item { padding: 1.2rem 0; border-bottom: 1px solid var(--gray-100); }
+    .review-item:last-child { border-bottom: none; }
+    .review-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.6rem; }
+    .review-header .r-info .name { font-weight: 700; font-size: 0.88rem; }
+    .review-header .r-info .date { font-size: 0.75rem; color: var(--gray-400); }
+    .review-header .r-stars { margin-left: auto; color: var(--accent); font-size: 0.9rem; }
+    .review-text { font-size: 0.85rem; color: var(--gray-600); line-height: 1.6; }
+
+    .avail-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }
+    .avail-col { text-align: center; }
+    .avail-col .day-name { font-size: 0.7rem; color: var(--gray-400); font-weight: 700; margin-bottom: 0.4rem; }
+    .avail-dot { width: 10px; height: 10px; border-radius: 50%; margin: 0.2rem auto; }
+    .dot-free { background: var(--success); }
+    .dot-busy { background: var(--gray-200); }
+
+    @media (max-width: 900px) {
+      .main-content { grid-template-columns: 1fr; }
+      .profile-top { flex-direction: column; }
+      .profile-actions { flex-direction: row; margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Hogar<span>Pro</span></a>
+  <div style="display:flex;gap:0.7rem;">
+    <a href="login.html" class="btn btn-secondary btn-sm">Iniciar sesión</a>
+    <a href="register.html" class="btn btn-primary btn-sm">Registrarse</a>
+  </div>
+</nav>
+
+<div class="profile-hero">
+  <div class="profile-hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html">Inicio</a> › <a href="pros.html">Profesionales</a> › Ana Martínez
+    </div>
+    <div class="profile-top">
+      <div class="profile-avt-wrap">
+        <div class="profile-avt">AM</div>
+        <div class="profile-avt-badge">✓</div>
+      </div>
+      <div class="profile-info">
+        <div class="service-badge">🧹 Limpieza del hogar</div>
+        <h1>Ana Martínez</h1>
+        <div class="profile-stats">
+          <div class="p-stat"><strong>4.98 ⭐</strong>Valoración</div>
+          <div class="p-stat"><strong>312</strong>Trabajos</div>
+          <div class="p-stat"><strong>8 años</strong>Experiencia</div>
+          <div class="p-stat"><strong>📍 Madrid</strong>Ciudad</div>
+          <div class="p-stat"><strong>✅ Verificada</strong>Estado</div>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <a href="https://wa.me/34600000000" class="btn btn-white btn-sm" target="_blank">💬 WhatsApp</a>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);" onclick="toggleFav(this)">🤍 Favorito</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main-content">
+  <!-- LEFT -->
+  <div>
+
+    <!-- ABOUT -->
+    <div class="section-card">
+      <div class="section-card-header" style="display:flex;align-items:center;gap:0.8rem;">
+        <div class="avt-wrap">
+          <div class="avatar avt-g1" style="font-size:0.78rem;">AM</div>
+          <div class="avt-verified">✓</div>
+        </div>
+        <h3>Sobre Ana Martínez</h3>
+      </div>
+      <div class="section-card-body">
+        <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;">
+          Soy especialista en limpieza del hogar con más de 8 años de experiencia trabajando en Madrid. Me caracterizo por ser muy meticulosa, puntual y de total confianza. Mis clientes siempre repiten porque saben que dejaré su hogar impecable.
+        </p>
+        <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.8rem;">
+          Trabajo con productos de alta calidad (incluidos o puedo usar los tuyos). Tengo experiencia con hogares con mascotas, alergias y también post-mudanza. Hablo español y francés.
+        </p>
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="section-card">
+      <div class="section-card-header"><h3>🎯 Especialidades</h3></div>
+      <div class="section-card-body">
+        <div class="tag-grid">
+          <span class="skill-tag">🧹 Limpieza estándar</span>
+          <span class="skill-tag">✨ Limpieza a fondo</span>
+          <span class="skill-tag">📦 Post-mudanza</span>
+          <span class="skill-tag">🏢 Oficinas</span>
+          <span class="skill-tag">🪟 Cristales</span>
+          <span class="skill-tag">🛋️ Tapicería</span>
+          <span class="skill-tag">🐾 Con mascotas</span>
+          <span class="skill-tag">🌿 Productos ecológicos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AVAILABILITY -->
+    <div class="section-card">
+      <div class="section-card-header"><h3>📅 Disponibilidad esta semana</h3></div>
+      <div class="section-card-body">
+        <div class="avail-week">
+          <div class="avail-col">
+            <div class="day-name">LUN</div>
+            <div class="avail-dot dot-free"></div>
+            <div class="avail-dot dot-free"></div>
+            <div class="avail-dot dot-busy"></div>
+          </div>
+          <div class="avail-col">
+            <div class="day-name">MAR</div>
+            <div class="avail-dot dot-free"></div>
+            <div class="avail-dot dot-free"></div>
+            <div class="avail-dot dot-free"></div>
+          </div>
+          <div class="avail-col">
+            <div class="day-name">MIÉ</div>
+            <div class="avail-dot dot-busy"></div>
+            <div class="avail-dot dot-busy"></div>
+            <div class="avail-dot dot-free"></div>
+          </div>
+          <div class="avail-col">
+            <div class="day-name">JUE</div>
+            <div class="avail-dot dot-free"></div>
+            <div class="avail-dot dot-busy"></div>
+            <div class="avail-dot dot-free"></div>
+          </div>
+          <div class="avail-col">
+            <div class="day-name">VIE</div>
+            <div class="avail-dot dot-free"></div>
+            <div class="avail-dot dot-free"></div>
+            <div class="avail-dot dot-busy"></div>
+          </div>
+          <div class="avail-col">
+            <div class="day-name">SÁB</div>
+            <div class="avail-dot dot-free"></div>
+            <div class="avail-dot dot-free"></div>
+            <div class="avail-dot dot-free"></div>
+          </div>
+          <div class="avail-col">
+            <div class="day-name">DOM</div>
+            <div class="avail-dot dot-busy"></div>
+            <div class="avail-dot dot-busy"></div>
+            <div class="avail-dot dot-busy"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:1rem;margin-top:1rem;font-size:0.75rem;color:var(--gray-500);">
+          <div style="display:flex;align-items:center;gap:0.4rem;"><div style="width:10px;height:10px;border-radius:50%;background:var(--success);"></div> Disponible</div>
+          <div style="display:flex;align-items:center;gap:0.4rem;"><div style="width:10px;height:10px;border-radius:50%;background:var(--gray-200);"></div> Ocupada</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="section-card">
+      <div class="section-card-header" style="display:flex;align-items:center;justify-content:space-between;">
+        <h3>⭐ Valoraciones (248)</h3>
+        <div style="display:flex;align-items:center;gap:0.4rem;font-size:1rem;font-weight:800;color:var(--gray-900);">4.98 <span style="color:var(--accent);">★</span></div>
+      </div>
+      <div class="section-card-body" style="padding:0 1.5rem;">
+        <div class="review-item">
+          <div class="review-header">
+            <div class="avatar avatar-sm avt-g1">ML</div>
+            <div class="r-info">
+              <div class="name">María López</div>
+              <div class="date">15 junio 2026</div>
+            </div>
+            <div class="r-stars">★★★★★</div>
+          </div>
+          <div class="review-text">"Ana es increíble. Llegó puntual, trabajó con mucho cuidado y dejó el piso brillando. Es muy profesional y de total confianza. La recomiendo sin dudarlo."</div>
+        </div>
+        <div class="review-item">
+          <div class="review-header">
+            <div class="avatar avatar-sm avt-g2">CG</div>
+            <div class="r-info">
+              <div class="name">Carlos García</div>
+              <div class="date">8 junio 2026</div>
+            </div>
+            <div class="r-stars">★★★★★</div>
+          </div>
+          <div class="review-text">"Ya la he contratado 6 veces y siempre el resultado es perfecto. Tengo el plan mensual con ella y es lo mejor que he hecho. Muy amable y eficiente."</div>
+        </div>
+        <div class="review-item">
+          <div class="review-header">
+            <div class="avatar avatar-sm avt-g5">AS</div>
+            <div class="r-info">
+              <div class="name">Ana Sánchez</div>
+              <div class="date">1 junio 2026</div>
+            </div>
+            <div class="r-stars">★★★★★</div>
+          </div>
+          <div class="review-text">"Contraté a Ana para la limpieza post-mudanza. El piso quedó como nuevo. Muy meticulosa y trabajadora. Definitivamente repetiré."</div>
+        </div>
+        <div style="text-align:center;padding:1rem 0;">
+          <button class="btn btn-secondary btn-sm">Ver todas las valoraciones (248)</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT — BOOKING CARD -->
+  <div>
+    <div class="booking-card">
+      <div class="booking-card-header">
+        <div class="price">25€ <small>/ hora</small></div>
+        <div class="rating">⭐ 4.98 · 312 trabajos · Madrid</div>
+      </div>
+      <div class="booking-card-body">
+        <p style="font-size:0.82rem;font-weight:700;color:var(--gray-700);margin-bottom:0.8rem;">📅 Selecciona una fecha:</p>
+
+        <div class="cal-picker" id="calendar"></div>
+
+        <p style="font-size:0.82rem;font-weight:700;color:var(--gray-700);margin:1rem 0 0.6rem;">🕐 Selecciona una hora:</p>
+        <div class="time-slots">
+          <div class="time-slot" onclick="selectTime(this)">09:00</div>
+          <div class="time-slot" onclick="selectTime(this)">10:00</div>
+          <div class="time-slot booked">11:00</div>
+          <div class="time-slot" onclick="selectTime(this)">12:00</div>
+          <div class="time-slot booked">13:00</div>
+          <div class="time-slot" onclick="selectTime(this)">15:00</div>
+          <div class="time-slot" onclick="selectTime(this)">16:00</div>
+          <div class="time-slot" onclick="selectTime(this)">17:00</div>
+          <div class="time-slot booked">18:00</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Duración</label>
+          <select class="form-control" id="duration" onchange="updatePrice()">
+            <option value="1">1 hora — 25€</option>
+            <option value="2">2 horas — 50€</option>
+            <option value="3" selected>3 horas — 75€</option>
+            <option value="4">4 horas — 100€</option>
+          </select>
+        </div>
+
+        <div class="price-breakdown">
+          <div class="price-row"><span>25€ × <span id="h-count">3</span> horas</span><span id="subtotal">75€</span></div>
+          <div class="price-row" style="align-items:flex-start;">
+            <span style="display:flex;align-items:center;gap:0.3rem;">
+              Gestión HogarPro (17%)
+              <button onclick="document.getElementById('fee-detail').style.display=document.getElementById('fee-detail').style.display==='none'?'flex':'none'" style="background:none;border:none;cursor:pointer;color:var(--primary);font-size:0.7rem;font-weight:700;padding:0;line-height:1;">ⓘ</button>
+            </span>
+            <span id="fee">12.75€</span>
+          </div>
+          <div id="fee-detail" style="display:none;flex-direction:column;gap:0.25rem;background:var(--primary-light);border-radius:8px;padding:0.6rem 0.8rem;margin-bottom:0.3rem;font-size:0.73rem;color:var(--gray-700);">
+            <span>🔒 Seguro RC del profesional</span>
+            <span>💬 Soporte 24/7</span>
+            <span>✅ Verificación del pro</span>
+            <span>↩️ Garantía devolución</span>
+          </div>
+          <div class="price-row"><span>Total</span><span id="total">82.50€</span></div>
+        </div>
+
+        <a href="booking.html" class="btn btn-primary btn-block btn-lg" style="border-radius:var(--radius-lg);">
+          Reservar con Ana →
+        </a>
+
+        <p style="text-align:center;font-size:0.75rem;color:var(--gray-400);margin-top:0.8rem;">
+          💳 Pago seguro · No se cobra hasta completar el servicio
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Calendar
+  const cal = document.getElementById('calendar');
+  const days = ['L','M','X','J','V','S','D'];
+  days.forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'cal-head'; h.textContent = d;
+    cal.appendChild(h);
+  });
+  const today = new Date();
+  for (let i = -2; i < 26; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' + (i < 0 ? ' disabled' : '') + (i === 0 ? ' today' : '');
+    cell.textContent = d.getDate();
+    if (i >= 0) {
+      cell.onclick = function() {
+        document.querySelectorAll('.cal-cell.selected').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+      };
+    }
+    cal.appendChild(cell);
+  }
+
+  function selectTime(el) {
+    document.querySelectorAll('.time-slot.selected').forEach(t => t.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function updatePrice() {
+    const h = parseInt(document.getElementById('duration').value);
+    const sub = h * 25;
+    const fee = sub * 0.17;
+    const total = sub + fee;
+    document.getElementById('h-count').textContent = h;
+    document.getElementById('subtotal').textContent = sub + '€';
+    document.getElementById('fee').textContent = fee.toFixed(2) + '€';
+    document.getElementById('total').textContent = total.toFixed(2) + '€';
+  }
+
+  function toggleFav(btn) {
+    btn.textContent = btn.textContent.includes('🤍') ? '❤️ Favorito' : '🤍 Favorito';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Profesional — HogarPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/shared.css" />
+  <style>
+    /* KPI accent bars */
+    .kpi-card { background:white; border-radius:var(--radius-lg); border:1px solid var(--gray-200); padding:1.3rem 1.4rem 1.2rem; display:flex; flex-direction:column; gap:0.5rem; position:relative; overflow:hidden; transition:box-shadow 0.2s,transform 0.2s; }
+    .kpi-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:3px 3px 0 0; }
+    .kpi-card.kpi-green::before  { background:linear-gradient(90deg,#10b981,#34d399); }
+    .kpi-card.kpi-blue::before   { background:linear-gradient(90deg,#3b82f6,#60a5fa); }
+    .kpi-card.kpi-amber::before  { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+    .kpi-card.kpi-purple::before { background:linear-gradient(90deg,#8b5cf6,#a78bfa); }
+    .kpi-top { display:flex; align-items:center; justify-content:space-between; }
+    .kpi-label { font-size:0.78rem; font-weight:600; color:var(--gray-500); }
+    .kpi-ico { width:36px; height:36px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:1rem; }
+    .kpi-value { font-size:1.9rem; font-weight:900; color:var(--gray-900); line-height:1; }
+    .kpi-trend { font-size:0.78rem; font-weight:600; color:var(--success); }
+
+    /* JOB CARDS */
+    .job-card { background:white; border-radius:var(--radius-lg); border:1px solid var(--gray-200); padding:1rem 1.2rem; display:flex; align-items:flex-start; gap:1rem; margin-bottom:0.7rem; transition:all 0.2s; }
+    .job-card:hover { box-shadow:var(--shadow-md); }
+    .job-card.next { border-left:4px solid var(--primary); }
+    .job-ico { width:46px; height:46px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; }
+    .job-info { flex:1; }
+    .job-title { font-weight:700; font-size:0.92rem; margin-bottom:0.2rem; }
+    .job-meta { color:var(--gray-500); font-size:0.78rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
+    .job-note { font-size:0.75rem; color:var(--primary); margin-top:0.3rem; background:var(--primary-light); padding:0.2rem 0.6rem; border-radius:6px; display:inline-block; }
+    .job-right { text-align:right; flex-shrink:0; }
+    .job-earn { font-weight:900; color:var(--success); font-size:1.05rem; }
+    .job-time { font-size:0.76rem; color:var(--gray-500); margin:0.2rem 0; }
+
+    /* EARNINGS CHART */
+    .earn-chart-wrap { display:flex; gap:0.4rem; align-items:flex-end; height:100px; }
+    .e-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:0.2rem; }
+    .e-bar { width:100%; border-radius:5px 5px 0 0; background:linear-gradient(to top,#10b981,#34d399); min-height:4px; transition:opacity 0.15s; cursor:default; position:relative; }
+    .e-bar.peak { background:linear-gradient(to top,var(--primary),var(--secondary)); }
+    .e-bar:hover { opacity:0.8; }
+    .e-lbl { font-size:0.6rem; color:var(--gray-400); font-weight:500; }
+
+    /* AVAILABILITY */
+    .avail-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:0.3rem; }
+    .avail-day { text-align:center; }
+    .avail-day .dname { font-size:0.62rem; color:var(--gray-400); font-weight:700; margin-bottom:0.3rem; letter-spacing:0.3px; }
+    .avail-slot { width:100%; padding:0.3rem 0.1rem; border-radius:5px; font-size:0.62rem; text-align:center; cursor:pointer; transition:all 0.15s; border:1px solid transparent; margin-bottom:0.2rem; font-weight:600; }
+    .avail-slot.free   { background:#d1fae5; color:#065f46; }
+    .avail-slot.busy   { background:var(--gray-100); color:var(--gray-400); }
+    .avail-slot.booked { background:#dbeafe; color:#1d4ed8; }
+    .avail-slot:hover  { transform:scale(1.05); }
+
+    /* REVIEWS */
+    .review-mini { padding:0.75rem 0; border-bottom:1px solid var(--gray-100); }
+    .review-mini:last-child { border-bottom:none; }
+    .review-mini .r-head { display:flex; align-items:center; gap:0.6rem; margin-bottom:0.35rem; }
+    .review-mini .r-text { font-size:0.81rem; color:var(--gray-600); font-style:italic; line-height:1.5; }
+
+    /* STATUS TOGGLE */
+    .status-toggle { display:flex; align-items:center; gap:0.5rem; background:var(--gray-100); border-radius:20px; padding:0.3rem 0.7rem; font-size:0.82rem; font-weight:600; cursor:pointer; border:none; transition:all 0.2s; font-family:inherit; }
+    .status-toggle.online { background:#d1fae5; color:#065f46; }
+    .status-toggle.offline { background:#fee2e2; color:#991b1b; }
+    .status-dot { width:8px; height:8px; border-radius:50%; background:currentColor; flex-shrink:0; }
+
+    /* NAV SVG */
+    .nav-icon svg { width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+  </style>
+</head>
+<body>
+
+<!-- MOBILE DRAWER -->
+<div class="mob-overlay" id="mob-overlay" onclick="closeMob()"></div>
+<div class="mob-drawer" id="mob-drawer">
+  <div class="sidebar-logo">
+    <div style="font-size:1.25rem;font-weight:900;color:white;">Hogar<span style="color:var(--accent)">Pro</span></div>
+    <div class="role-badge">PROFESIONAL</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Mi trabajo</div>
+    <a href="pro.html" class="nav-item active"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Inicio</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span><span>Mis trabajos</span><span class="nav-badge">3</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span>Disponibilidad</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span>Mis ganancias</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span>Valoraciones</span></a>
+    <div class="nav-section-label">Cuenta</div>
+    <a href="#" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>Mi perfil</span></a>
+    <a href="#" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Notificaciones</span><span class="nav-badge">2</span></a>
+    <a href="../login.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span><span>Cerrar sesión</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="avt-wrap"><div class="avatar avt-g1">AM</div><div class="avt-online"></div></div>
+      <div class="user-info"><div class="name">Ana Martínez</div><div class="email">🧹 Limpieza · Madrid</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="dash-layout">
+
+  <!-- SIDEBAR (desktop) -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div style="font-size:1.25rem;font-weight:900;color:white;">Hogar<span style="color:var(--accent)">Pro</span></div>
+      <div class="role-badge">PROFESIONAL</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Mi trabajo</div>
+      <a href="pro.html" class="nav-item active"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Inicio</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span><span>Mis trabajos</span><span class="nav-badge">3</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span>Disponibilidad</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span>Mis ganancias</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span>Valoraciones</span></a>
+      <div class="nav-section-label">Cuenta</div>
+      <a href="#" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>Mi perfil</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><span>Notificaciones</span><span class="nav-badge">2</span></a>
+      <a href="../login.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span><span>Cerrar sesión</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avt-wrap"><div class="avatar avt-g1">AM</div><div class="avt-online"></div></div>
+        <div class="user-info"><div class="name">Ana Martínez</div><div class="email">🧹 Limpieza · Madrid</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="dash-main">
+    <div class="dash-header">
+      <div style="display:flex;align-items:center;gap:0.8rem;">
+        <button class="hamburger" id="hamburger" onclick="openMob()">
+          <span></span><span></span><span></span>
+        </button>
+        <div style="display:flex;align-items:center;gap:0.8rem;">
+          <div class="avt-wrap">
+            <div class="avatar avt-g1" style="font-size:0.78rem;">AM</div>
+            <div class="avt-verified">✓</div>
+          </div>
+          <div>
+            <h1 style="font-size:1.1rem;">Ana Martínez</h1>
+            <div style="font-size:0.77rem;color:var(--gray-500);margin-top:0.1rem;">Lunes, 30 junio 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="notif-btn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </button>
+        <button class="status-toggle online" id="status-btn" onclick="toggleStatus()">
+          <span class="status-dot"></span> Disponible
+        </button>
+      </div>
+    </div>
+
+    <div class="dash-content">
+
+      <!-- KPIs -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1.2rem;margin-bottom:1.8rem;">
+        <div class="kpi-card kpi-green">
+          <div class="kpi-top"><div class="kpi-label">Ganancias del mes</div><div class="kpi-ico icon-green">💶</div></div>
+          <div class="kpi-value">1,240€</div>
+          <div class="kpi-trend">↑ +180€ vs mes anterior</div>
+        </div>
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-top"><div class="kpi-label">Trabajos completados</div><div class="kpi-ico icon-blue">✅</div></div>
+          <div class="kpi-value">312</div>
+          <div class="kpi-trend">↑ 18 este mes</div>
+        </div>
+        <div class="kpi-card kpi-amber">
+          <div class="kpi-top"><div class="kpi-label">Mi valoración</div><div class="kpi-ico icon-amber">⭐</div></div>
+          <div class="kpi-value">4.98</div>
+          <div class="kpi-trend" style="color:var(--gray-400);">248 reseñas</div>
+        </div>
+        <div class="kpi-card kpi-purple">
+          <div class="kpi-top"><div class="kpi-label">Próximo trabajo</div><div class="kpi-ico icon-purple">📅</div></div>
+          <div class="kpi-value" style="font-size:1.35rem;">Mañana</div>
+          <div class="kpi-trend neutral" style="color:var(--primary);">10:00h · Madrid</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+
+        <!-- LEFT: JOBS + CHART -->
+        <div>
+          <div class="card" style="margin-bottom:1.5rem;">
+            <div class="card-header">
+              <span class="card-title">📋 Próximos trabajos</span>
+              <span class="badge badge-primary">3 pendientes</span>
+            </div>
+            <div class="card-body">
+
+              <div class="job-card next">
+                <div class="job-ico icon-blue">🧹</div>
+                <div class="job-info">
+                  <div class="job-title">Limpieza estándar</div>
+                  <div class="job-meta">
+                    <div class="avt-wrap" style="display:inline-flex;"><div class="avatar avatar-sm avt-g1" style="width:20px;height:20px;font-size:0.55rem;">ML</div></div>
+                    María López · 📍 Calle Serrano 45 · ⏱ 3h
+                  </div>
+                  <span class="job-note">🔑 El cliente abrirá la puerta</span>
+                </div>
+                <div class="job-right">
+                  <div class="job-earn">+75€</div>
+                  <div class="job-time">Mañana · 10:00h</div>
+                  <button class="btn btn-primary btn-sm" style="margin-top:0.4rem;">Ver detalles</button>
+                </div>
+              </div>
+
+              <div class="job-card">
+                <div class="job-ico" style="background:#d1fae5;">🧹</div>
+                <div class="job-info">
+                  <div class="job-title">Limpieza a fondo</div>
+                  <div class="job-meta">
+                    <div class="avt-wrap" style="display:inline-flex;"><div class="avatar avatar-sm avt-g2" style="width:20px;height:20px;font-size:0.55rem;">CG</div></div>
+                    Carlos García · 📍 Gran Vía 12 · ⏱ 5h
+                  </div>
+                </div>
+                <div class="job-right">
+                  <div class="job-earn">+125€</div>
+                  <div class="job-time">2 Jul · 09:00h</div>
+                  <button class="btn btn-secondary btn-sm" style="margin-top:0.4rem;">Ver detalles</button>
+                </div>
+              </div>
+
+              <div class="job-card">
+                <div class="job-ico" style="background:#ede9fe;">🏢</div>
+                <div class="job-info">
+                  <div class="job-title">Limpieza oficina</div>
+                  <div class="job-meta">
+                    <div class="avt-wrap" style="display:inline-flex;"><div class="avatar avatar-sm avt-g6" style="width:20px;height:20px;font-size:0.5rem;">EA</div></div>
+                    Empresa ABC · 📍 P. Castellana 100 · ⏱ 4h
+                  </div>
+                </div>
+                <div class="job-right">
+                  <div class="job-earn">+100€</div>
+                  <div class="job-time">4 Jul · 17:00h</div>
+                  <button class="btn btn-secondary btn-sm" style="margin-top:0.4rem;">Ver detalles</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- EARNINGS CHART -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📈 Ganancias semanales</span>
+              <span class="badge badge-success">+23% ↑</span>
+            </div>
+            <div class="card-body">
+              <div class="earn-chart-wrap" id="earn-chart"></div>
+              <div style="display:flex;justify-content:space-between;font-size:0.65rem;color:var(--gray-400);margin-top:0.3rem;">
+                <span>S1</span><span>S2</span><span>S3</span><span>S4</span><span>S5</span><span>S6</span><span>S7</span><span>S8</span>
+              </div>
+              <div style="display:flex;gap:1.5rem;margin-top:1rem;padding-top:0.8rem;border-top:1px solid var(--gray-100);">
+                <div><div style="font-size:0.75rem;color:var(--gray-500);">Este mes</div><div style="font-weight:800;color:var(--success);font-size:1.1rem;">1,240€</div></div>
+                <div><div style="font-size:0.75rem;color:var(--gray-500);">Mejor semana</div><div style="font-weight:800;color:var(--primary);font-size:1.1rem;">380€</div></div>
+                <div><div style="font-size:0.75rem;color:var(--gray-500);">Media semanal</div><div style="font-weight:800;color:var(--gray-700);font-size:1.1rem;">274€</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: AVAILABILITY + REVIEWS -->
+        <div>
+          <div class="card" style="margin-bottom:1.5rem;">
+            <div class="card-header">
+              <span class="card-title">📅 Mi disponibilidad</span>
+              <button class="btn btn-primary btn-sm">Editar</button>
+            </div>
+            <div class="card-body">
+              <div class="avail-grid">
+                <div class="avail-day"><div class="dname">LUN</div><div class="avail-slot booked">09-11</div><div class="avail-slot free">11-13</div><div class="avail-slot busy">15-17</div></div>
+                <div class="avail-day"><div class="dname">MAR</div><div class="avail-slot free">09-11</div><div class="avail-slot free">11-13</div><div class="avail-slot free">15-17</div></div>
+                <div class="avail-day"><div class="dname">MIÉ</div><div class="avail-slot booked">09-11</div><div class="avail-slot booked">11-13</div><div class="avail-slot free">15-17</div></div>
+                <div class="avail-day"><div class="dname">JUE</div><div class="avail-slot free">09-11</div><div class="avail-slot busy">11-13</div><div class="avail-slot free">15-17</div></div>
+                <div class="avail-day"><div class="dname">VIE</div><div class="avail-slot booked">09-11</div><div class="avail-slot free">11-13</div><div class="avail-slot booked">15-17</div></div>
+                <div class="avail-day"><div class="dname">SÁB</div><div class="avail-slot free">09-11</div><div class="avail-slot free">11-13</div><div class="avail-slot busy">15-17</div></div>
+                <div class="avail-day"><div class="dname">DOM</div><div class="avail-slot busy">09-11</div><div class="avail-slot busy">11-13</div><div class="avail-slot busy">15-17</div></div>
+              </div>
+              <div style="display:flex;gap:1rem;margin-top:0.9rem;font-size:0.73rem;">
+                <div style="display:flex;align-items:center;gap:0.3rem;"><div style="width:10px;height:10px;background:#dbeafe;border-radius:2px;"></div>Reservado</div>
+                <div style="display:flex;align-items:center;gap:0.3rem;"><div style="width:10px;height:10px;background:#d1fae5;border-radius:2px;"></div>Libre</div>
+                <div style="display:flex;align-items:center;gap:0.3rem;"><div style="width:10px;height:10px;background:var(--gray-100);border-radius:2px;"></div>No disponible</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- REVIEWS -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">⭐ Últimas valoraciones</span>
+              <div style="display:flex;align-items:center;gap:0.3rem;font-size:0.9rem;font-weight:800;color:var(--success);">4.98 <span style="color:var(--accent);">★</span></div>
+            </div>
+            <div class="card-body" style="padding-top:0.3rem;">
+              <div class="review-mini">
+                <div class="r-head">
+                  <div class="avt-wrap"><div class="avatar avatar-sm avt-g1">ML</div></div>
+                  <div style="flex:1;"><div style="font-size:0.83rem;font-weight:700;">María López</div><div style="color:var(--accent);font-size:0.78rem;">★★★★★</div></div>
+                  <div style="font-size:0.73rem;color:var(--gray-400);">Ayer</div>
+                </div>
+                <div class="r-text">"Excepcional, como siempre. Deja todo impecable."</div>
+              </div>
+              <div class="review-mini">
+                <div class="r-head">
+                  <div class="avt-wrap"><div class="avatar avatar-sm avt-g2">CG</div></div>
+                  <div style="flex:1;"><div style="font-size:0.83rem;font-weight:700;">Carlos García</div><div style="color:var(--accent);font-size:0.78rem;">★★★★★</div></div>
+                  <div style="font-size:0.73rem;color:var(--gray-400);">Hace 3 días</div>
+                </div>
+                <div class="r-text">"Muy puntual y profesional. La recomiendo 100%."</div>
+              </div>
+              <div class="review-mini">
+                <div class="r-head">
+                  <div class="avt-wrap"><div class="avatar avatar-sm avt-g5">AS</div></div>
+                  <div style="flex:1;"><div style="font-size:0.83rem;font-weight:700;">Ana Sánchez</div><div style="color:var(--accent);font-size:0.78rem;">★★★★★</div></div>
+                  <div style="font-size:0.73rem;color:var(--gray-400);">Hace 5 días</div>
+                </div>
+                <div class="r-text">"El mejor servicio de limpieza que he tenido. Gracias!"</div>
+              </div>
+              <div style="text-align:center;padding-top:0.8rem;">
+                <button class="btn btn-secondary btn-sm">Ver todas (248)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Earnings chart
+  const earns = [180, 240, 195, 310, 275, 320, 290, 380];
+  const maxE = Math.max(...earns);
+  const chart = document.getElementById('earn-chart');
+  earns.forEach(v => {
+    const col = document.createElement('div');
+    col.className = 'e-col';
+    const bar = document.createElement('div');
+    bar.className = 'e-bar' + (v === maxE ? ' peak' : '');
+    bar.style.height = (v / maxE * 100) + '%';
+    bar.title = v + '€';
+    const lbl = document.createElement('div');
+    lbl.className = 'e-lbl';
+    lbl.textContent = v + '€';
+    col.appendChild(bar);
+    col.appendChild(lbl);
+    chart.appendChild(col);
+  });
+
+  // Status toggle
+  function toggleStatus() {
+    const btn = document.getElementById('status-btn');
+    const online = btn.classList.contains('online');
+    btn.className = 'status-toggle ' + (online ? 'offline' : 'online');
+    btn.innerHTML = `<span class="status-dot"></span> ${online ? 'No disponible' : 'Disponible'}`;
+    // Update sidebar dot
+    document.querySelectorAll('.avt-online').forEach(d => d.style.background = online ? '#ef4444' : '#22c55e');
+  }
+
+  // Mobile menu
+  function openMob() {
+    document.getElementById('mob-drawer').classList.add('open');
+    document.getElementById('mob-overlay').classList.add('open');
+    document.getElementById('hamburger').classList.add('open');
+  }
+  function closeMob() {
+    document.getElementById('mob-drawer').classList.remove('open');
+    document.getElementById('mob-overlay').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+  }
+</script>
+</body>
+</html>

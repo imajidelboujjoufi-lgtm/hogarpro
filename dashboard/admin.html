@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — HogarPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/shared.css" />
+  <style>
+    /* ── SIDEBAR ICONS ────────────────────────── */
+    .nav-icon svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+
+    /* ── HEADER SEARCH ─────────────────────────── */
+    .header-search {
+      display: flex; align-items: center; gap: 0.6rem;
+      background: var(--gray-50); border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius); padding: 0.45rem 0.9rem;
+      font-size: 0.85rem; color: var(--gray-500);
+      min-width: 220px;
+    }
+    .header-search input { border:none; outline:none; background:transparent; font-family:inherit; font-size:0.85rem; color:var(--gray-800); width:100%; }
+    .header-search input::placeholder { color:var(--gray-400); }
+
+    /* ── KPI CARDS ─────────────────────────────── */
+    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:1.2rem; margin-bottom:1.8rem; }
+    .kpi-card {
+      background:white; border-radius:var(--radius-lg);
+      border:1px solid var(--gray-200);
+      padding:1.3rem 1.4rem 1.2rem;
+      display:flex; flex-direction:column; gap:0.5rem;
+      position:relative; overflow:hidden;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .kpi-card:hover { box-shadow: var(--shadow-md); transform:translateY(-2px); }
+    .kpi-card::before {
+      content:''; position:absolute; top:0; left:0; right:0;
+      height:3px; border-radius:3px 3px 0 0;
+    }
+    .kpi-card.kpi-green::before  { background: linear-gradient(90deg,#10b981,#34d399); }
+    .kpi-card.kpi-blue::before   { background: linear-gradient(90deg,#3b82f6,#60a5fa); }
+    .kpi-card.kpi-purple::before { background: linear-gradient(90deg,#8b5cf6,#a78bfa); }
+    .kpi-card.kpi-amber::before  { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+    .kpi-card.kpi-pink::before   { background: linear-gradient(90deg,#ec4899,#f472b6); }
+    .kpi-card.kpi-indigo::before { background: linear-gradient(90deg,#0d9488,#818cf8); }
+
+    .kpi-top { display:flex; align-items:center; justify-content:space-between; }
+    .kpi-label { font-size:0.78rem; font-weight:600; color:var(--gray-500); letter-spacing:0.3px; }
+    .kpi-ico { width:36px; height:36px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:1rem; }
+    .kpi-value { font-size:1.9rem; font-weight:900; color:var(--gray-900); line-height:1; }
+    .kpi-trend { display:flex; align-items:center; gap:0.3rem; font-size:0.78rem; font-weight:600; }
+    .kpi-trend.up   { color:#10b981; }
+    .kpi-trend.down { color:#ef4444; }
+
+    /* ── CHARTS ────────────────────────────────── */
+    .chart-bar-wrap { margin-top:0.8rem; }
+    .chart-bar-item { margin-bottom:0.9rem; }
+    .chart-bar-label { display:flex; justify-content:space-between; font-size:0.8rem; color:var(--gray-600); margin-bottom:0.3rem; font-weight:500; }
+    .chart-bar-bg { background:var(--gray-100); border-radius:6px; height:9px; overflow:hidden; }
+    .chart-bar-fill { height:100%; border-radius:6px; background: linear-gradient(90deg, var(--primary), var(--secondary)); }
+
+    .revenue-chart-wrap { display:flex; gap:0.4rem; align-items:flex-end; height:130px; margin-top:1rem; }
+    .rev-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:0.25rem; }
+    .rev-bar {
+      width:100%; border-radius:5px 5px 0 0;
+      background: linear-gradient(to top, var(--primary), var(--secondary));
+      min-height:6px; transition: opacity 0.15s;
+      cursor:default; position:relative;
+    }
+    .rev-bar:hover { opacity:0.85; }
+    .rev-bar[data-tip]:hover::after {
+      content: attr(data-tip);
+      position:absolute; top:-28px; left:50%; transform:translateX(-50%);
+      background:var(--gray-900); color:white;
+      font-size:0.68rem; font-weight:700;
+      padding:0.2rem 0.5rem; border-radius:5px; white-space:nowrap;
+    }
+    .rev-month { font-size:0.67rem; color:var(--gray-400); font-weight:500; }
+    .rev-current .rev-bar { background: linear-gradient(to top, #f59e0b, #fbbf24); }
+
+    /* ── PENDING VERIFICATION ──────────────────── */
+    .verify-list { display:flex; flex-direction:column; gap:0.2rem; }
+    .verify-item {
+      display:flex; align-items:center; gap:0.9rem;
+      padding:0.9rem 1.2rem;
+      border-radius:var(--radius);
+      transition: background 0.12s;
+    }
+    .verify-item:hover { background:var(--gray-50); }
+    .verify-info { flex:1; }
+    .verify-name { font-size:0.88rem; font-weight:700; color:var(--gray-900); }
+    .verify-meta { font-size:0.77rem; color:var(--gray-500); margin-top:0.15rem; }
+    .verify-docs { display:flex; gap:0.4rem; margin-top:0.4rem; flex-wrap:wrap; }
+    .doc-chip {
+      font-size:0.68rem; font-weight:600;
+      padding:0.15rem 0.5rem; border-radius:6px;
+      background:var(--gray-100); color:var(--gray-600);
+    }
+    .doc-chip.ok { background:#d1fae5; color:#065f46; }
+    .verify-time { font-size:0.75rem; color:var(--gray-400); white-space:nowrap; }
+    .verify-btns { display:flex; gap:0.4rem; }
+
+    /* ── ACTIVITY ───────────────────────────────── */
+    .activity-item { display:flex; align-items:flex-start; gap:0.9rem; padding:0.75rem 0; border-bottom:1px solid var(--gray-100); }
+    .activity-item:last-child { border-bottom:none; }
+    .act-dot {
+      width:34px; height:34px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.9rem; flex-shrink:0;
+    }
+    .act-info { flex:1; }
+    .act-title { font-size:0.84rem; font-weight:600; color:var(--gray-800); }
+    .act-sub { font-size:0.76rem; color:var(--gray-500); margin-top:0.1rem; }
+    .act-time { font-size:0.73rem; color:var(--gray-400); white-space:nowrap; padding-top:0.1rem; }
+
+    /* ── CITY BARS ──────────────────────────────── */
+    .city-item { margin-bottom:1.1rem; }
+    .city-header { display:flex; justify-content:space-between; align-items:center; font-size:0.82rem; margin-bottom:0.35rem; }
+    .city-name { font-weight:600; color:var(--gray-700); }
+    .city-val { font-weight:700; color:var(--primary); }
+    .city-sub { font-size:0.72rem; color:var(--gray-400); margin-top:0.1rem; }
+
+    /* ── TABLE ─────────────────────────────────── */
+    .table-filters { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; }
+    .filter-chip {
+      padding:0.35rem 0.85rem; border-radius:20px;
+      font-size:0.78rem; font-weight:600; cursor:pointer;
+      border:1.5px solid var(--gray-200); background:white; color:var(--gray-600);
+      transition:all 0.15s; font-family:inherit;
+    }
+    .filter-chip.active, .filter-chip:hover { border-color:var(--primary); background:var(--primary-light); color:var(--primary); }
+
+    /* ── GRID ───────────────────────────────────── */
+    .grid-3-1 { display:grid; grid-template-columns:1fr 1fr 340px; gap:1.5rem; }
+
+    @media (max-width:1200px) { .grid-3-1 { grid-template-columns:1fr 1fr; } }
+    @media (max-width:1024px) {
+      .sidebar { width:70px; }
+      .sidebar-logo .role-badge, .sidebar-user .user-info, .nav-item > span:not(.nav-badge), .nav-section-label { display:none; }
+      .nav-item { padding:0.8rem; justify-content:center; }
+      .nav-item .nav-icon { margin:0; }
+      .dash-main { margin-left:70px; }
+      .grid-2, .grid-3, .grid-3-1 { grid-template-columns:1fr; }
+      .header-search { display:none; }
+    }
+    @media (max-width:768px) {
+      .sidebar { display:none; }
+      .dash-main { margin-left:0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="dash-layout">
+
+  <!-- ═══ SIDEBAR ═══════════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div style="font-size:1.25rem;font-weight:900;color:white;">Hogar<span style="color:var(--accent)">Pro</span></div>
+      <div class="role-badge">ADMINISTRADOR</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <a href="admin.html" class="nav-item active">
+        <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+        <span>Reservas</span>
+        <span class="nav-badge">14</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <span>Clientes</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></span>
+        <span>Profesionales</span>
+      </a>
+
+      <div class="nav-section-label">Servicios</div>
+      <a href="#" class="nav-item">
+        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
+        <span>Categorías</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>
+        <span>Pagos</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+        <span>Valoraciones</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+        <span>Notificaciones</span>
+        <span class="nav-badge">3</span>
+      </a>
+
+      <div class="nav-section-label">Sistema</div>
+      <a href="#" class="nav-item">
+        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+        <span>Configuración</span>
+      </a>
+      <a href="../login.html" class="nav-item">
+        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+        <span>Cerrar sesión</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avt-wrap">
+          <div class="avatar avt-g6" style="font-size:0.8rem;">AD</div>
+          <div class="avt-online"></div>
+        </div>
+        <div class="user-info">
+          <div class="name">Admin</div>
+          <div class="email">admin@hogarpro.es</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN ════════════════════════════════════════════════ -->
+  <div class="dash-main">
+
+    <!-- HEADER -->
+    <div class="dash-header">
+      <div>
+        <h1 style="font-size:1.1rem;">Dashboard General</h1>
+        <div style="font-size:0.77rem;color:var(--gray-500);margin-top:0.1rem;">Lunes, 30 junio 2026 · Datos en tiempo real</div>
+      </div>
+      <div class="header-right">
+        <div class="header-search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Buscar reservas, clientes..." />
+        </div>
+        <button class="notif-btn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="alert('Generando informe PDF...')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exportar
+        </button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="dash-content">
+
+      <!-- ── KPI ──────────────────────────────────── -->
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-green">
+          <div class="kpi-top">
+            <div class="kpi-label">Ingresos del mes</div>
+            <div class="kpi-ico icon-green">💶</div>
+          </div>
+          <div class="kpi-value">8,340€</div>
+          <div class="kpi-trend up">↑ +23% vs mes anterior</div>
+        </div>
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-top">
+            <div class="kpi-label">Reservas totales</div>
+            <div class="kpi-ico icon-blue">📋</div>
+          </div>
+          <div class="kpi-value">214</div>
+          <div class="kpi-trend up">↑ +18 esta semana</div>
+        </div>
+        <div class="kpi-card kpi-purple">
+          <div class="kpi-top">
+            <div class="kpi-label">Clientes activos</div>
+            <div class="kpi-ico icon-purple">👥</div>
+          </div>
+          <div class="kpi-value">1,243</div>
+          <div class="kpi-trend up">↑ +87 nuevos</div>
+        </div>
+        <div class="kpi-card kpi-amber">
+          <div class="kpi-top">
+            <div class="kpi-label">Profesionales</div>
+            <div class="kpi-ico icon-amber">🔧</div>
+          </div>
+          <div class="kpi-value">183</div>
+          <div class="kpi-trend up">↑ +12 este mes</div>
+        </div>
+        <div class="kpi-card kpi-pink">
+          <div class="kpi-top">
+            <div class="kpi-label">Valoración media</div>
+            <div class="kpi-ico icon-pink">⭐</div>
+          </div>
+          <div class="kpi-value">4.91</div>
+          <div class="kpi-trend up">↑ +0.02 este mes</div>
+        </div>
+        <div class="kpi-card kpi-indigo">
+          <div class="kpi-top">
+            <div class="kpi-label">Tasa completado</div>
+            <div class="kpi-ico icon-blue">✅</div>
+          </div>
+          <div class="kpi-value">97.3%</div>
+          <div class="kpi-trend up">↑ Excelente</div>
+        </div>
+      </div>
+
+      <!-- ── CHARTS ROW ──────────────────────────── -->
+      <div class="grid-2" style="margin-bottom:1.5rem;">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📈 Ingresos mensuales</span>
+            <span class="badge badge-success">+23% ↑</span>
+          </div>
+          <div class="card-body">
+            <div class="revenue-chart-wrap" id="rev-chart"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:0.4rem;">
+              <span id="rev-months"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🗂️ Servicios por categoría</span>
+            <span style="font-size:0.78rem;color:var(--gray-400);">Junio 2026</span>
+          </div>
+          <div class="card-body">
+            <div class="chart-bar-wrap">
+              <div class="chart-bar-item">
+                <div class="chart-bar-label"><span>🧹 Limpieza</span><span style="font-weight:700;">42% · 90 servicios</span></div>
+                <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:42%"></div></div>
+              </div>
+              <div class="chart-bar-item">
+                <div class="chart-bar-label"><span>🔧 Fontanería</span><span style="font-weight:700;">18% · 38 servicios</span></div>
+                <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:18%"></div></div>
+              </div>
+              <div class="chart-bar-item">
+                <div class="chart-bar-label"><span>🚚 Mudanzas</span><span style="font-weight:700;">15% · 32 servicios</span></div>
+                <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:15%"></div></div>
+              </div>
+              <div class="chart-bar-item">
+                <div class="chart-bar-label"><span>⚡ Electricidad</span><span style="font-weight:700;">12% · 26 servicios</span></div>
+                <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:12%"></div></div>
+              </div>
+              <div class="chart-bar-item">
+                <div class="chart-bar-label"><span>🎨 Pintura</span><span style="font-weight:700;">8% · 17 servicios</span></div>
+                <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:8%"></div></div>
+              </div>
+              <div class="chart-bar-item">
+                <div class="chart-bar-label"><span>🌿 Otros</span><span style="font-weight:700;">5% · 11 servicios</span></div>
+                <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:5%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PENDING VERIFICATIONS ───────────────── -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-3px;margin-right:4px;stroke:#f59e0b"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Verificaciones pendientes
+          </span>
+          <div style="display:flex;gap:0.6rem;align-items:center;">
+            <span class="badge badge-warning">4 pendientes</span>
+            <button class="btn btn-secondary btn-sm">Ver todas</button>
+          </div>
+        </div>
+        <div class="verify-list">
+
+          <div class="verify-item">
+            <div class="avt-wrap">
+              <div class="avatar avt-g2">MR</div>
+              <div class="avt-online"></div>
+            </div>
+            <div class="verify-info">
+              <div class="verify-name">Miguel Rodríguez</div>
+              <div class="verify-meta">🔧 Fontanería · Valencia · Solicitado hace 2h</div>
+              <div class="verify-docs">
+                <span class="doc-chip ok">✓ DNI</span>
+                <span class="doc-chip ok">✓ Certificado</span>
+                <span class="doc-chip ok">✓ Foto perfil</span>
+                <span class="doc-chip">⏳ Seguro RC</span>
+              </div>
+            </div>
+            <div class="verify-btns">
+              <button class="btn btn-success btn-sm" onclick="verificar(this,'Miguel R.')">✓ Aprobar</button>
+              <button class="btn btn-danger btn-sm" onclick="rechazar(this)">✗</button>
+            </div>
+          </div>
+
+          <div class="verify-item">
+            <div class="avt-wrap">
+              <div class="avatar avt-g5">SF</div>
+            </div>
+            <div class="verify-info">
+              <div class="verify-name">Sofía Fernández</div>
+              <div class="verify-meta">🧹 Limpieza · Málaga · Solicitado hace 5h</div>
+              <div class="verify-docs">
+                <span class="doc-chip ok">✓ DNI</span>
+                <span class="doc-chip ok">✓ Foto perfil</span>
+                <span class="doc-chip">⏳ Certificado</span>
+                <span class="doc-chip">⏳ Seguro RC</span>
+              </div>
+            </div>
+            <div class="verify-btns">
+              <button class="btn btn-success btn-sm" onclick="verificar(this,'Sofía F.')">✓ Aprobar</button>
+              <button class="btn btn-danger btn-sm" onclick="rechazar(this)">✗</button>
+            </div>
+          </div>
+
+          <div class="verify-item">
+            <div class="avt-wrap">
+              <div class="avatar avt-g4">JL</div>
+            </div>
+            <div class="verify-info">
+              <div class="verify-name">Jesús López</div>
+              <div class="verify-meta">⚡ Electricidad · Madrid · Solicitado hace 8h</div>
+              <div class="verify-docs">
+                <span class="doc-chip ok">✓ DNI</span>
+                <span class="doc-chip ok">✓ Certificado oficial</span>
+                <span class="doc-chip ok">✓ Seguro RC</span>
+                <span class="doc-chip ok">✓ Foto perfil</span>
+              </div>
+            </div>
+            <div class="verify-btns">
+              <button class="btn btn-success btn-sm" onclick="verificar(this,'Jesús L.')">✓ Aprobar</button>
+              <button class="btn btn-danger btn-sm" onclick="rechazar(this)">✗</button>
+            </div>
+          </div>
+
+          <div class="verify-item">
+            <div class="avt-wrap">
+              <div class="avatar avt-g3">RP</div>
+            </div>
+            <div class="verify-info">
+              <div class="verify-name">Rosa Pérez</div>
+              <div class="verify-meta">🌿 Jardinería · Barcelona · Solicitado hace 1d</div>
+              <div class="verify-docs">
+                <span class="doc-chip ok">✓ DNI</span>
+                <span class="doc-chip ok">✓ Foto perfil</span>
+                <span class="doc-chip">⏳ Certificado</span>
+              </div>
+            </div>
+            <div class="verify-btns">
+              <button class="btn btn-success btn-sm" onclick="verificar(this,'Rosa P.')">✓ Aprobar</button>
+              <button class="btn btn-danger btn-sm" onclick="rechazar(this)">✗</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── BOOKINGS TABLE ──────────────────────── -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <span class="card-title">📋 Reservas recientes</span>
+          <div class="table-filters">
+            <button class="filter-chip active" onclick="setFilter(this)">Todas</button>
+            <button class="filter-chip" onclick="setFilter(this)">Pendientes</button>
+            <button class="filter-chip" onclick="setFilter(this)">Confirmadas</button>
+            <button class="filter-chip" onclick="setFilter(this)">Completadas</button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>#ID</th>
+                <th>Cliente</th>
+                <th>Servicio</th>
+                <th>Profesional</th>
+                <th>Ciudad</th>
+                <th>Fecha</th>
+                <th>Precio</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color:var(--gray-400);font-size:0.78rem;font-weight:600;">#1089</td>
+                <td><div style="display:flex;align-items:center;gap:0.55rem;">
+                  <div class="avt-wrap"><div class="avatar avatar-sm avt-g1">ML</div></div>
+                  <div><div style="font-weight:600;font-size:0.85rem;">María López</div><div style="font-size:0.73rem;color:var(--gray-400);">madrid@client.es</div></div>
+                </div></td>
+                <td>🧹 Limpieza</td>
+                <td><div style="display:flex;align-items:center;gap:0.4rem;"><div class="avt-wrap"><div class="avatar avatar-sm avt-g1">AM</div><div class="avt-verified">✓</div></div> Ana M.</div></td>
+                <td>📍 Madrid</td>
+                <td style="font-size:0.82rem;">30 Jun 10:00</td>
+                <td><strong style="color:var(--gray-900);">75€</strong></td>
+                <td><span class="badge badge-primary">Confirmado</span></td>
+                <td><button class="btn btn-secondary btn-sm">Ver</button></td>
+              </tr>
+              <tr>
+                <td style="color:var(--gray-400);font-size:0.78rem;font-weight:600;">#1088</td>
+                <td><div style="display:flex;align-items:center;gap:0.55rem;">
+                  <div class="avt-wrap"><div class="avatar avatar-sm avt-g2">JR</div></div>
+                  <div><div style="font-weight:600;font-size:0.85rem;">Javier Rodríguez</div><div style="font-size:0.73rem;color:var(--gray-400);">bcn@client.es</div></div>
+                </div></td>
+                <td>🔧 Fontanería</td>
+                <td><div style="display:flex;align-items:center;gap:0.4rem;"><div class="avt-wrap"><div class="avatar avatar-sm avt-g2">CR</div><div class="avt-verified">✓</div></div> Carlos R.</div></td>
+                <td>📍 Barcelona</td>
+                <td style="font-size:0.82rem;">29 Jun 15:00</td>
+                <td><strong style="color:var(--gray-900);">90€</strong></td>
+                <td><span class="badge badge-success">Completado</span></td>
+                <td><button class="btn btn-secondary btn-sm">Ver</button></td>
+              </tr>
+              <tr>
+                <td style="color:var(--gray-400);font-size:0.78rem;font-weight:600;">#1087</td>
+                <td><div style="display:flex;align-items:center;gap:0.55rem;">
+                  <div class="avt-wrap"><div class="avatar avatar-sm avt-g3">CS</div></div>
+                  <div><div style="font-weight:600;font-size:0.85rem;">Carmen Sáez</div><div style="font-size:0.73rem;color:var(--gray-400);">val@client.es</div></div>
+                </div></td>
+                <td>🚚 Mudanza</td>
+                <td><div style="display:flex;align-items:center;gap:0.4rem;"><div class="avatar avatar-sm" style="background:var(--gray-200);color:var(--gray-600);font-size:0.7rem;">EQ</div> Equipo A</div></td>
+                <td>📍 Valencia</td>
+                <td style="font-size:0.82rem;">28 Jun 09:00</td>
+                <td><strong style="color:var(--gray-900);">250€</strong></td>
+                <td><span class="badge badge-success">Completado</span></td>
+                <td><button class="btn btn-secondary btn-sm">Ver</button></td>
+              </tr>
+              <tr>
+                <td style="color:var(--gray-400);font-size:0.78rem;font-weight:600;">#1086</td>
+                <td><div style="display:flex;align-items:center;gap:0.55rem;">
+                  <div class="avt-wrap"><div class="avatar avatar-sm avt-g4">PG</div></div>
+                  <div><div style="font-weight:600;font-size:0.85rem;">Pablo García</div><div style="font-size:0.73rem;color:var(--gray-400);">mad2@client.es</div></div>
+                </div></td>
+                <td>⚡ Electricidad</td>
+                <td><div style="display:flex;align-items:center;gap:0.4rem;"><div class="avt-wrap"><div class="avatar avatar-sm avt-g4">LG</div><div class="avt-verified">✓</div></div> Laura G.</div></td>
+                <td>📍 Madrid</td>
+                <td style="font-size:0.82rem;">1 Jul 11:00</td>
+                <td><strong style="color:var(--gray-900);">60€</strong></td>
+                <td><span class="badge badge-warning">Pendiente</span></td>
+                <td><button class="btn btn-secondary btn-sm">Ver</button></td>
+              </tr>
+              <tr>
+                <td style="color:var(--gray-400);font-size:0.78rem;font-weight:600;">#1085</td>
+                <td><div style="display:flex;align-items:center;gap:0.55rem;">
+                  <div class="avt-wrap"><div class="avatar avatar-sm avt-g5">AM</div></div>
+                  <div><div style="font-weight:600;font-size:0.85rem;">Ana Morales</div><div style="font-size:0.73rem;color:var(--gray-400);">sev@client.es</div></div>
+                </div></td>
+                <td>🎨 Pintura</td>
+                <td><div style="display:flex;align-items:center;gap:0.4rem;"><div class="avt-wrap"><div class="avatar avatar-sm avt-g5">PS</div><div class="avt-verified">✓</div></div> Pedro S.</div></td>
+                <td>📍 Sevilla</td>
+                <td style="font-size:0.82rem;">27 Jun 09:00</td>
+                <td><strong style="color:var(--gray-900);">320€</strong></td>
+                <td><span class="badge badge-success">Completado</span></td>
+                <td><button class="btn btn-secondary btn-sm">Ver</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── BOTTOM 3 COLS ───────────────────────── -->
+      <div class="grid-3-1">
+
+        <!-- TOP PROS -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🏆 Top profesionales</span>
+            <button class="btn btn-secondary btn-sm">Ver todos</button>
+          </div>
+          <div style="padding:0.5rem 0;">
+            <div style="display:flex;align-items:center;gap:0.8rem;padding:0.75rem 1.2rem;border-bottom:1px solid var(--gray-100);">
+              <div style="font-size:1.1rem;font-weight:900;color:var(--accent);width:20px;text-align:center;">1</div>
+              <div class="avt-wrap"><div class="avatar avt-g1">AM</div><div class="avt-verified">✓</div></div>
+              <div style="flex:1;">
+                <div style="font-weight:700;font-size:0.85rem;">Ana Martínez</div>
+                <div style="font-size:0.75rem;color:var(--gray-500);">🧹 Limpieza · Madrid</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-weight:800;color:var(--success);font-size:0.9rem;">4,680€</div>
+                <div style="font-size:0.72rem;color:var(--gray-400);">⭐ 4.98 · 312 jobs</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.8rem;padding:0.75rem 1.2rem;border-bottom:1px solid var(--gray-100);">
+              <div style="font-size:1.1rem;font-weight:900;color:var(--gray-400);width:20px;text-align:center;">2</div>
+              <div class="avt-wrap"><div class="avatar avt-g4">LG</div><div class="avt-verified">✓</div></div>
+              <div style="flex:1;">
+                <div style="font-weight:700;font-size:0.85rem;">Laura Gómez</div>
+                <div style="font-size:0.75rem;color:var(--gray-500);">⚡ Electricidad · Valencia</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-weight:800;color:var(--success);font-size:0.9rem;">3,645€</div>
+                <div style="font-size:0.72rem;color:var(--gray-400);">⭐ 4.97 · 243 jobs</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.8rem;padding:0.75rem 1.2rem;border-bottom:1px solid var(--gray-100);">
+              <div style="font-size:1.1rem;font-weight:900;color:var(--gray-400);width:20px;text-align:center;">3</div>
+              <div class="avt-wrap"><div class="avatar avt-g2">CR</div><div class="avt-verified">✓</div></div>
+              <div style="flex:1;">
+                <div style="font-weight:700;font-size:0.85rem;">Carlos Ruiz</div>
+                <div style="font-size:0.75rem;color:var(--gray-500);">🔧 Fontanería · Barcelona</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-weight:800;color:var(--success);font-size:0.9rem;">2,805€</div>
+                <div style="font-size:0.72rem;color:var(--gray-400);">⭐ 4.95 · 187 jobs</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.8rem;padding:0.75rem 1.2rem;">
+              <div style="font-size:1.1rem;font-weight:900;color:var(--gray-400);width:20px;text-align:center;">4</div>
+              <div class="avt-wrap"><div class="avatar avt-g5">PS</div><div class="avt-verified">✓</div></div>
+              <div style="flex:1;">
+                <div style="font-weight:700;font-size:0.85rem;">Pedro Sánchez</div>
+                <div style="font-size:0.75rem;color:var(--gray-500);">🎨 Pintura · Sevilla</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-weight:800;color:var(--success);font-size:0.9rem;">2,340€</div>
+                <div style="font-size:0.72rem;color:var(--gray-400);">⭐ 4.92 · 156 jobs</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CITY PERFORMANCE -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🗺️ Rendimiento por ciudad</span>
+            <span style="font-size:0.78rem;color:var(--gray-400);">Junio 2026</span>
+          </div>
+          <div class="card-body">
+            <div class="city-item">
+              <div class="city-header">
+                <span class="city-name">📍 Madrid</span>
+                <span class="city-val">3,240€</span>
+              </div>
+              <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:100%"></div></div>
+              <div class="city-sub">89 servicios · 62 profesionales</div>
+            </div>
+            <div class="city-item">
+              <div class="city-header">
+                <span class="city-name">📍 Barcelona</span>
+                <span class="city-val">2,180€</span>
+              </div>
+              <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:67%"></div></div>
+              <div class="city-sub">57 servicios · 41 profesionales</div>
+            </div>
+            <div class="city-item">
+              <div class="city-header">
+                <span class="city-name">📍 Valencia</span>
+                <span class="city-val">1,560€</span>
+              </div>
+              <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:48%"></div></div>
+              <div class="city-sub">40 servicios · 28 profesionales</div>
+            </div>
+            <div class="city-item">
+              <div class="city-header">
+                <span class="city-name">📍 Sevilla</span>
+                <span class="city-val">880€</span>
+              </div>
+              <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:27%"></div></div>
+              <div class="city-sub">22 servicios · 18 profesionales</div>
+            </div>
+            <div class="city-item">
+              <div class="city-header">
+                <span class="city-name">📍 Málaga</span>
+                <span class="city-val">480€</span>
+              </div>
+              <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:15%"></div></div>
+              <div class="city-sub">14 servicios · 9 profesionales</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTIVITY FEED -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🔔 Actividad</span>
+            <span class="badge badge-primary" style="animation:pulse 2s infinite;">En vivo</span>
+          </div>
+          <div class="card-body" style="padding-top:0.5rem;">
+            <div class="activity-item">
+              <div class="act-dot icon-green">✅</div>
+              <div class="act-info">
+                <div class="act-title">Servicio completado</div>
+                <div class="act-sub">Carlos R. finalizó fontanería</div>
+              </div>
+              <div class="act-time">5 min</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot icon-blue">📅</div>
+              <div class="act-info">
+                <div class="act-title">Nueva reserva #1089</div>
+                <div class="act-sub">María L. reservó limpieza</div>
+              </div>
+              <div class="act-time">18 min</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot" style="background:#f0fdfa;font-size:0.9rem;">👤</div>
+              <div class="act-info">
+                <div class="act-title">Nuevo cliente</div>
+                <div class="act-sub">Roberto García — Madrid</div>
+              </div>
+              <div class="act-time">32 min</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot icon-amber">⭐</div>
+              <div class="act-info">
+                <div class="act-title">Valoración 5★</div>
+                <div class="act-sub">Carmen S. valoró a Ana M.</div>
+              </div>
+              <div class="act-time">1h</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot icon-green">💶</div>
+              <div class="act-info">
+                <div class="act-title">Pago recibido</div>
+                <div class="act-sub">250€ — Mudanza Valencia</div>
+              </div>
+              <div class="act-time">2h</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot icon-amber" style="background:#fef3c7;">🛡️</div>
+              <div class="act-info">
+                <div class="act-title">Verificación solicitada</div>
+                <div class="act-sub">Miguel R. — Fontanería</div>
+              </div>
+              <div class="act-time">2h</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end grid-3-1 -->
+
+    </div><!-- end dash-content -->
+  </div><!-- end dash-main -->
+</div><!-- end dash-layout -->
+
+<style>
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+</style>
+
+<script>
+  /* Revenue chart */
+  const months = ['Dic','Ene','Feb','Mar','Abr','May','Jun'];
+  const values = [42, 58, 71, 89, 105, 124, 148];
+  const maxV = Math.max(...values);
+  const chart = document.getElementById('rev-chart');
+  const monthsEl = document.getElementById('rev-months');
+  monthsEl.style.cssText = 'display:flex;justify-content:space-between;font-size:0.68rem;color:var(--gray-400);margin-top:0.25rem;width:100%;';
+  values.forEach((v, i) => {
+    const col = document.createElement('div');
+    col.className = 'rev-col' + (i === values.length-1 ? ' rev-current' : '');
+    const bar = document.createElement('div');
+    bar.className = 'rev-bar';
+    bar.style.height = (v / maxV * 100) + '%';
+    bar.setAttribute('data-tip', (v * 100) + '€');
+    const lbl = document.createElement('div');
+    lbl.className = 'rev-month';
+    lbl.textContent = months[i];
+    col.appendChild(bar);
+    col.appendChild(lbl);
+    chart.appendChild(col);
+  });
+
+  /* Filter chips */
+  function setFilter(btn) {
+    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  /* Verify actions */
+  function verificar(btn, nombre) {
+    const row = btn.closest('.verify-item');
+    row.style.transition = 'opacity 0.4s';
+    row.style.opacity = '0';
+    setTimeout(() => {
+      row.remove();
+      updatePendingCount();
+      showToast('✓ ' + nombre + ' verificado correctamente', 'success');
+    }, 400);
+  }
+  function rechazar(btn) {
+    const row = btn.closest('.verify-item');
+    const name = row.querySelector('.verify-name').textContent;
+    if (!confirm('¿Rechazar la solicitud de ' + name + '?')) return;
+    row.style.transition = 'opacity 0.4s';
+    row.style.opacity = '0';
+    setTimeout(() => { row.remove(); updatePendingCount(); }, 400);
+  }
+  function updatePendingCount() {
+    const n = document.querySelectorAll('.verify-item').length;
+    const badge = document.querySelector('.badge-warning');
+    if (badge) badge.textContent = n + ' pendiente' + (n !== 1 ? 's' : '');
+  }
+
+  /* Toast notification */
+  function showToast(msg, type) {
+    const t = document.createElement('div');
+    t.style.cssText = `position:fixed;bottom:1.5rem;right:1.5rem;background:${type==='success'?'#10b981':'#ef4444'};color:white;padding:0.75rem 1.2rem;border-radius:10px;font-size:0.85rem;font-weight:600;box-shadow:0 8px 25px rgba(0,0,0,0.2);z-index:9999;transition:opacity 0.3s;`;
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3000);
+  }
+</script>
+</body>
+</html>

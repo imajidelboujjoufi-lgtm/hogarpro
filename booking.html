@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservar — HogarPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    body { background: var(--gray-50); }
+    nav {
+      background: white; border-bottom: 1px solid var(--gray-200);
+      padding: 0.9rem 5%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-size: 1.4rem; font-weight: 900; color: var(--primary); text-decoration: none; }
+    .logo span { color: var(--accent); }
+
+    /* PROGRESS */
+    .progress-bar {
+      background: white; border-bottom: 1px solid var(--gray-200);
+      padding: 1.2rem 5%;
+    }
+    .progress-inner { max-width: 800px; margin: 0 auto; }
+    .steps-progress { display: flex; align-items: center; }
+    .step-p {
+      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+      flex: 1; position: relative;
+    }
+    .step-p:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 16px; left: 60%; right: -40%;
+      height: 2px; background: var(--gray-200);
+    }
+    .step-p.done::after { background: var(--primary); }
+    .step-circle {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; font-weight: 700;
+      border: 2px solid var(--gray-200);
+      background: white; color: var(--gray-400);
+      position: relative; z-index: 1;
+      transition: all 0.3s;
+    }
+    .step-p.active .step-circle { background: var(--primary); border-color: var(--primary); color: white; }
+    .step-p.done .step-circle { background: var(--success); border-color: var(--success); color: white; }
+    .step-label { font-size: 0.72rem; font-weight: 600; color: var(--gray-400); text-align: center; }
+    .step-p.active .step-label { color: var(--primary); }
+    .step-p.done .step-label { color: var(--success); }
+
+    /* LAYOUT */
+    .booking-layout {
+      max-width: 1000px; margin: 2rem auto;
+      padding: 0 5%;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    /* STEPS */
+    .step-content { display: none; }
+    .step-content.active { display: block; }
+
+    .step-card {
+      background: white; border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-200);
+      overflow: hidden; margin-bottom: 1rem;
+    }
+    .step-card-header {
+      padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--gray-100);
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .step-card-header .step-num-sm {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--primary); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+    }
+    .step-card-header h3 { font-size: 1rem; font-weight: 800; }
+    .step-card-body { padding: 1.5rem; }
+
+    /* SERVICE OPTIONS */
+    .service-options { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    .service-opt {
+      border: 2px solid var(--gray-200); border-radius: var(--radius-lg);
+      padding: 1rem; cursor: pointer; transition: all 0.15s; text-align: center;
+    }
+    .service-opt:hover { border-color: var(--primary); background: var(--primary-light); }
+    .service-opt.selected { border-color: var(--primary); background: var(--primary-light); }
+    .service-opt .s-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+    .service-opt .s-name { font-weight: 700; font-size: 0.88rem; }
+    .service-opt .s-price { font-size: 0.78rem; color: var(--gray-500); }
+
+    /* EXTRAS */
+    .extras-grid { display: flex; flex-direction: column; gap: 0.6rem; }
+    .extra-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.8rem 1rem;
+      border: 1.5px solid var(--gray-200); border-radius: var(--radius);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .extra-item:hover { border-color: var(--primary); }
+    .extra-item.selected { border-color: var(--primary); background: var(--primary-light); }
+    .extra-left { display: flex; align-items: center; gap: 0.8rem; }
+    .extra-icon { font-size: 1.3rem; }
+    .extra-info .name { font-weight: 600; font-size: 0.88rem; }
+    .extra-info .desc { font-size: 0.75rem; color: var(--gray-500); }
+    .extra-price { font-weight: 700; color: var(--primary); font-size: 0.88rem; }
+
+    /* PAYMENT */
+    .payment-methods { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.5rem; }
+    .pay-method {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem; border: 2px solid var(--gray-200); border-radius: var(--radius-lg);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .pay-method:hover { border-color: var(--primary); }
+    .pay-method.selected { border-color: var(--primary); background: var(--primary-light); }
+    .pay-method .pay-icon { font-size: 1.5rem; }
+    .pay-method .pay-info .name { font-weight: 700; font-size: 0.9rem; }
+    .pay-method .pay-info .desc { font-size: 0.75rem; color: var(--gray-500); }
+    .pay-method .check { margin-left: auto; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--gray-300); }
+    .pay-method.selected .check { background: var(--primary); border-color: var(--primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.7rem; }
+
+    /* SUMMARY CARD */
+    .summary-card {
+      background: white; border-radius: var(--radius-xl);
+      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      position: sticky; top: 20px;
+    }
+    .summary-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      padding: 1.2rem 1.5rem; color: white;
+    }
+    .summary-header h3 { font-size: 1rem; font-weight: 800; }
+    .summary-body { padding: 1.5rem; }
+    .summary-pro { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--gray-100); }
+    .summary-pro .avt { width: 44px; height: 44px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .summary-pro .name { font-weight: 700; font-size: 0.9rem; }
+    .summary-pro .svc { font-size: 0.78rem; color: var(--gray-500); }
+    .summary-pro .rating { margin-left: auto; font-size: 0.82rem; color: var(--accent); font-weight: 700; }
+
+    .summary-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .summary-row .label { color: var(--gray-500); }
+    .summary-row .value { font-weight: 600; }
+    .summary-total { display: flex; justify-content: space-between; padding-top: 0.8rem; border-top: 2px solid var(--gray-200); margin-top: 0.5rem; }
+    .summary-total .label { font-weight: 800; font-size: 0.95rem; }
+    .summary-total .value { font-weight: 900; font-size: 1.2rem; color: var(--primary); }
+
+    .guarantee { display: flex; align-items: flex-start; gap: 0.6rem; background: #d1fae5; border-radius: var(--radius); padding: 0.8rem; margin-top: 1rem; }
+    .guarantee .icon { font-size: 1rem; flex-shrink: 0; }
+    .guarantee p { font-size: 0.75rem; color: #065f46; line-height: 1.5; }
+
+    /* SUCCESS */
+    .success-page { display: none; text-align: center; padding: 4rem 2rem; max-width: 560px; margin: 0 auto; }
+    .success-page .success-icon { font-size: 5rem; margin-bottom: 1.5rem; animation: pop 0.5s ease; }
+    @keyframes pop { 0%{transform:scale(0)} 80%{transform:scale(1.1)} 100%{transform:scale(1)} }
+    .success-page h2 { font-size: 2rem; font-weight: 900; margin-bottom: 0.8rem; }
+    .success-page p { color: var(--gray-500); font-size: 1rem; line-height: 1.7; margin-bottom: 1.5rem; }
+    .success-details { background: var(--gray-50); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem; text-align: left; }
+    .success-detail-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--gray-200); font-size: 0.88rem; }
+    .success-detail-row:last-child { border-bottom: none; }
+    .success-detail-row .lbl { color: var(--gray-500); }
+    .success-detail-row .val { font-weight: 700; }
+
+    @media (max-width: 768px) {
+      .booking-layout { grid-template-columns: 1fr; }
+      .service-options { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Hogar<span>Pro</span></a>
+  <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--gray-500);">
+    🔒 Reserva segura
+  </div>
+</nav>
+
+<!-- PROGRESS -->
+<div class="progress-bar">
+  <div class="progress-inner">
+    <div class="steps-progress">
+      <div class="step-p active" id="sp-1">
+        <div class="step-circle">1</div>
+        <div class="step-label">Servicio</div>
+      </div>
+      <div class="step-p" id="sp-2">
+        <div class="step-circle">2</div>
+        <div class="step-label">Detalles</div>
+      </div>
+      <div class="step-p" id="sp-3">
+        <div class="step-circle">3</div>
+        <div class="step-label">Pago</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="booking-layout" id="main-layout">
+  <div id="steps-area">
+
+    <!-- STEP 1 -->
+    <div class="step-content active" id="step-1">
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="step-num-sm">1</div>
+          <h3>¿Qué tipo de limpieza necesitas?</h3>
+        </div>
+        <div class="step-card-body">
+          <div class="service-options">
+            <div class="service-opt selected" onclick="selectService(this, 'Limpieza estándar', 75)">
+              <div class="s-icon">🧹</div>
+              <div class="s-name">Limpieza estándar</div>
+              <div class="s-price">Desde 75€ · 3h</div>
+            </div>
+            <div class="service-opt" onclick="selectService(this, 'Limpieza a fondo', 125)">
+              <div class="s-icon">✨</div>
+              <div class="s-name">Limpieza a fondo</div>
+              <div class="s-price">Desde 125€ · 5h</div>
+            </div>
+            <div class="service-opt" onclick="selectService(this, 'Post-mudanza', 150)">
+              <div class="s-icon">📦</div>
+              <div class="s-name">Post-mudanza</div>
+              <div class="s-price">Desde 150€ · 6h</div>
+            </div>
+            <div class="service-opt" onclick="selectService(this, 'Limpieza oficina', 99)">
+              <div class="s-icon">🏢</div>
+              <div class="s-name">Oficina / local</div>
+              <div class="s-price">Desde 99€ · 4h</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="step-num-sm">+</div>
+          <h3>Extras opcionales</h3>
+        </div>
+        <div class="step-card-body">
+          <div class="extras-grid">
+            <div class="extra-item" onclick="toggleExtra(this, 'Limpieza nevera', 15)">
+              <div class="extra-left">
+                <div class="extra-icon">🧊</div>
+                <div class="extra-info">
+                  <div class="name">Limpieza interior nevera</div>
+                  <div class="desc">Limpieza profunda interior y exterior</div>
+                </div>
+              </div>
+              <div class="extra-price">+15€</div>
+            </div>
+            <div class="extra-item" onclick="toggleExtra(this, 'Plancha ropa', 20)">
+              <div class="extra-left">
+                <div class="extra-icon">👔</div>
+                <div class="extra-info">
+                  <div class="name">Plancha de ropa</div>
+                  <div class="desc">Hasta 10 prendas incluidas</div>
+                </div>
+              </div>
+              <div class="extra-price">+20€</div>
+            </div>
+            <div class="extra-item" onclick="toggleExtra(this, 'Productos eco', 10)">
+              <div class="extra-left">
+                <div class="extra-icon">🌿</div>
+                <div class="extra-info">
+                  <div class="name">Productos ecológicos</div>
+                  <div class="desc">Certificados, sin alérgenos</div>
+                </div>
+              </div>
+              <div class="extra-price">+10€</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary btn-lg" onclick="goStep(2)">Siguiente: Detalles →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-content" id="step-2">
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="step-num-sm">2</div>
+          <h3>Fecha, hora y dirección</h3>
+        </div>
+        <div class="step-card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Fecha</label>
+              <input type="date" class="form-control" id="book-date" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hora de llegada</label>
+              <select class="form-control">
+                <option>09:00</option><option>10:00</option><option selected>11:00</option>
+                <option>12:00</option><option>15:00</option><option>16:00</option><option>17:00</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Dirección completa</label>
+            <input type="text" class="form-control" placeholder="Ej: Calle Gran Vía 45, 3ºB" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Ciudad</label>
+              <select class="form-control" id="book-city">
+                <option value="">Selecciona ciudad...</option>
+                <option>A Coruña</option><option>Aguilar de Campoo</option><option>Albacete</option>
+                <option>Alcalá de Guadaíra</option><option>Alcalá de Henares</option><option>Alcazar de San Juan</option>
+                <option>Alcobendas</option><option>Alcorcón</option><option>Alcoy</option>
+                <option>Algeciras</option><option>Alicante</option><option>Almería</option>
+                <option>Andújar</option><option>Antequera</option><option>Aranjuez</option>
+                <option>Arona</option><option>Arrecife</option><option>Avilés</option>
+                <option>Ávila</option><option>Azuqueca de Henares</option><option>Badajoz</option>
+                <option>Badalona</option><option>Barakaldo</option><option>Barcelona</option>
+                <option>Basauri</option><option>Benalmádena</option><option>Benidorm</option>
+                <option>Bilbao</option><option>Blanes</option><option>Burgos</option>
+                <option>Cáceres</option><option>Cádiz</option><option>Calahorra</option>
+                <option>Calpe</option><option>Cambrils</option><option>Cartagena</option>
+                <option>Castelldefels</option><option>Castellón de la Plana</option><option>Ceuta</option>
+                <option>Chiclana de la Frontera</option><option>Ciudad Real</option><option>Cieza</option>
+                <option>Collado Villalba</option><option>Córdoba</option><option>Cornellà de Llobregat</option>
+                <option>Cuenca</option><option>Dénia</option><option>Don Benito</option>
+                <option>Donostia-San Sebastián</option><option>Dos Hermanas</option><option>Durango</option>
+                <option>Écija</option><option>El Ejido</option><option>El Puerto de Santa María</option>
+                <option>Elche</option><option>Elda</option><option>Estepona</option>
+                <option>Ferrol</option><option>Fuengirola</option><option>Fuenlabrada</option>
+                <option>Gandía</option><option>Getafe</option><option>Getxo</option>
+                <option>Gijón</option><option>Girona</option><option>Granada</option>
+                <option>Granollers</option><option>Guadalajara</option><option>Hellín</option>
+                <option>Hospitalet de Llobregat</option><option>Huelva</option><option>Huesca</option>
+                <option>Ibiza</option><option>Irun</option><option>Jaén</option>
+                <option>Jerez de la Frontera</option><option>La Línea de la Concepción</option>
+                <option>La Orotava</option><option>Las Palmas de Gran Canaria</option>
+                <option>Las Rozas de Madrid</option><option>Leganés</option><option>León</option>
+                <option>Linares</option><option>Lleida</option><option>Lloret de Mar</option>
+                <option>Lorca</option><option>Logroño</option><option>Lugo</option>
+                <option>Mairena del Aljarafe</option><option>Manresa</option><option>Marbella</option>
+                <option>Mataro</option><option>Melilla</option><option>Mérida</option>
+                <option>Mijas</option><option>Molina de Segura</option><option>Mollet del Vallès</option>
+                <option>Motril</option><option>Móstoles</option><option selected>Madrid</option>
+                <option>Málaga</option><option>Murcia</option><option>Olot</option>
+                <option>Ourense</option><option>Oviedo</option><option>Palencia</option>
+                <option>Palma de Mallorca</option><option>Pamplona</option><option>Parla</option>
+                <option>Paterna</option><option>Plasencia</option><option>Pontevedra</option>
+                <option>Pozuelo de Alarcón</option><option>Puerto Real</option><option>Puertollano</option>
+                <option>Reus</option><option>Roquetas de Mar</option><option>Rubí</option>
+                <option>Sabadell</option><option>Salamanca</option><option>Salou</option>
+                <option>San Cristóbal de La Laguna</option><option>Sanlúcar de Barrameda</option>
+                <option>Santa Cruz de Tenerife</option><option>Santander</option>
+                <option>Santiago de Compostela</option><option>Segovia</option><option>Sevilla</option>
+                <option>Soria</option><option>Talavera de la Reina</option><option>Tarragona</option>
+                <option>Telde</option><option>Terrassa</option><option>Teruel</option>
+                <option>Toledo</option><option>Torrejón de Ardoz</option><option>Torremolinos</option>
+                <option>Torrent</option><option>Torrevieja</option><option>Tudela</option>
+                <option>Utrera</option><option>Valdemoro</option><option>Valencia</option>
+                <option>Valladolid</option><option>Vélez-Málaga</option><option>Vic</option>
+                <option>Vigo</option><option>Vila-real</option><option>Viladecans</option>
+                <option>Vilagarcía de Arousa</option><option>Vitoria-Gasteiz</option>
+                <option>Zamora</option><option>Zaragoza</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Código postal</label>
+              <input type="text" class="form-control" placeholder="28001" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notas para el profesional</label>
+            <textarea class="form-control" rows="3" placeholder="Ej: Hay mascota en casa. La entrada es por el portal de atrás. Código: 1234..." style="resize:vertical;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;">
+        <button class="btn btn-secondary btn-lg" onclick="goStep(1)">← Atrás</button>
+        <button class="btn btn-primary btn-lg" onclick="goStep(3)">Siguiente: Pago →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-content" id="step-3">
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="step-num-sm">3</div>
+          <h3>Método de pago</h3>
+        </div>
+        <div class="step-card-body">
+          <div class="payment-methods">
+            <div class="pay-method selected" onclick="selectPay(this)">
+              <div class="pay-icon">💳</div>
+              <div class="pay-info">
+                <div class="name">Tarjeta de crédito / débito</div>
+                <div class="desc">Visa, Mastercard, American Express</div>
+              </div>
+              <div class="check">✓</div>
+            </div>
+            <div class="pay-method" onclick="selectPay(this)">
+              <div class="pay-icon">📱</div>
+              <div class="pay-info">
+                <div class="name">Bizum</div>
+                <div class="desc">Pago instantáneo por móvil</div>
+              </div>
+              <div class="check"></div>
+            </div>
+            <div class="pay-method" onclick="selectPay(this)">
+              <div class="pay-icon">🏦</div>
+              <div class="pay-info">
+                <div class="name">Transferencia bancaria</div>
+                <div class="desc">Confirmar en 1-2 días hábiles</div>
+              </div>
+              <div class="check"></div>
+            </div>
+          </div>
+
+          <div id="card-form">
+            <div class="form-group">
+              <label class="form-label">Número de tarjeta</label>
+              <input type="text" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Caducidad</label>
+                <input type="text" class="form-control" placeholder="MM/AA" maxlength="5" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">CVV</label>
+                <input type="text" class="form-control" placeholder="123" maxlength="3" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nombre en la tarjeta</label>
+              <input type="text" class="form-control" placeholder="MARIA LOPEZ GARCIA" />
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;color:var(--gray-500);margin-top:0.5rem;">
+            🔒 Pago procesado de forma segura con cifrado SSL de 256 bits.
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;">
+        <button class="btn btn-secondary btn-lg" onclick="goStep(2)">← Atrás</button>
+        <button class="btn btn-primary btn-lg" onclick="confirmBooking()">Confirmar y pagar →</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUMMARY SIDEBAR -->
+  <div>
+    <div class="summary-card">
+      <div class="summary-header">
+        <h3>📋 Resumen de reserva</h3>
+      </div>
+      <div class="summary-body">
+        <div class="summary-pro">
+          <div class="avt-wrap">
+            <div class="avt avt-g1" style="font-size:0.85rem;font-weight:800;color:white;background:linear-gradient(135deg,#0d9488,#06b6d4);">AM</div>
+            <div class="avt-verified" style="width:16px;height:16px;font-size:0.5rem;">✓</div>
+          </div>
+          <div>
+            <div class="name">Ana Martínez</div>
+            <div class="svc">🧹 Limpieza • Madrid</div>
+          </div>
+          <div class="rating">⭐ 4.98</div>
+        </div>
+
+        <div class="summary-row"><span class="label">Servicio</span><span class="value" id="sum-service">Limpieza estándar</span></div>
+        <div class="summary-row"><span class="label">Fecha</span><span class="value" id="sum-date">—</span></div>
+        <div class="summary-row"><span class="label">Hora</span><span class="value">11:00h</span></div>
+        <div class="summary-row"><span class="label">Duración</span><span class="value">3 horas</span></div>
+        <div class="summary-row" id="extras-row" style="display:none;"><span class="label">Extras</span><span class="value" id="sum-extras">—</span></div>
+        <div class="summary-row"><span class="label">Subtotal</span><span class="value" id="sum-sub">75€</span></div>
+
+        <!-- COMISIÓN 17% + BREAKDOWN -->
+        <div class="summary-row" style="align-items:flex-start;">
+          <span class="label" style="display:flex;align-items:center;gap:0.3rem;">
+            Gestión HogarPro (17%)
+            <button onclick="toggleBreakdown()" style="background:none;border:none;cursor:pointer;color:var(--primary);font-size:0.75rem;font-weight:700;padding:0;" id="breakdown-toggle">¿Qué incluye? ▾</button>
+          </span>
+          <span class="value" id="sum-fee">12.75€</span>
+        </div>
+        <div id="fee-breakdown" style="display:none;background:var(--primary-light);border-radius:var(--radius);padding:0.7rem 0.9rem;margin-bottom:0.5rem;font-size:0.77rem;">
+          <div style="display:flex;flex-direction:column;gap:0.4rem;">
+            <div style="display:flex;align-items:center;gap:0.5rem;color:var(--gray-700);"><span>🔒</span> Seguro de responsabilidad civil</div>
+            <div style="display:flex;align-items:center;gap:0.5rem;color:var(--gray-700);"><span>💬</span> Soporte al cliente 24/7</div>
+            <div style="display:flex;align-items:center;gap:0.5rem;color:var(--gray-700);"><span>✅</span> Verificación del profesional</div>
+            <div style="display:flex;align-items:center;gap:0.5rem;color:var(--gray-700);"><span>↩️</span> Garantía de devolución</div>
+          </div>
+        </div>
+
+        <!-- PROMO CODE -->
+        <div style="margin-bottom:0.8rem;">
+          <div style="display:flex;gap:0.5rem;" id="promo-input-wrap">
+            <input id="promo-input" type="text" placeholder="🎟️ Código promo" class="form-control" style="font-size:0.82rem;padding:0.55rem 0.8rem;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()" />
+            <button onclick="applyPromo()" class="btn btn-outline btn-sm" style="white-space:nowrap;padding:0.55rem 0.9rem;">Aplicar</button>
+          </div>
+          <div id="promo-msg" style="font-size:0.77rem;margin-top:0.35rem;display:none;"></div>
+        </div>
+        <div class="summary-row" id="promo-row" style="display:none;color:var(--success);">
+          <span class="label" style="color:var(--success);">🎟️ Descuento promo</span>
+          <span class="value" id="sum-promo" style="color:var(--success);">-0€</span>
+        </div>
+
+        <div class="summary-total">
+          <span class="label">Total</span>
+          <span class="value" id="sum-total">87.75€</span>
+        </div>
+
+        <div class="guarantee" style="flex-direction:column;gap:0.5rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span>🛡️</span>
+            <strong style="font-size:0.82rem;color:#065f46;">Garantía HogarPro</strong>
+          </div>
+          <p>Si no estás satisfecho, te devolvemos el dinero o enviamos otro profesional sin coste adicional.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-page" id="success-page">
+  <div class="success-icon">🎉</div>
+  <h2>¡Reserva confirmada!</h2>
+  <p>Ana Martínez ha sido notificada y recibirás una confirmación por WhatsApp en los próximos minutos.</p>
+  <div class="success-details">
+    <div class="success-detail-row"><span class="lbl">Profesional</span><span class="val">👩 Ana Martínez</span></div>
+    <div class="success-detail-row"><span class="lbl">Servicio</span><span class="val" id="conf-service">Limpieza estándar</span></div>
+    <div class="success-detail-row"><span class="lbl">Fecha y hora</span><span class="val" id="conf-date">Mañana a las 11:00h</span></div>
+    <div class="success-detail-row"><span class="lbl">Duración</span><span class="val">3 horas</span></div>
+    <div class="success-detail-row"><span class="lbl">Total pagado</span><span class="val" id="conf-total" style="color:var(--primary);">82.50€</span></div>
+    <div class="success-detail-row"><span class="lbl">Referencia</span><span class="val" style="color:var(--gray-400);">#HP-2026-1090</span></div>
+  </div>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+    <a href="dashboard/client.html" class="btn btn-primary btn-lg">Ver mis reservas</a>
+    <a href="index.html" class="btn btn-secondary btn-lg">Volver al inicio</a>
+  </div>
+</div>
+
+<script>
+  const COMMISSION = 0.17;
+  const PROMO_CODES = {
+    'HOGARPRO10': { discount: 10,  label: '✅ -10€ aplicados! 🎉' },
+    'VERANO25':   { discount: 25,  label: '✅ -25€ aplicados! ☀️' },
+    'PRIMERA':    { discount: 15,  label: '✅ -15€ primera reserva! 🎁' },
+    'BIENVENIDO': { discount: 20,  label: '✅ -20€ bienvenido! 👋' },
+  };
+
+  let basePrice = 75;
+  let extrasTotal = 0;
+  let extrasList = [];
+  let promoDiscount = 0;
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('book-date').min = today;
+
+  function goStep(n) {
+    document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-' + n).classList.add('active');
+    ['sp-1','sp-2','sp-3'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      el.className = 'step-p' + (i + 1 < n ? ' done' : i + 1 === n ? ' active' : '');
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    updateSummary();
+  }
+
+  function selectService(el, name, price) {
+    document.querySelectorAll('.service-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    basePrice = price;
+    document.getElementById('sum-service').textContent = name;
+    document.getElementById('conf-service').textContent = name;
+    updateSummary();
+  }
+
+  function toggleExtra(el, name, price) {
+    el.classList.toggle('selected');
+    if (el.classList.contains('selected')) {
+      extrasTotal += price;
+      extrasList.push(name);
+    } else {
+      extrasTotal -= price;
+      extrasList = extrasList.filter(e => e !== name);
+    }
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const sub = basePrice + extrasTotal;
+    const fee = sub * COMMISSION;
+    const total = Math.max(0, sub + fee - promoDiscount);
+    document.getElementById('sum-sub').textContent = sub + '€';
+    document.getElementById('sum-fee').textContent = fee.toFixed(2) + '€';
+    document.getElementById('sum-total').textContent = total.toFixed(2) + '€';
+    document.getElementById('conf-total').textContent = total.toFixed(2) + '€';
+
+    if (promoDiscount > 0) {
+      document.getElementById('promo-row').style.display = 'flex';
+      document.getElementById('sum-promo').textContent = '-' + promoDiscount + '€';
+    }
+
+    const dateEl = document.getElementById('book-date');
+    if (dateEl.value) {
+      const d = new Date(dateEl.value);
+      document.getElementById('sum-date').textContent = d.toLocaleDateString('es-ES', { weekday:'short', day:'numeric', month:'short' });
+    }
+
+    if (extrasList.length > 0) {
+      document.getElementById('extras-row').style.display = 'flex';
+      document.getElementById('sum-extras').textContent = '+' + extrasTotal + '€';
+    } else {
+      document.getElementById('extras-row').style.display = 'none';
+    }
+  }
+
+  function applyPromo() {
+    const code = document.getElementById('promo-input').value.trim().toUpperCase();
+    const msg = document.getElementById('promo-msg');
+    msg.style.display = 'block';
+
+    if (PROMO_CODES[code]) {
+      const p = PROMO_CODES[code];
+      promoDiscount = p.discount;
+      msg.style.color = 'var(--success)';
+      msg.textContent = p.label;
+      document.getElementById('promo-input').style.borderColor = 'var(--success)';
+      document.getElementById('promo-input').disabled = true;
+      updateSummary();
+    } else if (code === '') {
+      msg.style.color = 'var(--danger)';
+      msg.textContent = '⚠️ Introduce un código promo.';
+    } else {
+      msg.style.color = 'var(--danger)';
+      msg.textContent = '❌ Código no válido o expirado.';
+      document.getElementById('promo-input').style.borderColor = 'var(--danger)';
+      setTimeout(() => { document.getElementById('promo-input').style.borderColor = ''; }, 1500);
+    }
+  }
+
+  function toggleBreakdown() {
+    const el = document.getElementById('fee-breakdown');
+    const btn = document.getElementById('breakdown-toggle');
+    const open = el.style.display === 'block';
+    el.style.display = open ? 'none' : 'block';
+    btn.textContent = open ? '¿Qué incluye? ▾' : 'Ocultar ▴';
+  }
+
+  function selectPay(el) {
+    document.querySelectorAll('.pay-method').forEach(p => {
+      p.classList.remove('selected');
+      p.querySelector('.check').textContent = '';
+    });
+    el.classList.add('selected');
+    el.querySelector('.check').textContent = '✓';
+  }
+
+  function formatCard(input) {
+    let v = input.value.replace(/\D/g, '').substring(0, 16);
+    input.value = v.replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  function confirmBooking() {
+    document.getElementById('main-layout').style.display = 'none';
+    document.querySelector('.progress-bar').style.display = 'none';
+    document.getElementById('success-page').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

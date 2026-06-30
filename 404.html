@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Página no encontrada — HogarPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    body { background: var(--gray-50); min-height: 100vh; display: flex; flex-direction: column; }
+    nav { background: white; border-bottom: 1px solid var(--gray-200); padding: 0.9rem 5%; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-size: 1.4rem; font-weight: 900; color: var(--primary); text-decoration: none; }
+    .logo span { color: var(--accent); }
+
+    .hero { flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem 1rem; }
+    .hero-inner { text-align: center; max-width: 600px; }
+
+    /* 404 big number */
+    .four-o-four {
+      font-size: clamp(6rem, 20vw, 10rem);
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, #0d9488, #06b6d4, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.2rem;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .emoji-house { font-size: 3.5rem; margin-bottom: 1rem; display: block; animation: wiggle 2s ease-in-out infinite; }
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(-5deg); }
+      50% { transform: rotate(5deg); }
+    }
+
+    .hero-inner h1 { font-size: 1.8rem; font-weight: 900; color: var(--gray-900); margin-bottom: 0.7rem; }
+    .hero-inner p { color: var(--gray-500); font-size: 1rem; line-height: 1.7; margin-bottom: 2.5rem; }
+
+    .btn-group { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
+
+    /* SUGGESTIONS */
+    .suggestions { background: white; border-radius: var(--radius-xl); border: 1px solid var(--gray-200); padding: 1.5rem; text-align: left; box-shadow: var(--shadow-sm); }
+    .suggestions h3 { font-size: 0.85rem; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem; }
+    .suggestion-links { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .sug-link {
+      display: flex; align-items: center; gap: 0.7rem;
+      padding: 0.8rem 1rem;
+      border: 1px solid var(--gray-200); border-radius: var(--radius);
+      text-decoration: none; color: var(--gray-700);
+      font-size: 0.85rem; font-weight: 500;
+      transition: all 0.15s;
+    }
+    .sug-link:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+    .sug-link .sug-ico { font-size: 1.1rem; flex-shrink: 0; }
+    .sug-link .sug-txt .title { font-weight: 700; font-size: 0.85rem; }
+    .sug-link .sug-txt .sub { font-size: 0.73rem; color: var(--gray-400); margin-top: 0.1rem; }
+    .sug-link:hover .sug-txt .sub { color: var(--primary); opacity: 0.7; }
+
+    /* SEARCH */
+    .search-wrap { position: relative; margin-bottom: 2rem; }
+    .search-wrap input { width: 100%; padding: 0.85rem 3rem 0.85rem 1.1rem; border: 2px solid var(--gray-200); border-radius: var(--radius-lg); font-size: 0.9rem; font-family: inherit; outline: none; transition: border-color 0.15s; box-sizing: border-box; }
+    .search-wrap input:focus { border-color: var(--primary); }
+    .search-wrap button { position: absolute; right: 0.7rem; top: 50%; transform: translateY(-50%); background: var(--primary); border: none; color: white; width: 32px; height: 32px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; }
+
+    @media (max-width: 500px) {
+      .suggestion-links { grid-template-columns: 1fr; }
+      .btn-group { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Hogar<span>Pro</span></a>
+  <div style="display:flex;gap:0.6rem;">
+    <a href="login.html" class="btn btn-secondary btn-sm">Iniciar sesión</a>
+    <a href="register.html" class="btn btn-primary btn-sm">Registrarse</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="four-o-four">404</div>
+    <span class="emoji-house">🏠</span>
+    <h1>Esta página se ha mudado</h1>
+    <p>No encontramos la página que buscas. Quizás fue eliminada, renombrada o simplemente nunca existió. Pero no te preocupes, tu hogar sigue en buenas manos.</p>
+
+    <div class="search-wrap">
+      <input type="text" placeholder="🔍  Busca un servicio, ciudad o profesional..." onkeypress="if(event.key==='Enter')doSearch(this.value)" />
+      <button onclick="doSearch(document.querySelector('.search-wrap input').value)">→</button>
+    </div>
+
+    <div class="btn-group">
+      <a href="index.html" class="btn btn-primary btn-lg">← Volver al inicio</a>
+      <a href="pros.html" class="btn btn-secondary btn-lg">Ver profesionales</a>
+    </div>
+
+    <div class="suggestions">
+      <h3>¿Buscabas alguna de estas páginas?</h3>
+      <div class="suggestion-links">
+        <a href="index.html" class="sug-link">
+          <div class="sug-ico">🏠</div>
+          <div class="sug-txt"><div class="title">Inicio</div><div class="sub">Página principal de HogarPro</div></div>
+        </a>
+        <a href="pros.html" class="sug-link">
+          <div class="sug-ico">👷</div>
+          <div class="sug-txt"><div class="title">Profesionales</div><div class="sub">+500 pros en 74 ciudades</div></div>
+        </a>
+        <a href="booking.html" class="sug-link">
+          <div class="sug-ico">📅</div>
+          <div class="sug-txt"><div class="title">Reservar servicio</div><div class="sub">Limpieza, fontanería, pintura…</div></div>
+        </a>
+        <a href="login.html" class="sug-link">
+          <div class="sug-ico">🔑</div>
+          <div class="sug-txt"><div class="title">Iniciar sesión</div><div class="sub">Accede a tu cuenta</div></div>
+        </a>
+        <a href="register.html" class="sug-link">
+          <div class="sug-ico">✨</div>
+          <div class="sug-txt"><div class="title">Crear cuenta</div><div class="sub">Gratis + 10€ de bienvenida</div></div>
+        </a>
+        <a href="dashboard/client.html" class="sug-link">
+          <div class="sug-ico">📊</div>
+          <div class="sug-txt"><div class="title">Mi panel</div><div class="sub">Gestiona tus reservas</div></div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function doSearch(q) {
+    if (q.trim()) window.location.href = 'pros.html?city=' + encodeURIComponent(q.trim());
+  }
+</script>
+</body>
+</html>

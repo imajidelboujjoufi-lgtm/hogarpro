@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profesionales — HogarPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <link rel="stylesheet" href="css/autocomplete.css" />
+  <style>
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0.9rem 5%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-size: 1.4rem; font-weight: 900; color: var(--primary); text-decoration: none; }
+    .logo span { color: var(--accent); }
+
+    .page-header {
+      background: linear-gradient(135deg, #134e4a, #0d9488);
+      padding: 3rem 5%;
+      color: white;
+    }
+    .page-header-inner { max-width: 1200px; margin: 0 auto; }
+    .page-header h1 { font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem; }
+    .page-header p { color: #99f6e4; font-size: 0.95rem; }
+
+    .filter-bar {
+      background: white;
+      border-bottom: 1px solid var(--gray-200);
+      padding: 1rem 5%;
+      position: sticky; top: 61px; z-index: 90;
+    }
+    .filter-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;
+    }
+    .filter-select {
+      padding: 0.55rem 1rem;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      color: var(--gray-700);
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      background: white;
+    }
+    .filter-select:focus { border-color: var(--primary); }
+    .filter-btn {
+      padding: 0.55rem 1rem;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: white;
+      color: var(--gray-600);
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .filter-btn.active, .filter-btn:hover { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+    .results-count { margin-left: auto; font-size: 0.82rem; color: var(--gray-500); }
+
+    .main-layout {
+      max-width: 1200px; margin: 0 auto;
+      padding: 2rem 5%;
+    }
+
+    .pros-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .pro-card {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .pro-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 8px 30px rgba(13,148,136,0.12);
+      transform: translateY(-3px);
+    }
+
+    .pro-card-top {
+      background: linear-gradient(135deg, var(--primary-light), #f0fdfa);
+      padding: 1.5rem;
+      display: flex; align-items: center; gap: 1rem; position: relative;
+    }
+    .pro-avt {
+      width: 64px; height: 64px; border-radius: 50%;
+      border: 3px solid white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 900; letter-spacing: -0.5px;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-md);
+    }
+    .pro-header-info .name { font-weight: 800; font-size: 1rem; }
+    .pro-header-info .service { font-size: 0.82rem; color: var(--primary); font-weight: 600; margin-top: 0.2rem; }
+    .verified-badge {
+      position: absolute; top: 1rem; right: 1rem;
+      background: var(--success); color: white;
+      font-size: 0.7rem; font-weight: 700;
+      padding: 0.2rem 0.6rem; border-radius: 10px;
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+
+    .pro-card-body { padding: 1.2rem; }
+    .pro-meta { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .pro-meta-item { display: flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; color: var(--gray-600); }
+    .pro-bio { font-size: 0.82rem; color: var(--gray-500); line-height: 1.6; margin-bottom: 1rem; }
+    .pro-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .pro-tag { background: var(--gray-100); color: var(--gray-600); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.73rem; font-weight: 500; }
+    .pro-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid var(--gray-100); }
+    .pro-price { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
+    .pro-price small { font-size: 0.75rem; color: var(--gray-400); font-weight: 400; }
+
+    /* NO RESULTS */
+    .no-results { text-align: center; padding: 4rem 2rem; color: var(--gray-500); }
+    .no-results .icon { font-size: 3rem; margin-bottom: 1rem; }
+    .no-results h3 { font-size: 1.1rem; font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; }
+
+    @media (max-width: 768px) {
+      nav ul { display: none; }
+      .filter-inner { gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Hogar<span>Pro</span></a>
+  <ul style="list-style:none;display:flex;gap:2rem;">
+    <li><a href="pros.html" style="color:var(--primary);text-decoration:none;font-size:0.88rem;font-weight:600;">Profesionales</a></li>
+    <li><a href="index.html#como-funciona" style="color:var(--gray-600);text-decoration:none;font-size:0.88rem;font-weight:500;">Cómo funciona</a></li>
+  </ul>
+  <div style="display:flex;gap:0.7rem;">
+    <a href="login.html" class="btn btn-secondary btn-sm">Iniciar sesión</a>
+    <a href="register.html" class="btn btn-primary btn-sm">Registrarse</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <h1>Encuentra tu profesional</h1>
+    <p>+500 profesionales verificados disponibles en toda España — 50 provincias cubiertas.</p>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-inner">
+    <select class="filter-select" id="f-service" onchange="applyFilters()">
+      <option value="">🗂️ Todos los servicios</option>
+      <option value="Limpieza">🧹 Limpieza</option>
+      <option value="Fontanería">🔧 Fontanería</option>
+      <option value="Electricidad">⚡ Electricidad</option>
+      <option value="Pintura">🎨 Pintura</option>
+      <option value="Mudanza">🚚 Mudanzas</option>
+      <option value="Jardinería">🌿 Jardinería</option>
+      <option value="Bricolaje">🪚 Bricolaje</option>
+      <option value="Pet Sitting">🐶 Pet Sitting</option>
+    </select>
+
+    <div class="city-input-wrap" style="position:relative;">
+      <input id="f-city-input" type="text" placeholder="📍 Ciudad..." autocomplete="off"
+        class="filter-select" style="min-width:160px;cursor:text;"
+        oninput="applyFilters()" />
+      <div class="city-dropdown" id="f-city-drop"></div>
+    </div>
+
+    <select class="filter-select" id="f-sort" onchange="applyFilters()">
+      <option value="rating">⭐ Mejor valorados</option>
+      <option value="price_asc">💶 Precio: menor a mayor</option>
+      <option value="price_desc">💶 Precio: mayor a menor</option>
+      <option value="jobs">✅ Más trabajos</option>
+    </select>
+
+    <button class="filter-btn active" onclick="filterRating(this, 0)">Todos</button>
+    <button class="filter-btn" onclick="filterRating(this, 4.9)">⭐ 4.9+</button>
+    <button class="filter-btn" onclick="filterRating(this, 4.5)">⭐ 4.5+</button>
+
+    <div class="results-count" id="results-count">Cargando...</div>
+  </div>
+</div>
+
+<div class="main-layout">
+  <div class="pros-grid" id="pros-grid"></div>
+</div>
+
+<script>
+const CITIES = [
+  'A Coruña','Aguilar de Campoo','Albacete','Alcalá de Guadaíra','Alcalá de Henares',
+  'Alcazar de San Juan','Alcobendas','Alcorcón','Alcoy','Alcúdia','Algeciras','Alicante',
+  'Almería','Almonte','Almuñécar','Alpedrete','Andújar','Antequera','Aranjuez','Arona',
+  'Arrecife','Arucas','Ávila','Avilés','Azuqueca de Henares','Badajoz','Badalona',
+  'Barakaldo','Barcelona','Basauri','Benalmádena','Benidorm','Bilbao','Blanes',
+  'Burgos','Cáceres','Cádiz','Calahorra','Calella','Calpe','Calvià','Cambrils',
+  'Cartagena','Castelldefels','Castellón de la Plana','Ceuta','Chiclana de la Frontera',
+  'Ciudad Real','Cieza','Collado Villalba','Córdoba','Cornellà de Llobregat','Cuenca',
+  'Dénia','Don Benito','Donostia-San Sebastián','Dos Hermanas','Durango','Écija',
+  'El Ejido','El Puerto de Santa María','Elche','Elda','Estepona','Ferrol',
+  'Fuengirola','Fuenlabrada','Gandía','Getafe','Getxo','Gijón','Girona','Granada',
+  'Granollers','Guadalajara','Hellín','Hospitalet de Llobregat','Huelva','Huesca',
+  'Ibiza','Irun','Jaén','Jerez de la Frontera','La Línea de la Concepción',
+  'La Orotava','Las Palmas de Gran Canaria','Las Rozas de Madrid','Leganés','León',
+  'Linares','Lleida','Lloret de Mar','Lorca','Logroño','Lugo','Mairena del Aljarafe',
+  'Manresa','Marbella','Martos','Mataro','Melilla','Mérida','Mijas','Molina de Segura',
+  'Mollet del Vallès','Motril','Móstoles','Murcia','Olot','Ourense','Oviedo',
+  'Palencia','Palma de Mallorca','Pamplona','Parla','Paterna','Plasencia','Pontevedra',
+  'Pozuelo de Alarcón','Puerto Real','Puertollano','Reus','Roquetas de Mar','Rubí',
+  'Sabadell','Salamanca','Salou','San Cristóbal de La Laguna','Sanlúcar de Barrameda',
+  'Santa Cruz de Tenerife','Santa Eulària des Riu','Santander','Santiago de Compostela',
+  'Segovia','Sevilla','Soria','Talavera de la Reina','Tarragona','Telde','Terrassa',
+  'Teruel','Toledo','Torrejón de Ardoz','Torremolinos','Torrent','Torrevieja',
+  'Torroella de Montgrí','Tudela','Utrera','Valdemoro','Valencia','Valladolid',
+  'Vélez-Málaga','Vic','Vigo','Vila-real','Viladecans','Vilagarcía de Arousa',
+  'Villajoyosa','Villarreal','Vitoria-Gasteiz','Zamora','Zaragoza'
+];
+
+const pros = [
+  { id: 1,  name: 'Ana Martínez',       initials: 'AM', grad: 'avt-g1', service: 'Limpieza',    city: 'Madrid',                      rating: 4.98, jobs: 312, price: 25, bio: 'Especialista en limpieza del hogar con más de 8 años de experiencia. Meticulosa, puntual y de confianza.', tags: ['Limpieza a fondo', 'Oficinas', 'Cristales', 'Airbnb'], verified: true },
+  { id: 2,  name: 'Carlos Ruiz',         initials: 'CR', grad: 'avt-g2', service: 'Fontanería',  city: 'Barcelona',                   rating: 4.95, jobs: 187, price: 45, bio: 'Fontanero profesional certificado. Especializado en instalaciones, fugas y reformas de baños.', tags: ['Fugas', 'Calefacción', 'Reformas', 'Instalaciones'], verified: true },
+  { id: 3,  name: 'Laura Gómez',         initials: 'LG', grad: 'avt-g4', service: 'Electricidad',city: 'Valencia',                    rating: 4.97, jobs: 243, price: 50, bio: 'Electricista certificada con experiencia en instalaciones domésticas y comerciales. Trabajo seguro y garantizado.', tags: ['Instalaciones', 'Averías', 'LED', 'Cuadros eléctricos'], verified: true },
+  { id: 4,  name: 'Pedro Sánchez',       initials: 'PS', grad: 'avt-g5', service: 'Pintura',     city: 'Sevilla',                     rating: 4.92, jobs: 156, price: 35, bio: 'Pintor profesional con 12 años de experiencia. Acabados perfectos en interiores y exteriores.', tags: ['Interior', 'Exterior', 'Estuco', 'Decoración'], verified: true },
+  { id: 5,  name: 'María Fernández',     initials: 'MF', grad: 'avt-g1', service: 'Limpieza',    city: 'Barcelona',                   rating: 4.94, jobs: 278, price: 22, bio: 'Servicio de limpieza profesional a domicilio. Rápida, eficiente y muy cuidadosa con tus pertenencias.', tags: ['Limpieza estándar', 'Post-obra', 'Airbnb'], verified: true },
+  { id: 6,  name: 'Roberto García',      initials: 'RG', grad: 'avt-g3', service: 'Mudanza',     city: 'Madrid',                      rating: 4.88, jobs: 134, price: 40, bio: 'Equipo de mudanzas con furgoneta propia. Embalaje profesional y seguro de transporte incluido.', tags: ['Embalaje', 'Transporte', 'Montaje muebles', 'Piano'], verified: false },
+  { id: 7,  name: 'Sofía Torres',        initials: 'ST', grad: 'avt-g3', service: 'Jardinería',  city: 'Málaga',                      rating: 4.96, jobs: 89,  price: 30, bio: 'Paisajista y jardinera profesional. Diseño, mantenimiento y poda de todo tipo de jardines.', tags: ['Poda', 'Riego', 'Diseño', 'Césped'], verified: true },
+  { id: 8,  name: 'Javier López',        initials: 'JL', grad: 'avt-g6', service: 'Bricolaje',   city: 'Madrid',                      rating: 4.90, jobs: 203, price: 38, bio: 'Manitas profesional para todo tipo de reparaciones del hogar. Montaje de muebles IKEA y más.', tags: ['IKEA', 'Parquet', 'Pladur', 'Persianas'], verified: true },
+  { id: 9,  name: 'Carmen Díaz',         initials: 'CD', grad: 'avt-g5', service: 'Pet Sitting',  city: 'Barcelona',                   rating: 4.99, jobs: 67,  price: 15, bio: 'Cuidadora de animales certificada. Paseos, guardería en casa y cuidados veterinarios básicos.', tags: ['Perros', 'Gatos', 'Paseos', 'Guardería'], verified: true },
+  { id: 10, name: 'Antonio Moreno',      initials: 'AM', grad: 'avt-g4', service: 'Electricidad',city: 'Madrid',                      rating: 4.85, jobs: 178, price: 48, bio: 'Electricista con 15 años de experiencia. Instalaciones completas, domótica y eficiencia energética.', tags: ['Domótica', 'Solar', 'Averías', 'Certificados'], verified: true },
+  { id: 11, name: 'Elena Romero',        initials: 'ER', grad: 'avt-g1', service: 'Limpieza',    city: 'Valencia',                    rating: 4.91, jobs: 195, price: 20, bio: 'Limpiadora profesional con productos ecológicos. Especializada en hogares con mascotas y niños.', tags: ['Ecológico', 'Mascotas', 'Alergias', 'Post-mudanza'], verified: true },
+  { id: 12, name: 'David Jiménez',       initials: 'DJ', grad: 'avt-g2', service: 'Fontanería',  city: 'Sevilla',                     rating: 4.87, jobs: 112, price: 42, bio: 'Fontanero autónomo con cobertura en toda Sevilla. Urgencias disponibles 24/7.', tags: ['Urgencias', 'Tuberías', 'Sanitarios', '24/7'], verified: false },
+  { id: 13, name: 'Isabel Vázquez',      initials: 'IV', grad: 'avt-g3', service: 'Limpieza',    city: 'Bilbao',                      rating: 4.93, jobs: 220, price: 26, bio: 'Profesional de la limpieza con 10 años de experiencia en el País Vasco. Puntual y meticulosa.', tags: ['Hogares', 'Oficinas', 'Post-obra', 'Ventanas'], verified: true },
+  { id: 14, name: 'Fernando Ruiz',       initials: 'FR', grad: 'avt-g2', service: 'Fontanería',  city: 'Zaragoza',                    rating: 4.89, jobs: 143, price: 43, bio: 'Fontanero con más de 10 años en Aragón. Reparaciones rápidas y presupuesto sin compromiso.', tags: ['Fugas', 'Calefacción', 'Baños', 'Urgencias'], verified: true },
+  { id: 15, name: 'Cristina López',      initials: 'CL', grad: 'avt-g7', service: 'Jardinería',  city: 'Granada',                     rating: 4.97, jobs: 98,  price: 28, bio: 'Experta en jardines mediterráneos y tropicales. Diseño, instalación de riego automático y mantenimiento.', tags: ['Diseño', 'Riego automático', 'Poda', 'Plantas'], verified: true },
+  { id: 16, name: 'Miguel Ángel Torres', initials: 'MT', grad: 'avt-g6', service: 'Electricidad',city: 'Córdoba',                     rating: 4.86, jobs: 167, price: 47, bio: 'Electricista industrial y doméstico. Certificaciones vigentes y garantía en todos los trabajos.', tags: ['Instalaciones', 'Domótica', 'Paneles solares', 'Averías'], verified: true },
+  { id: 17, name: 'Patricia Ramírez',    initials: 'PR', grad: 'avt-g5', service: 'Limpieza',    city: 'Alicante',                    rating: 4.96, jobs: 189, price: 23, bio: 'Limpiadora profesional en la Costa Blanca. Especializada en apartamentos turísticos y villas.', tags: ['Alquiler turístico', 'Post-mudanza', 'Piscinas', 'Terrazas'], verified: true },
+  { id: 18, name: 'Andrés Herrera',      initials: 'AH', grad: 'avt-g4', service: 'Bricolaje',   city: 'Murcia',                      rating: 4.88, jobs: 211, price: 36, bio: 'Experto en bricolaje y reformas del hogar. Montaje de muebles, pladur, parquet y más en Murcia.', tags: ['IKEA', 'Pladur', 'Parquet', 'Persianas'], verified: true },
+  { id: 19, name: 'Lucía Moreno',        initials: 'LM', grad: 'avt-g1', service: 'Pet Sitting',  city: 'Pamplona',                    rating: 4.98, jobs: 54,  price: 14, bio: 'Amante de los animales certificada en comportamiento canino. Cuidado con amor y responsabilidad.', tags: ['Perros', 'Gatos', 'Pájaros', 'Paseos'], verified: true },
+  { id: 20, name: 'Alberto García',      initials: 'AG', grad: 'avt-g3', service: 'Mudanza',     city: 'Donostia-San Sebastián',      rating: 4.91, jobs: 88,  price: 45, bio: 'Empresa familiar de mudanzas en el País Vasco. Flota propia y personal especializado.', tags: ['Local', 'Nacional', 'Embalaje', 'Guardamuebles'], verified: true },
+  { id: 21, name: 'Natalia Pérez',       initials: 'NP', grad: 'avt-g1', service: 'Limpieza',    city: 'Santander',                   rating: 4.90, jobs: 165, price: 24, bio: 'Servicio de limpieza integral en Cantabria. Casas, oficinas y locales comerciales.', tags: ['Hogares', 'Comercios', 'Cristales', 'Alfombras'], verified: true },
+  { id: 22, name: 'Raúl Fernández',      initials: 'RF', grad: 'avt-g2', service: 'Electricidad',city: 'Oviedo',                      rating: 4.84, jobs: 134, price: 46, bio: 'Electricista en Asturias con amplia experiencia en instalaciones y mantenimiento preventivo.', tags: ['Instalaciones', 'Averías urgentes', 'LED', 'Cuadros'], verified: true },
+  { id: 23, name: 'Esther Martín',       initials: 'EM', grad: 'avt-g5', service: 'Limpieza',    city: 'Valladolid',                  rating: 4.93, jobs: 178, price: 22, bio: 'Limpiadora de confianza en Castilla y León. Trabajo garantizado y productos de alta calidad.', tags: ['Hogares', 'Oficinas', 'Post-obra', 'Fin de obra'], verified: true },
+  { id: 24, name: 'Pablo Díaz',          initials: 'PD', grad: 'avt-g6', service: 'Fontanería',  city: 'A Coruña',                    rating: 4.87, jobs: 122, price: 44, bio: 'Fontanero en Galicia, especializado en reformas de baños y cocinas. Presupuesto gratuito.', tags: ['Reformas', 'Baños', 'Fugas', 'Tuberías'], verified: true },
+  { id: 25, name: 'Sara González',       initials: 'SG', grad: 'avt-g3', service: 'Limpieza',    city: 'Santa Cruz de Tenerife',      rating: 4.95, jobs: 201, price: 21, bio: 'Limpieza profesional en Canarias. Especializada en chalets y apartamentos vacacionales.', tags: ['Chalets', 'Villas', 'Apartamentos', 'Post-mudanza'], verified: true },
+  { id: 26, name: 'Marcos López',        initials: 'ML', grad: 'avt-g4', service: 'Pintura',     city: 'Las Palmas de Gran Canaria',  rating: 4.89, jobs: 145, price: 33, bio: 'Pintor en Gran Canaria con 14 años de experiencia. Especializado en exteriores con pintura antihumedad.', tags: ['Exteriores', 'Antihumedad', 'Decoración', 'Estuco'], verified: true },
+  { id: 27, name: 'Irene Castro',        initials: 'IC', grad: 'avt-g7', service: 'Jardinería',  city: 'Palma de Mallorca',           rating: 4.94, jobs: 112, price: 32, bio: 'Jardines mediterráneos en Mallorca. Diseño paisajístico, mantenimiento y plantas autóctonas.', tags: ['Mediterráneo', 'Piscinas', 'Autóctonas', 'Riego'], verified: true },
+  { id: 28, name: 'Daniel Romero',       initials: 'DR', grad: 'avt-g2', service: 'Bricolaje',   city: 'Toledo',                      rating: 4.86, jobs: 176, price: 37, bio: 'Manitas en Castilla-La Mancha. Reformas, instalaciones y reparaciones del hogar a buen precio.', tags: ['IKEA', 'Pladur', 'Parquet', 'Puertas'], verified: true },
+  { id: 29, name: 'Vanessa Torres',      initials: 'VT', grad: 'avt-g5', service: 'Pet Sitting',  city: 'Salamanca',                   rating: 4.97, jobs: 61,  price: 13, bio: 'Cuidadora de mascotas certificada en Salamanca. Cariño y profesionalidad garantizados.', tags: ['Perros', 'Gatos', 'Guardería', 'Adiestramiento'], verified: true },
+  { id: 30, name: 'Óscar Hernández',     initials: 'OH', grad: 'avt-g8', service: 'Mudanza',     city: 'Tarragona',                   rating: 4.83, jobs: 97,  price: 38, bio: 'Mudanzas en Cataluña con cobertura hasta Andorra y sur de Francia. Equipo de 4 personas.', tags: ['Local', 'Internacional', 'Embalaje premium', 'Arte'], verified: false },
+  { id: 31, name: 'Beatriz Iglesias',    initials: 'BI', grad: 'avt-g1', service: 'Limpieza',    city: 'Zaragoza',                    rating: 4.92, jobs: 158, price: 23, bio: 'Servicio de limpieza en Zaragoza y provincia. Hogares, oficinas y comunidades de vecinos.', tags: ['Comunidades', 'Oficinas', 'Hogares', 'Cristales'], verified: true },
+  { id: 32, name: 'Tomás Vargas',        initials: 'TV', grad: 'avt-g4', service: 'Electricidad',city: 'Bilbao',                      rating: 4.91, jobs: 199, price: 49, bio: 'Electricista industrial en Bizkaia. Certificaciones en BT y AT. Instalaciones industriales y domésticas.', tags: ['Industrial', 'BT', 'Domótica', 'Solar'], verified: true },
+  { id: 33, name: 'Mónica Sanz',         initials: 'MS', grad: 'avt-g5', service: 'Pintura',     city: 'Granada',                     rating: 4.94, jobs: 137, price: 34, bio: 'Pintora decorativa en Granada. Técnicas especiales: estuco veneciano, fresco y pintura efecto madera.', tags: ['Veneciano', 'Decorativo', 'Interior', 'Exterior'], verified: true },
+  { id: 34, name: 'Jorge Alonso',        initials: 'JA', grad: 'avt-g3', service: 'Fontanería',  city: 'Alicante',                    rating: 4.88, jobs: 131, price: 41, bio: 'Fontanero en la provincia de Alicante. Instalaciones y reparaciones en toda la Costa Blanca.', tags: ['Fugas', 'Piscinas', 'Riego', 'Urgencias'], verified: true },
+  { id: 35, name: 'Nuria Blanco',        initials: 'NB', grad: 'avt-g7', service: 'Jardinería',  city: 'Murcia',                      rating: 4.89, jobs: 76,  price: 29, bio: 'Jardinera en la Región de Murcia. Huertos urbanos, jardines y espacios verdes empresariales.', tags: ['Huertos', 'Jardines', 'Empresas', 'Riego'], verified: true },
+  { id: 36, name: 'Adrián Molina',       initials: 'AM', grad: 'avt-g6', service: 'Bricolaje',   city: 'Valladolid',                  rating: 4.85, jobs: 143, price: 35, bio: 'Manitas en Valladolid con 8 años de experiencia. Montaje, reparación e instalaciones varias.', tags: ['Montaje', 'Reparaciones', 'Puertas', 'Ventanas'], verified: true },
+  { id: 37, name: 'Silvia Ortega',       initials: 'SO', grad: 'avt-g1', service: 'Limpieza',    city: 'Córdoba',                     rating: 4.90, jobs: 182, price: 21, bio: 'Limpieza integral en Córdoba y provincia. Servicio de confianza desde hace más de 6 años.', tags: ['Hogares', 'Fincas', 'Post-obra', 'Cristales'], verified: true },
+  { id: 38, name: 'Héctor Campos',       initials: 'HC', grad: 'avt-g2', service: 'Mudanza',     city: 'Málaga',                      rating: 4.87, jobs: 109, price: 42, bio: 'Mudanzas en la Costa del Sol. Flota de camiones propios y seguro de transporte completo.', tags: ['Local', 'Nacional', 'Muebles de lujo', 'Arte'], verified: true },
+  { id: 39, name: 'Amparo Fuentes',      initials: 'AF', grad: 'avt-g5', service: 'Pet Sitting',  city: 'Valencia',                    rating: 4.96, jobs: 83,  price: 16, bio: 'Cuidadora de mascotas en Valencia. Experta en razas especiales y animales exóticos.', tags: ['Exóticos', 'Perros', 'Gatos', 'Aves'], verified: true },
+  { id: 40, name: 'Rubén Navarro',       initials: 'RN', grad: 'avt-g4', service: 'Electricidad',city: 'Pamplona',                    rating: 4.88, jobs: 156, price: 46, bio: 'Electricista en Navarra. Certificaciones vigentes y trabajos con garantía de 2 años.', tags: ['Instalaciones', 'Averías', 'Eficiencia energética', 'LED'], verified: true },
+];
+
+let minRating = 0;
+
+function renderPros(list) {
+  const grid = document.getElementById('pros-grid');
+  document.getElementById('results-count').textContent = list.length + ' profesionales encontrados';
+
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="no-results" style="grid-column:1/-1;">
+      <div class="icon">🔍</div>
+      <h3>No encontramos profesionales</h3>
+      <p>Prueba con otros filtros o ciudad.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(p => `
+    <a href="pro-profile.html?id=${p.id}" class="pro-card">
+      <div class="pro-card-top">
+        <div class="avt-wrap">
+          <div class="pro-avt ${p.grad}">${p.initials}</div>
+          ${p.verified ? '<div class="avt-verified" style="width:20px;height:20px;font-size:0.6rem;">✓</div>' : ''}
+        </div>
+        <div class="pro-header-info">
+          <div class="name">${p.name}</div>
+          <div class="service">${p.service}</div>
+        </div>
+        ${p.verified ? '<div class="verified-badge">✓ Verificado</div>' : ''}
+      </div>
+      <div class="pro-card-body">
+        <div class="pro-meta">
+          <div class="pro-meta-item">⭐ <strong>${p.rating}</strong></div>
+          <div class="pro-meta-item">✅ ${p.jobs} trabajos</div>
+          <div class="pro-meta-item">📍 ${p.city}</div>
+        </div>
+        <div class="pro-bio">${p.bio}</div>
+        <div class="pro-tags">${p.tags.map(t => `<span class="pro-tag">${t}</span>`).join('')}</div>
+        <div class="pro-footer">
+          <div class="pro-price">${p.price}€ <small>/ hora</small></div>
+          <div class="btn btn-primary btn-sm">Ver perfil →</div>
+        </div>
+      </div>
+    </a>
+  `).join('');
+}
+
+function applyFilters() {
+  const service = document.getElementById('f-service').value;
+  const city = document.getElementById('f-city-input').value.trim();
+  const sort = document.getElementById('f-sort').value;
+
+  let filtered = pros.filter(p => {
+    if (service && p.service !== service) return false;
+    if (city && !p.city.toLowerCase().includes(city.toLowerCase())) return false;
+    if (p.rating < minRating) return false;
+    return true;
+  });
+
+  if (sort === 'rating') filtered.sort((a,b) => b.rating - a.rating);
+  else if (sort === 'price_asc') filtered.sort((a,b) => a.price - b.price);
+  else if (sort === 'price_desc') filtered.sort((a,b) => b.price - a.price);
+  else if (sort === 'jobs') filtered.sort((a,b) => b.jobs - a.jobs);
+
+  renderPros(filtered);
+}
+
+function filterRating(btn, rating) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  minRating = rating;
+  applyFilters();
+}
+
+// CITY AUTOCOMPLETE
+const cityInput = document.getElementById('f-city-input');
+const cityDrop  = document.getElementById('f-city-drop');
+let acIndex = -1;
+
+cityInput.addEventListener('input', function () {
+  const q = this.value.trim().toLowerCase();
+  applyFilters();
+  if (q.length < 1) { hideDrop(); return; }
+  const matches = CITIES.filter(c => c.toLowerCase().includes(q)).slice(0, 8);
+  if (!matches.length) { hideDrop(); return; }
+  cityDrop.innerHTML = matches.map(c =>
+    `<div class="city-item" onmousedown="pickCity('${c}')">📍 ${c}</div>`
+  ).join('');
+  cityDrop.style.display = 'block';
+  acIndex = -1;
+});
+
+cityInput.addEventListener('keydown', function (e) {
+  const items = cityDrop.querySelectorAll('.city-item');
+  if (e.key === 'ArrowDown') { acIndex = Math.min(acIndex + 1, items.length - 1); highlightAC(items); e.preventDefault(); }
+  else if (e.key === 'ArrowUp') { acIndex = Math.max(acIndex - 1, 0); highlightAC(items); e.preventDefault(); }
+  else if (e.key === 'Enter' && acIndex >= 0) { items[acIndex].dispatchEvent(new MouseEvent('mousedown')); e.preventDefault(); }
+  else if (e.key === 'Escape') { hideDrop(); }
+});
+
+cityInput.addEventListener('blur', () => setTimeout(hideDrop, 150));
+
+function highlightAC(items) {
+  items.forEach((it, i) => it.classList.toggle('active', i === acIndex));
+  if (items[acIndex]) items[acIndex].scrollIntoView({ block: 'nearest' });
+}
+
+function pickCity(name) {
+  cityInput.value = name;
+  hideDrop();
+  applyFilters();
+}
+
+function hideDrop() { cityDrop.style.display = 'none'; acIndex = -1; }
+
+// Init
+renderPros(pros);
+
+// URL params
+const params = new URLSearchParams(window.location.search);
+if (params.get('service')) {
+  document.getElementById('f-service').value = params.get('service');
+  applyFilters();
+}
+if (params.get('city')) {
+  cityInput.value = params.get('city');
+  applyFilters();
+}
+</script>
+</body>
+</html>
