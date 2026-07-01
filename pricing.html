@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Precios — HogarPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0.9rem 5%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-size: 1.4rem; font-weight: 900; color: var(--primary); text-decoration: none; }
+    .logo span { color: var(--accent); }
+    .nav-btns { display: flex; gap: 0.7rem; align-items: center; }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav ul a { color: var(--gray-600); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.15s; }
+    nav ul a:hover { color: var(--primary); }
+    @media(max-width:900px){ nav ul { display: none; } }
+
+    /* HERO */
+    .hero { background: linear-gradient(135deg, #134e4a 0%, #0d9488 60%, #06b6d4 100%); padding: 5rem 5% 4rem; text-align: center; }
+    .hero h1 { font-size: clamp(2rem,4vw,3rem); font-weight: 900; color: white; margin-bottom: 1rem; }
+    .hero p { color: #99f6e4; font-size: 1.05rem; max-width: 500px; margin: 0 auto 2rem; }
+
+    /* TOGGLE */
+    .toggle-wrap { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .toggle-label { font-size: 0.9rem; font-weight: 600; color: rgba(255,255,255,0.7); cursor: pointer; }
+    .toggle-label.active { color: white; }
+    .toggle-btn { width: 52px; height: 28px; background: rgba(255,255,255,0.2); border-radius: 14px; border: none; cursor: pointer; position: relative; transition: background 0.2s; }
+    .toggle-btn .knob { width: 22px; height: 22px; background: white; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: left 0.2s; }
+    .toggle-btn.annual .knob { left: 27px; }
+    .toggle-btn.annual { background: var(--accent); }
+    .save-badge { background: var(--accent); color: white; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 10px; }
+
+    /* TABS */
+    .tabs-wrap { max-width: 400px; margin: 0 auto 3rem; background: rgba(255,255,255,0.12); border-radius: 14px; padding: 6px; display: flex; }
+    .tab-btn { flex: 1; padding: 0.6rem; border-radius: 10px; border: none; cursor: pointer; font-size: 0.88rem; font-weight: 600; background: transparent; color: rgba(255,255,255,0.6); transition: all 0.2s; font-family: inherit; }
+    .tab-btn.active { background: white; color: var(--primary); }
+
+    /* PRICING CARDS */
+    .pricing-section { padding: 4rem 5%; background: var(--gray-50); }
+    .pricing-inner { max-width: 1100px; margin: 0 auto; }
+    .plans-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 0; }
+    .plan-card {
+      background: white; border-radius: 20px; border: 2px solid var(--gray-200);
+      padding: 2.5rem 2rem; transition: all 0.2s; position: relative;
+    }
+    .plan-card:hover { box-shadow: 0 12px 40px rgba(13,148,136,0.1); transform: translateY(-4px); }
+    .plan-card.popular { border-color: var(--primary); box-shadow: 0 8px 40px rgba(13,148,136,0.2); transform: scale(1.02); }
+    .popular-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; font-size: 0.75rem; font-weight: 700; padding: 0.3rem 1rem; border-radius: 20px; white-space: nowrap; }
+    .plan-name { font-size: 0.85rem; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
+    .plan-price { margin-bottom: 0.3rem; }
+    .plan-price .amount { font-size: 3rem; font-weight: 900; color: var(--gray-900); line-height: 1; }
+    .plan-price .currency { font-size: 1.3rem; font-weight: 700; color: var(--gray-900); vertical-align: top; margin-top: 0.6rem; display: inline-block; }
+    .plan-price .period { font-size: 0.85rem; color: var(--gray-400); margin-left: 0.3rem; }
+    .plan-price .original { font-size: 0.85rem; color: var(--gray-400); text-decoration: line-through; margin-left: 0.4rem; }
+    .plan-desc { color: var(--gray-500); font-size: 0.85rem; margin-bottom: 2rem; line-height: 1.6; margin-top: 0.5rem; }
+    .plan-features { list-style: none; margin-bottom: 2rem; }
+    .plan-features li { padding: 0.55rem 0; border-bottom: 1px solid var(--gray-100); font-size: 0.88rem; display: flex; align-items: center; gap: 0.7rem; color: var(--gray-700); }
+    .plan-features li:last-child { border-bottom: none; }
+    .plan-features .ico-yes { color: var(--success); font-weight: 700; flex-shrink: 0; }
+    .plan-features .ico-no { color: var(--gray-300); flex-shrink: 0; }
+    .plan-features .ico-yes::before { content: '✓'; }
+    .plan-features .ico-no::before { content: '✕'; }
+
+    @media(max-width:900px){ .plans-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; } .plan-card.popular { transform: none; } }
+
+    /* PRO PLANS (hidden by default) */
+    .pro-plans { display: none; }
+
+    /* COMMISSION INFO */
+    .commission-box { background: var(--primary-light); border: 1.5px solid var(--primary); border-radius: 16px; padding: 1.5rem 2rem; margin-top: 3rem; display: flex; align-items: center; gap: 1.5rem; }
+    .commission-box .ico { font-size: 2rem; flex-shrink: 0; }
+    .commission-box h4 { font-weight: 800; margin-bottom: 0.3rem; color: var(--primary); }
+    .commission-box p { font-size: 0.88rem; color: var(--gray-600); line-height: 1.6; }
+    @media(max-width:600px){ .commission-box { flex-direction: column; } }
+
+    /* FAQ */
+    .faq { padding: 5rem 5%; }
+    .faq-inner { max-width: 800px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--gray-200); }
+    .faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 0; background: none; border: none; cursor: pointer; font-size: 0.95rem; font-weight: 700; color: var(--gray-900); text-align: left; font-family: inherit; gap: 1rem; }
+    .faq-q .arr { font-size: 1.1rem; color: var(--gray-400); transition: transform 0.2s; flex-shrink: 0; }
+    .faq-q.open .arr { transform: rotate(180deg); }
+    .faq-a { font-size: 0.88rem; color: var(--gray-600); line-height: 1.8; padding-bottom: 1.2rem; display: none; }
+    .faq-a.open { display: block; }
+
+    /* CTA */
+    .cta { padding: 5rem 5%; background: var(--gray-900); text-align: center; }
+    .cta h2 { font-size: clamp(1.8rem,3vw,2.6rem); color: white; font-weight: 900; margin-bottom: 1rem; }
+    .cta p { color: var(--gray-400); font-size: 1rem; margin-bottom: 2.5rem; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* FOOTER */
+    footer { background: #0a0a0a; color: var(--gray-500); padding: 2rem 5%; text-align: center; font-size: 0.85rem; }
+    footer a { color: var(--gray-500); text-decoration: none; }
+    footer a:hover { color: white; }
+    .footer-links { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 1rem; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">Hogar<span>Pro</span></a>
+  <ul>
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="pros.html">Profesionales</a></li>
+    <li><a href="hazte-profesional.html">Hazte Pro</a></li>
+  </ul>
+  <div class="nav-btns">
+    <a href="login.html" class="btn btn-secondary btn-sm">Iniciar sesión</a>
+    <a href="register.html" class="btn btn-primary btn-sm">Registrarse gratis</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Precios claros,<br/>sin sorpresas</h1>
+  <p>Elige el plan que mejor se adapta a tus necesidades. Siempre puedes cambiar o cancelar.</p>
+
+  <!-- TOGGLE ANNUAL/MONTHLY -->
+  <div class="toggle-wrap">
+    <span class="toggle-label active" id="lbl-monthly">Mensual</span>
+    <button class="toggle-btn" id="billing-toggle" onclick="toggleBilling()"><span class="knob"></span></button>
+    <span class="toggle-label" id="lbl-annual">Anual <span class="save-badge">-20%</span></span>
+  </div>
+
+  <!-- TABS CLIENT/PRO -->
+  <div class="tabs-wrap">
+    <button class="tab-btn active" onclick="switchTab('client', this)">Para clientes</button>
+    <button class="tab-btn" onclick="switchTab('pro', this)">Para profesionales</button>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="pricing-section">
+  <div class="pricing-inner">
+
+    <!-- CLIENT PLANS -->
+    <div id="client-plans">
+      <div class="plans-grid">
+
+        <!-- FREE -->
+        <div class="plan-card">
+          <div class="plan-name">Gratis</div>
+          <div class="plan-price">
+            <span class="currency">€</span><span class="amount">0</span>
+            <span class="period">/ mes</span>
+          </div>
+          <div class="plan-desc">Perfecto para empezar a explorar. Accede a profesionales verificados sin compromiso.</div>
+          <ul class="plan-features">
+            <li><span class="ico-yes"></span>3 reservas al mes</li>
+            <li><span class="ico-yes"></span>Búsqueda por ciudad y servicio</li>
+            <li><span class="ico-yes"></span>Valoraciones verificadas</li>
+            <li><span class="ico-yes"></span>Chat con profesionales</li>
+            <li><span class="ico-no"></span>Reservas prioritarias</li>
+            <li><span class="ico-no"></span>Descuentos exclusivos</li>
+            <li><span class="ico-no"></span>Soporte prioritario</li>
+            <li><span class="ico-no"></span>Historial ilimitado</li>
+          </ul>
+          <a href="register.html" class="btn btn-outline btn-block">Empezar gratis</a>
+        </div>
+
+        <!-- PLUS (POPULAR) -->
+        <div class="plan-card popular">
+          <div class="popular-badge">⭐ Más popular</div>
+          <div class="plan-name">Plus</div>
+          <div class="plan-price">
+            <span class="currency">€</span><span class="amount" id="plus-price">9</span>
+            <span class="period">/ mes</span>
+            <span class="original" id="plus-original" style="display:none">11 €</span>
+          </div>
+          <div class="plan-desc">Para quienes usan HogarPro regularmente. Más reservas, mejores precios.</div>
+          <ul class="plan-features">
+            <li><span class="ico-yes"></span>Reservas ilimitadas</li>
+            <li><span class="ico-yes"></span>Búsqueda avanzada con filtros</li>
+            <li><span class="ico-yes"></span>Reservas prioritarias</li>
+            <li><span class="ico-yes"></span>5% descuento en cada servicio</li>
+            <li><span class="ico-yes"></span>Historial completo</li>
+            <li><span class="ico-yes"></span>Soporte por chat</li>
+            <li><span class="ico-no"></span>Acceso anticipado</li>
+            <li><span class="ico-no"></span>Gestor personal</li>
+          </ul>
+          <a href="register.html" class="btn btn-primary btn-block">Empezar con Plus</a>
+        </div>
+
+        <!-- PREMIUM -->
+        <div class="plan-card">
+          <div class="plan-name">Premium</div>
+          <div class="plan-price">
+            <span class="currency">€</span><span class="amount" id="prem-price">19</span>
+            <span class="period">/ mes</span>
+            <span class="original" id="prem-original" style="display:none">24 €</span>
+          </div>
+          <div class="plan-desc">Para hogares que necesitan el máximo nivel de servicio y atención personalizada.</div>
+          <ul class="plan-features">
+            <li><span class="ico-yes"></span>Todo lo del plan Plus</li>
+            <li><span class="ico-yes"></span>10% descuento en cada servicio</li>
+            <li><span class="ico-yes"></span>Acceso anticipado a nuevos pros</li>
+            <li><span class="ico-yes"></span>Gestor personal asignado</li>
+            <li><span class="ico-yes"></span>Soporte telefónico 24/7</li>
+            <li><span class="ico-yes"></span>Cancelación gratuita siempre</li>
+            <li><span class="ico-yes"></span>Garantía de satisfacción</li>
+            <li><span class="ico-yes"></span>Facturas automáticas</li>
+          </ul>
+          <a href="register.html" class="btn btn-secondary btn-block">Empezar Premium</a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PRO PLANS (hidden by default) -->
+    <div id="pro-plans" class="pro-plans">
+      <div class="plans-grid">
+
+        <!-- BÁSICO -->
+        <div class="plan-card">
+          <div class="plan-name">Básico</div>
+          <div class="plan-price">
+            <span class="currency">€</span><span class="amount" id="pro-basic-price">0</span>
+            <span class="period">/ mes</span>
+          </div>
+          <div class="plan-desc">Empieza sin coste. Ideal para probar la plataforma y conseguir tus primeros clientes.</div>
+          <ul class="plan-features">
+            <li><span class="ico-yes"></span>Perfil verificado</li>
+            <li><span class="ico-yes"></span>Hasta 10 solicitudes/mes</li>
+            <li><span class="ico-yes"></span>Chat con clientes</li>
+            <li><span class="ico-yes"></span>17% de comisión por servicio</li>
+            <li><span class="ico-no"></span>Posicionamiento prioritario</li>
+            <li><span class="ico-no"></span>Estadísticas avanzadas</li>
+            <li><span class="ico-no"></span>Cobro express 24h</li>
+            <li><span class="ico-no"></span>Badge "Pro Premium"</li>
+          </ul>
+          <a href="register.html" class="btn btn-outline btn-block">Registrarse gratis</a>
+        </div>
+
+        <!-- PRO (POPULAR) -->
+        <div class="plan-card popular">
+          <div class="popular-badge">⭐ Más popular</div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">
+            <span class="currency">€</span><span class="amount" id="pro-price">29</span>
+            <span class="period">/ mes</span>
+            <span class="original" id="pro-original" style="display:none">36 €</span>
+          </div>
+          <div class="plan-desc">Para profesionales activos que quieren más clientes y menos comisión.</div>
+          <ul class="plan-features">
+            <li><span class="ico-yes"></span>Solicitudes ilimitadas</li>
+            <li><span class="ico-yes"></span>Comisión reducida al 12%</li>
+            <li><span class="ico-yes"></span>Posicionamiento prioritario</li>
+            <li><span class="ico-yes"></span>Estadísticas avanzadas</li>
+            <li><span class="ico-yes"></span>Badge "Pro verificado"</li>
+            <li><span class="ico-yes"></span>Cobro en 48h</li>
+            <li><span class="ico-no"></span>Cobro express 24h</li>
+            <li><span class="ico-no"></span>Badge "Pro Premium"</li>
+          </ul>
+          <a href="register.html" class="btn btn-primary btn-block">Hacerme Pro</a>
+        </div>
+
+        <!-- ELITE -->
+        <div class="plan-card">
+          <div class="plan-name">Elite</div>
+          <div class="plan-price">
+            <span class="currency">€</span><span class="amount" id="pro-elite-price">59</span>
+            <span class="period">/ mes</span>
+            <span class="original" id="pro-elite-original" style="display:none">74 €</span>
+          </div>
+          <div class="plan-desc">El máximo nivel. Para profesionales que quieren crecer al máximo con el menor coste por servicio.</div>
+          <ul class="plan-features">
+            <li><span class="ico-yes"></span>Todo lo del plan Pro</li>
+            <li><span class="ico-yes"></span>Comisión mínima al 8%</li>
+            <li><span class="ico-yes"></span>Top posicionamiento</li>
+            <li><span class="ico-yes"></span>Cobro express 24h</li>
+            <li><span class="ico-yes"></span>Badge "Pro Premium" exclusivo</li>
+            <li><span class="ico-yes"></span>Gestor de cuenta personal</li>
+            <li><span class="ico-yes"></span>Acceso anticipado a clientes</li>
+            <li><span class="ico-yes"></span>Soporte telefónico dedicado</li>
+          </ul>
+          <a href="register.html" class="btn btn-secondary btn-block">Ser Elite</a>
+        </div>
+
+      </div>
+
+      <!-- COMMISSION BOX -->
+      <div class="commission-box">
+        <div class="ico">💡</div>
+        <div>
+          <h4>¿Cómo funciona la comisión?</h4>
+          <p>HogarPro aplica una comisión sobre cada servicio completado. Con el plan Básico es del 17%, con Pro baja al 12% y con Elite al 8%. La comisión ya está incluida en el precio que ves en tu panel — sin sorpresas al cobrar.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq">
+  <div class="faq-inner">
+    <div class="section-center" style="margin-bottom:3rem;">
+      <div class="section-tag">FAQ</div>
+      <h2 class="section-title">Preguntas frecuentes</h2>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">¿Puedo cancelar en cualquier momento? <span class="arr">▼</span></button>
+      <div class="faq-a">Sí, puedes cancelar tu suscripción en cualquier momento desde tu panel de control, sin penalizaciones. El plan seguirá activo hasta el final del período ya pagado.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">¿Hay algún contrato de permanencia? <span class="arr">▼</span></button>
+      <div class="faq-a">No. HogarPro funciona mes a mes o año a año, sin ningún tipo de permanencia. Puedes cambiar de plan o cancelar cuando quieras.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">¿Cómo se calcula la comisión para profesionales? <span class="arr">▼</span></button>
+      <div class="faq-a">La comisión se aplica sobre el importe total de cada servicio completado. Con el plan Básico es del 17%, con el plan Pro del 12% y con el plan Elite del 8%. Si ofreces un servicio de 100€, con el plan Elite recibirías 92€.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">¿Es seguro el pago en la plataforma? <span class="arr">▼</span></button>
+      <div class="faq-a">Sí. Usamos encriptación SSL y procesamos los pagos a través de Stripe, uno de los sistemas de pago más seguros del mundo. Nunca almacenamos los datos de tu tarjeta.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">¿Cuándo recibo el dinero como profesional? <span class="arr">▼</span></button>
+      <div class="faq-a">Con el plan Básico, los cobros se realizan semanalmente. Con el plan Pro en 48h y con Elite en 24h tras completar el servicio. El dinero llega directamente a tu cuenta bancaria.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">¿Puedo cambiar de plan cuando quiera? <span class="arr">▼</span></button>
+      <div class="faq-a">Sí. Puedes subir o bajar de plan en cualquier momento. Si subes de plan, el cambio es inmediato. Si bajas de plan, el cambio se aplica al inicio del siguiente período.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta">
+  <h2>Empieza gratis hoy</h2>
+  <p>Sin tarjeta de crédito. Sin compromiso. Cancela cuando quieras.</p>
+  <div class="cta-btns">
+    <a href="register.html" class="btn btn-primary btn-xl">Crear cuenta gratis →</a>
+    <a href="hazte-profesional.html" class="btn btn-xl" style="background:var(--gray-800);color:white;">Soy profesional</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Inicio</a>
+    <a href="pros.html">Profesionales</a>
+    <a href="hazte-profesional.html">Hazte Pro</a>
+    <a href="login.html">Iniciar sesión</a>
+    <a href="register.html">Registrarse</a>
+  </div>
+  <div>© 2026 HogarPro · Todos los derechos reservados</div>
+</footer>
+
+<script>
+  let isAnnual = false;
+  let currentTab = 'client';
+
+  function toggleBilling() {
+    isAnnual = !isAnnual;
+    const btn = document.getElementById('billing-toggle');
+    const lblM = document.getElementById('lbl-monthly');
+    const lblA = document.getElementById('lbl-annual');
+    btn.classList.toggle('annual', isAnnual);
+    lblM.classList.toggle('active', !isAnnual);
+    lblA.classList.toggle('active', isAnnual);
+    updatePrices();
+  }
+
+  function updatePrices() {
+    const discount = isAnnual ? 0.8 : 1;
+    const prices = {
+      'plus-price': [9, 11],
+      'prem-price': [19, 24],
+      'pro-price': [29, 36],
+      'pro-elite-price': [59, 74]
+    };
+    Object.entries(prices).forEach(([id, [base, orig]]) => {
+      const el = document.getElementById(id);
+      const origEl = document.getElementById(id.replace('-price', '-original'));
+      if (el) {
+        const newPrice = Math.round(base * discount);
+        el.textContent = newPrice;
+        if (origEl) {
+          origEl.style.display = isAnnual ? 'inline' : 'none';
+          origEl.textContent = base + ' €';
+        }
+      }
+    });
+
+    const proBasicEl = document.getElementById('pro-basic-price');
+    if (proBasicEl) proBasicEl.textContent = '0';
+  }
+
+  function switchTab(tab, btn) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('client-plans').style.display = tab === 'client' ? 'block' : 'none';
+    document.getElementById('pro-plans').style.display = tab === 'pro' ? 'block' : 'none';
+  }
+
+  function toggleFaq(btn) {
+    const answer = btn.nextElementSibling;
+    const isOpen = answer.classList.contains('open');
+    document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+    document.querySelectorAll('.faq-q').forEach(b => b.classList.remove('open'));
+    if (!isOpen) {
+      answer.classList.add('open');
+      btn.classList.add('open');
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hazte Profesional — Gana dinero con HogarPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0.9rem 5%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-size: 1.4rem; font-weight: 900; color: var(--primary); text-decoration: none; }
+    .logo span { color: var(--accent); }
+    .nav-btns { display: flex; gap: 0.7rem; align-items: center; }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav ul a { color: var(--gray-600); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.15s; }
+    nav ul a:hover { color: var(--primary); }
+    @media(max-width:900px){ nav ul { display:none; } }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(145deg, #042f2e 0%, #134e4a 30%, #0d9488 65%, #06b6d4 100%);
+      padding: 6rem 5% 5rem; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute;
+      width: 700px; height: 700px; background: rgba(255,255,255,0.03);
+      border-radius: 50%; top: -300px; right: -100px;
+    }
+    .hero-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; position: relative; z-index: 1; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.12); color: #a5f3fc; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.82rem; font-weight: 600; margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.15); }
+    .hero h1 { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900; color: white; line-height: 1.1; margin-bottom: 1.2rem; }
+    .hero h1 .hl { background: linear-gradient(135deg,#fbbf24,#f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { color: #99f6e4; font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem; }
+    .hero-btns { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+
+    /* EARNINGS CARD */
+    .earnings-card {
+      background: white; border-radius: 24px; padding: 2rem;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+    }
+    .earn-title { font-size: 0.8rem; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.2rem; }
+    .earn-slider-wrap { margin-bottom: 1.5rem; }
+    .earn-slider-label { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.85rem; }
+    .earn-slider-label span { color: var(--gray-500); }
+    .earn-slider-label strong { color: var(--gray-900); }
+    input[type=range] { width: 100%; accent-color: var(--primary); cursor: pointer; }
+    .earn-result { background: var(--primary-light); border-radius: 16px; padding: 1.2rem; text-align: center; margin-top: 1rem; }
+    .earn-amount { font-size: 2.4rem; font-weight: 900; color: var(--primary); line-height: 1; }
+    .earn-label { font-size: 0.82rem; color: var(--gray-500); margin-top: 0.3rem; }
+    .earn-breakdown { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1rem; }
+    .earn-item { background: var(--gray-50); border-radius: 10px; padding: 0.8rem; text-align: center; }
+    .earn-item .val { font-size: 1.1rem; font-weight: 800; color: var(--gray-900); }
+    .earn-item .lbl { font-size: 0.73rem; color: var(--gray-500); margin-top: 0.2rem; }
+
+    @media(max-width:768px){ .hero-inner { grid-template-columns: 1fr; } .earnings-card { margin-top: 0; } }
+
+    /* STATS BAR */
+    .stats-bar { background: var(--gray-900); padding: 2.5rem 5%; }
+    .stats-bar-inner { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; text-align: center; }
+    .sbar-num { font-size: 2rem; font-weight: 900; color: white; }
+    .sbar-lbl { color: var(--gray-400); font-size: 0.82rem; margin-top: 0.3rem; }
+    @media(max-width:600px){ .stats-bar-inner { grid-template-columns: repeat(2,1fr); } }
+
+    /* BENEFITS */
+    .benefits { padding: 5rem 5%; }
+    .benefits-inner { max-width: 1100px; margin: 0 auto; }
+    .benefits-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
+    .benefit-card { background: white; border-radius: var(--radius-lg); padding: 2rem; border: 1.5px solid var(--gray-200); transition: all 0.2s; }
+    .benefit-card:hover { border-color: var(--primary); box-shadow: 0 8px 30px rgba(13,148,136,0.1); transform: translateY(-4px); }
+    .benefit-ico { font-size: 2.5rem; margin-bottom: 1rem; }
+    .benefit-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .benefit-card p { color: var(--gray-500); font-size: 0.88rem; line-height: 1.7; }
+    @media(max-width:768px){ .benefits-grid { grid-template-columns: 1fr; } }
+
+    /* HOW */
+    .how { padding: 5rem 5%; background: var(--gray-50); }
+    .how-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+    .steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; margin-top: 3rem; position: relative; }
+    .steps::before { content: ''; position: absolute; top: 28px; left: 12%; right: 12%; height: 2px; background: linear-gradient(to right, var(--primary), var(--secondary)); opacity: 0.2; }
+    .step { text-align: center; position: relative; z-index: 1; }
+    .step-n { width: 56px; height: 56px; background: linear-gradient(135deg,var(--primary),var(--secondary)); color: white; border-radius: 50%; font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 6px 20px rgba(13,148,136,0.3); }
+    .step h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .step p { color: var(--gray-500); font-size: 0.82rem; line-height: 1.6; }
+    @media(max-width:600px){ .steps { grid-template-columns: repeat(2,1fr); } .steps::before { display: none; } }
+
+    /* TESTIMONIALS */
+    .testimonials { padding: 5rem 5%; }
+    .test-inner { max-width: 1100px; margin: 0 auto; }
+    .test-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
+    .test-card { background: white; border-radius: var(--radius-lg); padding: 1.8rem; border: 1px solid var(--gray-200); }
+    .test-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
+    .test-avatar { width: 52px; height: 52px; border-radius: 50%; font-size: 0.9rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .test-name { font-weight: 700; font-size: 0.92rem; }
+    .test-service { font-size: 0.78rem; color: var(--gray-500); }
+    .test-earnings { font-size: 0.78rem; font-weight: 700; color: var(--primary); margin-top: 0.2rem; }
+    .test-stars { color: var(--accent); font-size: 0.85rem; margin-bottom: 0.8rem; }
+    .test-card p { color: var(--gray-600); font-size: 0.88rem; line-height: 1.7; font-style: italic; }
+    @media(max-width:900px){ .test-grid { grid-template-columns: 1fr 1fr; } }
+    @media(max-width:600px){ .test-grid { grid-template-columns: 1fr; } }
+
+    /* REQUIREMENTS */
+    .requirements { padding: 5rem 5%; background: var(--gray-50); }
+    .req-inner { max-width: 900px; margin: 0 auto; }
+    .req-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 3rem; align-items: start; }
+    .req-list { list-style: none; }
+    .req-list li { display: flex; align-items: flex-start; gap: 0.8rem; padding: 0.8rem 0; border-bottom: 1px solid var(--gray-200); font-size: 0.9rem; }
+    .req-list li:last-child { border-bottom: none; }
+    .req-list .ico { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .req-list .txt strong { display: block; font-weight: 700; margin-bottom: 0.2rem; }
+    .req-list .txt span { color: var(--gray-500); font-size: 0.82rem; }
+    .req-img { background: linear-gradient(135deg, #134e4a, #0d9488); border-radius: 20px; padding: 2.5rem; color: white; }
+    .req-img h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 1rem; }
+    .req-img ul { list-style: none; }
+    .req-img ul li { padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.88rem; display: flex; align-items: center; gap: 0.7rem; color: #99f6e4; }
+    .req-img ul li:last-child { border-bottom: none; }
+    @media(max-width:768px){ .req-grid { grid-template-columns: 1fr; } }
+
+    /* CTA */
+    .cta { padding: 6rem 5%; background: linear-gradient(135deg, #042f2e, #0d9488); text-align: center; }
+    .cta h2 { font-size: clamp(1.8rem,3vw,2.8rem); color: white; font-weight: 900; margin-bottom: 1rem; }
+    .cta p { color: #99f6e4; font-size: 1rem; margin-bottom: 2.5rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* FOOTER */
+    footer { background: #0a0a0a; color: var(--gray-500); padding: 2rem 5%; text-align: center; font-size: 0.85rem; }
+    footer a { color: var(--gray-500); text-decoration: none; }
+    footer a:hover { color: white; }
+    .footer-links { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 1rem; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">Hogar<span>Pro</span></a>
+  <ul>
+    <li><a href="#beneficios">Beneficios</a></li>
+    <li><a href="#como-funciona">Cómo funciona</a></li>
+    <li><a href="#testimonios">Testimonios</a></li>
+    <li><a href="#requisitos">Requisitos</a></li>
+  </ul>
+  <div class="nav-btns">
+    <a href="login.html" class="btn btn-secondary btn-sm">Iniciar sesión</a>
+    <a href="register.html" class="btn btn-primary btn-sm">Registrarse gratis</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">💼 +2,400 profesionales activos en España</div>
+      <h1>Trabaja cuando<br/>quieras.<br/>Gana <span class="hl">lo que mereces.</span></h1>
+      <p>Únete a la plataforma de servicios del hogar que más crece en España. Tú decides tu horario, tu tarifa y tu zona de trabajo.</p>
+      <div class="hero-btns">
+        <a href="register.html" class="btn btn-white btn-lg">Registrarme gratis →</a>
+        <a href="#como-funciona" class="btn btn-lg" style="background:rgba(255,255,255,0.12);color:white;border:1.5px solid rgba(255,255,255,0.25);">Ver cómo funciona</a>
+      </div>
+      <div style="display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;">
+        <div style="color:#99f6e4;font-size:0.82rem;">✅ Sin comisión el primer mes</div>
+        <div style="color:#99f6e4;font-size:0.82rem;">✅ Cobro garantizado</div>
+        <div style="color:#99f6e4;font-size:0.82rem;">✅ Soporte 24/7</div>
+      </div>
+    </div>
+
+    <!-- EARNINGS CALCULATOR -->
+    <div class="earnings-card">
+      <div class="earn-title">Calculadora de ingresos</div>
+      <div class="earn-slider-wrap">
+        <div class="earn-slider-label">
+          <span>Horas por semana</span>
+          <strong id="hrs-val">20 horas</strong>
+        </div>
+        <input type="range" min="5" max="50" value="20" id="hrs-slider" oninput="calcEarnings()" />
+      </div>
+      <div class="earn-slider-wrap">
+        <div class="earn-slider-label">
+          <span>Tarifa por hora</span>
+          <strong id="rate-val">25 €/h</strong>
+        </div>
+        <input type="range" min="15" max="80" value="25" id="rate-slider" oninput="calcEarnings()" />
+      </div>
+      <div class="earn-result">
+        <div class="earn-amount" id="monthly-earn">1.720 €</div>
+        <div class="earn-label">ingresos estimados al mes</div>
+      </div>
+      <div class="earn-breakdown">
+        <div class="earn-item">
+          <div class="val" id="weekly-earn">430 €</div>
+          <div class="lbl">por semana</div>
+        </div>
+        <div class="earn-item">
+          <div class="val" id="yearly-earn">20.640 €</div>
+          <div class="lbl">al año</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-bar-inner">
+    <div><div class="sbar-num">2.400+</div><div class="sbar-lbl">Profesionales activos</div></div>
+    <div><div class="sbar-num">1.850 €</div><div class="sbar-lbl">Media mensual de ingresos</div></div>
+    <div><div class="sbar-num">4.9 ⭐</div><div class="sbar-lbl">Valoración media de pros</div></div>
+    <div><div class="sbar-num">151</div><div class="sbar-lbl">Ciudades disponibles</div></div>
+  </div>
+</div>
+
+<!-- BENEFITS -->
+<div class="benefits" id="beneficios">
+  <div class="benefits-inner">
+    <div class="section-center">
+      <div class="section-tag">Por qué HogarPro</div>
+      <h2 class="section-title">Todo lo que necesitas para crecer</h2>
+      <p class="section-sub">No solo es trabajo — es una plataforma diseñada para que los profesionales ganen más y trabajen mejor.</p>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-ico">📅</div>
+        <h3>Tú controlas tu agenda</h3>
+        <p>Activa o desactiva tu disponibilidad cuando quieras. Sin jefes, sin horarios fijos. Trabaja los días y las horas que tú elijas.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-ico">💰</div>
+        <h3>Cobro garantizado siempre</h3>
+        <p>El pago está asegurado antes de que empieces. Nunca más impagos ni clientes que no pagan. HogarPro retiene el dinero y te lo transfiere al terminar.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-ico">🎯</div>
+        <h3>Clientes en tu zona</h3>
+        <p>Recibes solicitudes de trabajo solo en las ciudades y barrios que hayas elegido. Sin desplazamientos innecesarios.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-ico">⭐</div>
+        <h3>Reputación verificada</h3>
+        <p>Tu perfil muestra tus valoraciones reales, trabajos completados y certificaciones. Cuanto mejor trabajes, más reservas recibirás.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-ico">📱</div>
+        <h3>App todo en uno</h3>
+        <p>Gestiona tus reservas, mensajes, facturas y pagos desde una sola app. Simple, rápida y sin complicaciones.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-ico">🛡️</div>
+        <h3>Seguro de responsabilidad</h3>
+        <p>Todos los trabajos están cubiertos por un seguro de responsabilidad civil. Trabaja con total tranquilidad.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="how" id="como-funciona">
+  <div class="how-inner">
+    <div class="section-tag">Proceso</div>
+    <h2 class="section-title">Empezar es muy fácil</h2>
+    <p class="section-sub" style="margin:0 auto 0;">En 4 pasos estás activo y recibiendo solicitudes de trabajo.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <h3>Crea tu perfil</h3>
+        <p>Regístrate gratis, añade tu foto, especialidades y zona de trabajo.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <h3>Verificación rápida</h3>
+        <p>Subimos tu DNI y certificados. En menos de 24h estás verificado.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <h3>Recibe solicitudes</h3>
+        <p>Los clientes te encuentran y reservan directamente desde la plataforma.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <h3>Trabaja y cobra</h3>
+        <p>Realiza el servicio y el dinero llega a tu cuenta en 24-48h.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="testimonials" id="testimonios">
+  <div class="test-inner">
+    <div class="section-center">
+      <div class="section-tag">Testimonios</div>
+      <h2 class="section-title">Lo que dicen nuestros profesionales</h2>
+      <p class="section-sub">Más de 2.400 profesionales ya confían en HogarPro para gestionar su negocio.</p>
+    </div>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="test-header">
+          <div class="test-avatar avt-g1">AM</div>
+          <div>
+            <div class="test-name">Ana Martínez</div>
+            <div class="test-service">🧹 Limpieza del hogar · Madrid</div>
+            <div class="test-earnings">Gana ~2.100 €/mes</div>
+          </div>
+        </div>
+        <div class="test-stars">★★★★★</div>
+        <p>"Llevaba años trabajando por cuenta propia y siempre tenía problemas con los cobros. Desde que estoy en HogarPro, cada semana me llegan nuevos clientes y el dinero llega puntual. Ha cambiado mi vida."</p>
+      </div>
+      <div class="test-card">
+        <div class="test-header">
+          <div class="test-avatar avt-g2">CR</div>
+          <div>
+            <div class="test-name">Carlos Ruiz</div>
+            <div class="test-service">🔧 Fontanería · Barcelona</div>
+            <div class="test-earnings">Gana ~2.800 €/mes</div>
+          </div>
+        </div>
+        <div class="test-stars">★★★★★</div>
+        <p>"Trabajo 30 horas a la semana y gano más que en mi anterior empresa donde trabajaba 50 horas. La plataforma es muy fácil y los clientes ya vienen con el trabajo claro. Muy recomendable."</p>
+      </div>
+      <div class="test-card">
+        <div class="test-header">
+          <div class="test-avatar avt-g4">LG</div>
+          <div>
+            <div class="test-name">Laura Gómez</div>
+            <div class="test-service">⚡ Electricidad · Valencia</div>
+            <div class="test-earnings">Gana ~1.950 €/mes</div>
+          </div>
+        </div>
+        <div class="test-stars">★★★★★</div>
+        <p>"Como electricista autónoma era difícil encontrar clientes. HogarPro me llena la agenda cada semana. Lo mejor es que los clientes ya saben el precio antes de reservar, no hay sorpresas."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REQUIREMENTS -->
+<div class="requirements" id="requisitos">
+  <div class="req-inner">
+    <div class="section-center">
+      <div class="section-tag">Requisitos</div>
+      <h2 class="section-title">¿Qué necesitas para unirte?</h2>
+      <p class="section-sub">Ser parte de HogarPro es sencillo. Solo necesitas ganas de trabajar y cumplir estos requisitos básicos.</p>
+    </div>
+    <div class="req-grid">
+      <ul class="req-list">
+        <li>
+          <span class="ico">🪪</span>
+          <div class="txt"><strong>DNI o NIE válido</strong><span>Documento de identidad en vigor para verificar tu identidad.</span></div>
+        </li>
+        <li>
+          <span class="ico">💼</span>
+          <div class="txt"><strong>Experiencia en tu sector</strong><span>Al menos 6 meses de experiencia demostrable en el servicio que ofreces.</span></div>
+        </li>
+        <li>
+          <span class="ico">📞</span>
+          <div class="txt"><strong>Teléfono móvil activo</strong><span>Para recibir notificaciones y comunicarte con los clientes.</span></div>
+        </li>
+        <li>
+          <span class="ico">🏦</span>
+          <div class="txt"><strong>Cuenta bancaria española</strong><span>Para recibir tus pagos semanalmente de forma directa.</span></div>
+        </li>
+        <li>
+          <span class="ico">✅</span>
+          <div class="txt"><strong>Pasar la verificación</strong><span>Un breve proceso de verificación de antecedentes. Rápido y gratuito.</span></div>
+        </li>
+      </ul>
+      <div class="req-img">
+        <h3>¿Qué incluye tu perfil Pro?</h3>
+        <ul>
+          <li>⭐ Sistema de valoraciones verificadas</li>
+          <li>📅 Calendario de disponibilidad</li>
+          <li>💬 Chat con clientes</li>
+          <li>📊 Panel de estadísticas</li>
+          <li>🧾 Facturas automáticas</li>
+          <li>💳 Cobros semanales</li>
+          <li>🛡️ Seguro de responsabilidad incluido</li>
+          <li>📱 App móvil gratuita</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta">
+  <h2>¿Listo para empezar a ganar?</h2>
+  <p>Regístrate gratis hoy. Sin cuota de entrada, sin permanencia. El primer mes sin comisión.</p>
+  <div class="cta-btns">
+    <a href="register.html" class="btn btn-white btn-xl">Registrarme como profesional →</a>
+    <a href="pros.html" class="btn btn-xl" style="background:rgba(255,255,255,0.12);color:white;border:1.5px solid rgba(255,255,255,0.25);">Ver otros profesionales</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Inicio</a>
+    <a href="pros.html">Profesionales</a>
+    <a href="pricing.html">Precios</a>
+    <a href="login.html">Iniciar sesión</a>
+    <a href="register.html">Registrarse</a>
+  </div>
+  <div>© 2026 HogarPro · Todos los derechos reservados</div>
+</footer>
+
+<script>
+  function calcEarnings() {
+    const hrs = parseInt(document.getElementById('hrs-slider').value);
+    const rate = parseInt(document.getElementById('rate-slider').value);
+    const commission = 0.17;
+    const weekly = hrs * rate * (1 - commission);
+    const monthly = weekly * 4;
+    const yearly = monthly * 12;
+
+    document.getElementById('hrs-val').textContent = hrs + ' horas';
+    document.getElementById('rate-val').textContent = rate + ' €/h';
+    document.getElementById('weekly-earn').textContent = Math.round(weekly).toLocaleString('es') + ' €';
+    document.getElementById('monthly-earn').textContent = Math.round(monthly).toLocaleString('es') + ' €';
+    document.getElementById('yearly-earn').textContent = Math.round(yearly).toLocaleString('es') + ' €';
+  }
+  calcEarnings();
+</script>
+</body>
+</html>
