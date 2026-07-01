@@ -7,7 +7,7 @@
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
   <meta name="robots" content="index, follow" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Crear cuenta — HogarPro</title>
+  <title>Crear cuenta — HogarFast</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/shared.css" />
   <style>
@@ -122,7 +122,7 @@
 <body>
 
 <nav class="auth-nav">
-  <a href="index.html" class="logo">Hogar<span>Pro</span></a>
+  <a href="index.html" class="logo">Hogar<span>Fast</span></a>
   <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.83rem;color:var(--gray-500);">
     ¿Ya tienes cuenta?
     <a href="login.html" class="btn btn-secondary btn-sm">Iniciar sesión</a>
@@ -136,7 +136,7 @@
     <div class="auth-left-inner">
       <div>
         <div class="left-brand">
-          <div class="brand-name">Hogar<span>Pro</span></div>
+          <div class="brand-name">Hogar<span>Fast</span></div>
           <div class="brand-sub">La plataforma #1 de servicios del hogar en España</div>
         </div>
         <div class="left-headline">
@@ -151,9 +151,9 @@
         </div>
         <div id="benefits-pro" style="display:none;">
           <div class="benefit-card"><div class="b-ico">💶</div><div><div class="b-title">Gana más y gestiona tu agenda</div><div class="b-desc">Tú pones el precio y el horario. Sin jefes.</div></div></div>
-          <div class="benefit-card"><div class="b-ico">📱</div><div><div class="b-title">Clientes llegan solos a ti</div><div class="b-desc">HogarPro te da visibilidad en toda España</div></div></div>
+          <div class="benefit-card"><div class="b-ico">📱</div><div><div class="b-title">Clientes llegan solos a ti</div><div class="b-desc">HogarFast te da visibilidad en toda España</div></div></div>
           <div class="benefit-card"><div class="b-ico">📊</div><div><div class="b-title">Panel profesional completo</div><div class="b-desc">Estadísticas, valoraciones y pagos en un sitio</div></div></div>
-          <div class="benefit-card"><div class="b-ico">🏅</div><div><div class="b-title">Sello "Verificado HogarPro"</div><div class="b-desc">Genera confianza y consigue más contratos</div></div></div>
+          <div class="benefit-card"><div class="b-ico">🏅</div><div><div class="b-title">Sello "Verificado HogarFast"</div><div class="b-desc">Genera confianza y consigue más contratos</div></div></div>
         </div>
       </div>
       <div class="left-stats">
@@ -167,9 +167,9 @@
   <!-- RIGHT -->
   <div class="auth-right">
     <div class="auth-box">
-      <div class="auth-box-logo">Hogar<span>Pro</span></div>
+      <div class="auth-box-logo">Hogar<span>Fast</span></div>
       <h1>Crea tu cuenta gratis</h1>
-      <p class="sub">Únete a más de 8,000 usuarios que ya confían en HogarPro</p>
+      <p class="sub">Únete a más de 8,000 usuarios que ya confían en HogarFast</p>
 
       <!-- PROMO BANNER -->
       <div class="promo-banner" id="promo-banner">
@@ -354,7 +354,7 @@
 <div class="success-overlay" id="success-overlay">
   <div class="s-icon">🎉</div>
   <h2>¡Cuenta creada!</h2>
-  <p id="success-msg">Bienvenido a HogarPro. Redirigiendo a tu panel...</p>
+  <p id="success-msg">Bienvenido a HogarFast. Redirigiendo a tu panel...</p>
   <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
     <div class="btn btn-primary btn-lg">Ir a mi panel →</div>
   </div>
@@ -372,7 +372,7 @@
     if (type === 'pro') {
       document.getElementById('promo-banner').style.display = 'none';
       document.getElementById('left-title').textContent = 'Trabaja con total libertad';
-      document.getElementById('left-desc').textContent = 'Únete a +500 profesionales que ya generan ingresos extra con HogarPro. Sin cuotas mensuales.';
+      document.getElementById('left-desc').textContent = 'Únete a +500 profesionales que ya generan ingresos extra con HogarFast. Sin cuotas mensuales.';
       document.getElementById('benefits-client').style.display = 'none';
       document.getElementById('benefits-pro').style.display = 'block';
       document.getElementById('reg-btn').textContent = 'Registrarme como profesional →';
@@ -419,7 +419,7 @@
       const overlay = document.getElementById('success-overlay');
       document.getElementById('success-msg').textContent = selectedType === 'pro'
         ? 'Cuenta profesional creada. Revisaremos tu documentación en 24h. Redirigiendo...'
-        : 'Bienvenido a HogarPro. Aquí tienes 10€ de descuento en tu primera reserva. Redirigiendo...';
+        : 'Bienvenido a HogarFast. Aquí tienes 10€ de descuento en tu primera reserva. Redirigiendo...';
       overlay.classList.add('show');
       setTimeout(() => {
         window.location.href = selectedType === 'pro' ? 'dashboard/pro.html' : 'dashboard/client.html';
