@@ -347,7 +347,7 @@
             </div>
             <div class="form-group">
               <label class="form-label">Hora de llegada</label>
-              <select class="form-control">
+              <select class="form-control" id="book-time">
                 <option>09:00</option><option>10:00</option><option selected>11:00</option>
                 <option>12:00</option><option>15:00</option><option>16:00</option><option>17:00</option>
               </select>
@@ -731,7 +731,7 @@
     document.querySelector('.progress-bar').style.display = 'none';
 
     const total = document.getElementById('sum-total')?.textContent || '—';
-    const service = document.querySelector('.service-opt.selected .svc-name')?.textContent || '—';
+    const service = document.querySelector('.service-opt.selected .s-name')?.textContent || '—';
     const date = document.getElementById('book-date')?.value || '';
     const time = document.getElementById('book-time')?.value || '';
     const ref = '#HF' + Date.now().toString().slice(-6);
