@@ -113,29 +113,107 @@
     }
     .hero p { color: #99f6e4; font-size: 1.1rem; max-width: 560px; margin: 0 auto 2.5rem; line-height: 1.7; }
 
-    /* SEARCH BAR */
-    .search-bar {
-      display: flex;
-      background: white;
-      border-radius: var(--radius-xl);
-      padding: 0.5rem;
-      max-width: 680px;
-      margin: 0 auto 3rem;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    /* SEARCH BOX */
+    .search-box { max-width: 780px; margin: 0 auto 2.5rem; }
+
+    .service-pills {
+      display: flex; gap: 0.5rem; flex-wrap: wrap;
+      justify-content: center; margin-bottom: 1rem;
     }
-    .search-bar select, .search-bar input {
-      flex: 1;
-      border: none;
-      outline: none;
-      padding: 0.7rem 1rem;
-      font-size: 0.9rem;
+    .sp {
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      color: white; border-radius: 50px;
+      padding: 0.4rem 1rem; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
       font-family: inherit;
-      background: transparent;
-      color: var(--gray-800);
     }
-    .search-bar .separator { width: 1px; background: var(--gray-200); margin: 0.5rem 0; }
-    .search-bar button { background: var(--primary); color: white; border: none; padding: 0.7rem 1.5rem; border-radius: var(--radius-lg); font-weight: 700; cursor: pointer; font-size: 0.9rem; transition: background 0.15s; white-space: nowrap; }
-    .search-bar button:hover { background: var(--primary-dark); }
+    .sp:hover, .sp.active {
+      background: white; color: var(--primary);
+      border-color: white;
+    }
+
+    .search-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.3);
+      overflow: visible;
+    }
+    .search-fields {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr 1px 1fr auto;
+      align-items: stretch;
+      padding: 0.5rem 0.5rem 0.5rem 0;
+    }
+    .sf {
+      padding: 0.7rem 1.2rem;
+      cursor: pointer;
+      border-radius: 14px;
+      transition: background 0.12s;
+      position: relative;
+    }
+    .sf:hover { background: var(--gray-50); }
+    .sf label {
+      display: block; font-size: 0.7rem; font-weight: 800;
+      color: var(--gray-800); text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 0.2rem; cursor: pointer;
+    }
+    .sf input, .sf select {
+      width: 100%; border: none; outline: none;
+      font-size: 0.92rem; font-family: inherit;
+      color: var(--gray-500); background: transparent;
+      padding: 0; cursor: pointer;
+    }
+    .sf input::placeholder { color: var(--gray-400); }
+    .sf select { appearance: none; -webkit-appearance: none; }
+    .sf input:focus, .sf select:focus { color: var(--gray-900); }
+
+    .sf-divider {
+      width: 1px; background: var(--gray-200);
+      margin: 0.8rem 0; align-self: stretch;
+    }
+
+    .search-btn-wrap { padding: 0.4rem 0.4rem 0.4rem 0.6rem; display: flex; align-items: center; }
+    .search-btn {
+      background: linear-gradient(135deg, #0d9488, #0891b2);
+      color: white; border: none;
+      padding: 0.95rem 1.6rem;
+      border-radius: 14px;
+      font-weight: 800; font-size: 0.95rem;
+      cursor: pointer; white-space: nowrap;
+      font-family: inherit;
+      display: flex; align-items: center; gap: 0.5rem;
+      transition: all 0.15s;
+      box-shadow: 0 4px 15px rgba(13,148,136,0.4);
+    }
+    .search-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 25px rgba(13,148,136,0.5);
+    }
+    .search-btn svg { flex-shrink: 0; }
+
+    .city-dropdown {
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: white; border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      border: 1px solid var(--gray-100);
+      z-index: 100; overflow: hidden; margin-top: 4px;
+    }
+    .city-item {
+      padding: 0.65rem 1rem; font-size: 0.88rem;
+      cursor: pointer; color: var(--gray-700);
+      transition: background 0.1s;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .city-item:hover { background: var(--primary-light); color: var(--primary); }
+
+    @media (max-width: 700px) {
+      .search-fields { grid-template-columns: 1fr; padding: 0.8rem; gap: 0; }
+      .sf-divider { width: 100%; height: 1px; margin: 0; }
+      .search-btn-wrap { padding: 0 0 0.5rem 0; }
+      .search-btn { width: 100%; justify-content: center; }
+      .service-pills { display: none; }
+    }
 
     .hero-trust { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
     .trust-pill { display: flex; align-items: center; gap: 0.5rem; color: #a5b4fc; font-size: 0.83rem; }
@@ -290,8 +368,6 @@
       .footer-grid { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 600px) {
-      .search-bar { flex-direction: column; }
-      .search-bar .separator { display: none; }
       .steps-grid, .stats-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; }
     }
@@ -324,27 +400,60 @@
       <h1>Todos los servicios<br/>de tu hogar,<br/><span class="highlight">en un solo lugar</span></h1>
       <p>Limpieza, fontanería, electricidad, mudanzas y más. Profesionales verificados a tu puerta en menos de 24h.</p>
 
-      <div class="search-bar">
-        <div class="city-input-wrap" style="flex:1;min-width:160px;">
-          <input id="hero-city" type="text" placeholder="🏙️ Ciudad..." autocomplete="off"
-            style="width:100%;border:none;outline:none;padding:0.7rem 1rem;font-size:0.9rem;font-family:inherit;background:transparent;color:#1f2937;" />
-          <div class="city-dropdown" id="hero-city-drop"></div>
+      <div class="search-box">
+        <!-- Quick pills -->
+        <div class="service-pills">
+          <button class="sp active" onclick="selectPill(this,'Limpieza')">🧹 Limpieza</button>
+          <button class="sp" onclick="selectPill(this,'Fontanería')">🔧 Fontanería</button>
+          <button class="sp" onclick="selectPill(this,'Electricidad')">⚡ Electricidad</button>
+          <button class="sp" onclick="selectPill(this,'Mudanzas')">🚚 Mudanzas</button>
+          <button class="sp" onclick="selectPill(this,'Jardinería')">🌿 Jardín</button>
+          <button class="sp" onclick="selectPill(this,'Pintura')">🎨 Pintura</button>
         </div>
-        <div class="separator"></div>
-        <select style="flex:1;border:none;outline:none;padding:0.7rem 1rem;font-size:0.9rem;font-family:inherit;background:transparent;color:#1f2937;">
-          <option>🧹 Todos los servicios</option>
-          <option>🧹 Limpieza</option>
-          <option>🔧 Fontanería</option>
-          <option>⚡ Electricidad</option>
-          <option>🎨 Pintura</option>
-          <option>🚚 Mudanzas</option>
-          <option>🌿 Jardín</option>
-          <option>🪚 Bricolaje</option>
-          <option>🐶 Pet Sitting</option>
-        </select>
-        <div class="separator"></div>
-        <input type="date" style="border:none;outline:none;padding:0.7rem 0.5rem;font-size:0.9rem;font-family:inherit;background:transparent;color:#1f2937;" />
-        <button onclick="window.location='pros.html'">Buscar →</button>
+
+        <!-- Main card -->
+        <div class="search-card">
+          <div class="search-fields">
+
+            <div class="sf">
+              <label>📍 Ciudad</label>
+              <input id="hero-city" type="text" placeholder="¿Dónde necesitas ayuda?" autocomplete="off" />
+              <div class="city-dropdown" id="hero-city-drop" style="display:none;"></div>
+            </div>
+
+            <div class="sf-divider"></div>
+
+            <div class="sf">
+              <label>🔧 Servicio</label>
+              <select id="hero-service">
+                <option value="">Todos los servicios</option>
+                <option value="Limpieza">🧹 Limpieza</option>
+                <option value="Fontanería">🔧 Fontanería</option>
+                <option value="Electricidad">⚡ Electricidad</option>
+                <option value="Pintura">🎨 Pintura</option>
+                <option value="Mudanzas">🚚 Mudanzas</option>
+                <option value="Jardinería">🌿 Jardinería</option>
+                <option value="Bricolaje">🪚 Bricolaje</option>
+                <option value="Pet Sitting">🐶 Pet Sitting</option>
+              </select>
+            </div>
+
+            <div class="sf-divider"></div>
+
+            <div class="sf">
+              <label>📅 ¿Cuándo?</label>
+              <input type="date" id="hero-date" />
+            </div>
+
+            <div class="search-btn-wrap">
+              <button class="search-btn" onclick="doSearch()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Buscar
+              </button>
+            </div>
+
+          </div>
+        </div>
       </div>
 
       <div class="hero-trust">
@@ -689,6 +798,28 @@
     });
   });
   initCityAutocomplete('hero-city', 'hero-city-drop');
+
+  function selectPill(btn, service) {
+    document.querySelectorAll('.sp').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const sel = document.getElementById('hero-service');
+    if (sel) sel.value = service;
+  }
+
+  function doSearch() {
+    const city = document.getElementById('hero-city').value.trim();
+    const service = document.getElementById('hero-service').value;
+    const date = document.getElementById('hero-date').value;
+    const params = new URLSearchParams();
+    if (city) params.set('ciudad', city);
+    if (service) params.set('servicio', service);
+    if (date) params.set('fecha', date);
+    window.location.href = 'pros.html' + (params.toString() ? '?' + params.toString() : '');
+  }
+
+  /* Set today as min date */
+  const dateInput = document.getElementById('hero-date');
+  if (dateInput) dateInput.min = new Date().toISOString().split('T')[0];
 </script>
 </body>
 </html>
