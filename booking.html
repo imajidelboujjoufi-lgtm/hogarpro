@@ -166,16 +166,54 @@
     .guarantee p { font-size: 0.75rem; color: #065f46; line-height: 1.5; }
 
     /* SUCCESS */
-    .success-page { display: none; text-align: center; padding: 4rem 2rem; max-width: 560px; margin: 0 auto; }
-    .success-page .success-icon { font-size: 5rem; margin-bottom: 1.5rem; animation: pop 0.5s ease; }
+    .success-page { display: none; padding: 2.5rem 1rem; max-width: 600px; margin: 0 auto; }
+    .success-page .success-icon { font-size: 4rem; margin-bottom: 1rem; animation: pop 0.5s ease; text-align:center; }
     @keyframes pop { 0%{transform:scale(0)} 80%{transform:scale(1.1)} 100%{transform:scale(1)} }
-    .success-page h2 { font-size: 2rem; font-weight: 900; margin-bottom: 0.8rem; }
-    .success-page p { color: var(--gray-500); font-size: 1rem; line-height: 1.7; margin-bottom: 1.5rem; }
-    .success-details { background: var(--gray-50); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem; text-align: left; }
-    .success-detail-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--gray-200); font-size: 0.88rem; }
+    .success-page h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 0.4rem; text-align:center; }
+    .success-page > p { color: var(--gray-500); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem; text-align:center; }
+    .success-details { background: var(--gray-50); border-radius: var(--radius-lg); padding: 1.3rem 1.5rem; margin-bottom: 1.5rem; }
+    .success-detail-row { display: flex; justify-content: space-between; padding: 0.45rem 0; border-bottom: 1px solid var(--gray-200); font-size: 0.87rem; }
     .success-detail-row:last-child { border-bottom: none; }
     .success-detail-row .lbl { color: var(--gray-500); }
     .success-detail-row .val { font-weight: 700; }
+
+    /* Payment methods */
+    .pay-title { font-size:0.88rem; font-weight:800; color:var(--gray-700); margin-bottom:0.8rem; text-transform:uppercase; letter-spacing:0.5px; }
+    .pay-methods { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:1.5rem; }
+    .pay-method {
+      border: 2px solid var(--gray-200); border-radius: var(--radius-lg);
+      padding: 1.2rem; cursor:pointer; transition:all 0.15s; text-align:center;
+      background:white;
+    }
+    .pay-method:hover { border-color:var(--primary); background:var(--primary-light); }
+    .pay-method.selected { border-color:var(--primary); background:var(--primary-light); }
+    .pay-method .pm-icon { font-size:2rem; margin-bottom:0.4rem; }
+    .pay-method .pm-name { font-weight:800; font-size:0.9rem; color:var(--gray-900); }
+    .pay-method .pm-desc { font-size:0.75rem; color:var(--gray-500); margin-top:0.15rem; }
+    .pay-method.selected .pm-desc { color:var(--primary); }
+
+    .pay-details { display:none; border-radius:var(--radius-lg); padding:1.4rem; margin-bottom:1.5rem; }
+    .pay-details.show { display:block; }
+    .pay-details.bizum { background: linear-gradient(135deg,#d1fae5,#a7f3d0); border:1.5px solid #6ee7b7; }
+    .pay-details.transfer { background: linear-gradient(135deg,#eff6ff,#dbeafe); border:1.5px solid #93c5fd; }
+
+    .pay-number {
+      font-size:1.8rem; font-weight:900; letter-spacing:2px;
+      color:var(--gray-900); margin:0.5rem 0 0.3rem; display:flex;
+      align-items:center; gap:0.8rem; justify-content:center;
+    }
+    .copy-btn {
+      background:white; border:1.5px solid var(--gray-300);
+      border-radius:8px; padding:0.3rem 0.7rem; font-size:0.75rem;
+      font-weight:700; cursor:pointer; font-family:inherit; color:var(--gray-700);
+      transition:all 0.15s;
+    }
+    .copy-btn:hover { background:var(--primary); color:white; border-color:var(--primary); }
+    .pay-ref { font-size:0.8rem; color:#065f46; font-weight:600; margin-top:0.4rem; text-align:center; }
+    .pay-steps { margin-top:1rem; }
+    .pay-step { display:flex; align-items:flex-start; gap:0.6rem; margin-bottom:0.6rem; font-size:0.83rem; color:var(--gray-700); }
+    .pay-step-num { width:20px; height:20px; border-radius:50%; background:var(--primary); color:white; font-size:0.7rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .pay-warn { background:#fef3c7; border:1px solid #fbbf24; border-radius:10px; padding:0.7rem 1rem; font-size:0.8rem; color:#92400e; font-weight:600; margin-top:1rem; }
 
     @media (max-width: 768px) {
       .booking-layout { grid-template-columns: 1fr; }
@@ -488,20 +526,80 @@
 <!-- SUCCESS -->
 <div class="success-page" id="success-page">
   <div class="success-icon">🎉</div>
-  <h2>¡Reserva confirmada!</h2>
-  <p>Ana Martínez ha sido notificada y recibirás una confirmación por WhatsApp en los próximos minutos.</p>
+  <h2>¡Reserva recibida!</h2>
+  <p>Confirmaremos tu reserva en cuanto recibamos el pago. Te avisamos por WhatsApp.</p>
+
+  <!-- Booking summary -->
   <div class="success-details">
-    <div class="success-detail-row"><span class="lbl">Profesional</span><span class="val">👩 Ana Martínez</span></div>
-    <div class="success-detail-row"><span class="lbl">Servicio</span><span class="val" id="conf-service">Limpieza estándar</span></div>
-    <div class="success-detail-row"><span class="lbl">Fecha y hora</span><span class="val" id="conf-date">Mañana a las 11:00h</span></div>
-    <div class="success-detail-row"><span class="lbl">Duración</span><span class="val">3 horas</span></div>
-    <div class="success-detail-row"><span class="lbl">Total pagado</span><span class="val" id="conf-total" style="color:var(--primary);">82.50€</span></div>
-    <div class="success-detail-row"><span class="lbl">Referencia</span><span class="val" style="color:var(--gray-400);">#HP-2026-1090</span></div>
+    <div class="success-detail-row"><span class="lbl">Servicio</span><span class="val" id="conf-service">—</span></div>
+    <div class="success-detail-row"><span class="lbl">Fecha y hora</span><span class="val" id="conf-date">—</span></div>
+    <div class="success-detail-row"><span class="lbl">Total a pagar</span><span class="val" id="conf-total" style="color:var(--primary);">—</span></div>
+    <div class="success-detail-row"><span class="lbl">Referencia</span><span class="val" id="conf-ref" style="color:var(--gray-400);">—</span></div>
   </div>
-  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-    <a href="dashboard/client.html" class="btn btn-primary btn-lg">Ver mis reservas</a>
-    <a href="index.html" class="btn btn-secondary btn-lg">Volver al inicio</a>
+
+  <!-- Payment method selector -->
+  <p class="pay-title">💳 Elige cómo pagar</p>
+  <div class="pay-methods">
+    <div class="pay-method" id="pm-bizum" onclick="selectPayment('bizum')">
+      <div class="pm-icon">📱</div>
+      <div class="pm-name">Bizum</div>
+      <div class="pm-desc">Pago instantáneo desde tu banco</div>
+    </div>
+    <div class="pay-method" id="pm-transfer" onclick="selectPayment('transfer')">
+      <div class="pm-icon">🏦</div>
+      <div class="pm-name">Transferencia</div>
+      <div class="pm-desc">Transferencia bancaria segura</div>
+    </div>
   </div>
+
+  <!-- Bizum details -->
+  <div class="pay-details bizum" id="pd-bizum">
+    <div style="text-align:center;">
+      <div style="font-size:0.82rem;font-weight:700;color:#065f46;margin-bottom:0.3rem;">📱 Envía el pago por Bizum a:</div>
+      <div class="pay-number">
+        +34 627 148 198
+        <button class="copy-btn" onclick="copyText('+34627148198','bizum-copy')">
+          <span id="bizum-copy">Copiar</span>
+        </button>
+      </div>
+      <div class="pay-ref">Concepto: <strong id="bizum-ref">HogarFast - #HF0000</strong></div>
+    </div>
+    <div class="pay-steps">
+      <div class="pay-step"><div class="pay-step-num">1</div><span>Abre la app de tu banco y entra en Bizum</span></div>
+      <div class="pay-step"><div class="pay-step-num">2</div><span>Envía <strong id="bizum-amount">—</strong> al número <strong>627 148 198</strong></span></div>
+      <div class="pay-step"><div class="pay-step-num">3</div><span>Pon como concepto: <strong id="bizum-concept">HogarFast - #HF0000</strong></span></div>
+      <div class="pay-step"><div class="pay-step-num">4</div><span>¡Listo! Te confirmaremos por WhatsApp en minutos ✅</span></div>
+    </div>
+    <div class="pay-warn">⚠️ El importe debe coincidir exactamente. Si tienes dudas, escríbenos por WhatsApp.</div>
+  </div>
+
+  <!-- Transfer details -->
+  <div class="pay-details transfer" id="pd-transfer">
+    <div style="text-align:center;margin-bottom:1rem;">
+      <div style="font-size:0.82rem;font-weight:700;color:#1e40af;margin-bottom:0.6rem;">🏦 Datos para la transferencia:</div>
+      <div style="background:white;border-radius:10px;padding:1rem;display:inline-block;min-width:280px;">
+        <div style="font-size:0.78rem;color:var(--gray-500);margin-bottom:0.2rem;">Beneficiario</div>
+        <div style="font-weight:800;font-size:0.95rem;color:var(--gray-900);margin-bottom:0.8rem;">HogarFast Services</div>
+        <div style="font-size:0.78rem;color:var(--gray-500);margin-bottom:0.2rem;">IBAN</div>
+        <div style="font-weight:800;font-size:0.9rem;color:var(--gray-900);letter-spacing:1px;display:flex;align-items:center;gap:0.5rem;justify-content:center;">
+          ES00 0000 0000 0000 0000 0000
+          <button class="copy-btn" onclick="copyText('ES0000000000000000000000','iban-copy')"><span id="iban-copy">Copiar</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="pay-steps">
+      <div class="pay-step"><div class="pay-step-num">1</div><span>Accede a tu banca online</span></div>
+      <div class="pay-step"><div class="pay-step-num">2</div><span>Realiza una transferencia de <strong id="transfer-amount">—</strong> al IBAN de arriba</span></div>
+      <div class="pay-step"><div class="pay-step-num">3</div><span>Concepto: <strong id="transfer-ref">HogarFast - #HF0000</strong></span></div>
+      <div class="pay-step"><div class="pay-step-num">4</div><span>Tardamos 1-2 días hábiles en confirmar la transferencia</span></div>
+    </div>
+    <div class="pay-warn">⚠️ Pon siempre la referencia en el concepto o no podremos identificar tu pago.</div>
+  </div>
+
+  <a href="https://wa.me/34627148198?text=Hola%2C%20acabo%20de%20hacer%20una%20reserva%20en%20HogarFast%20y%20quiero%20confirmar%20el%20pago" target="_blank" class="btn btn-primary" style="width:100%;justify-content:center;display:flex;margin-bottom:0.8rem;">
+    💬 Confirmar pago por WhatsApp
+  </a>
+  <a href="index.html" class="btn btn-secondary" style="width:100%;justify-content:center;display:flex;">Volver al inicio</a>
 </div>
 
 <script src="js/cities.js"></script>
@@ -631,8 +729,45 @@
   function confirmBooking() {
     document.getElementById('main-layout').style.display = 'none';
     document.querySelector('.progress-bar').style.display = 'none';
+
+    const total = document.getElementById('sum-total')?.textContent || '—';
+    const service = document.querySelector('.service-opt.selected .svc-name')?.textContent || '—';
+    const date = document.getElementById('book-date')?.value || '';
+    const time = document.getElementById('book-time')?.value || '';
+    const ref = '#HF' + Date.now().toString().slice(-6);
+
+    document.getElementById('conf-service').textContent = service;
+    document.getElementById('conf-date').textContent = date + (time ? ' a las ' + time : '');
+    document.getElementById('conf-total').textContent = total;
+    document.getElementById('conf-ref').textContent = ref;
+
+    const bizumRef = 'HogarFast ' + ref;
+    ['bizum-ref','bizum-concept','transfer-ref'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = bizumRef;
+    });
+    const amountEls = ['bizum-amount','transfer-amount'];
+    amountEls.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = total;
+    });
+
     document.getElementById('success-page').style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function selectPayment(method) {
+    document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected'));
+    document.querySelectorAll('.pay-details').forEach(d => d.classList.remove('show'));
+    document.getElementById('pm-' + method).classList.add('selected');
+    document.getElementById('pd-' + method).classList.add('show');
+  }
+
+  function copyText(text, spanId) {
+    navigator.clipboard.writeText(text).then(() => {
+      const el = document.getElementById(spanId);
+      if (el) { el.textContent = '✓ Copiado'; setTimeout(() => el.textContent = 'Copiar', 2000); }
+    });
   }
 </script>
 </body>
