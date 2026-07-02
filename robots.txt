@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /forgot-password.html
+Disallow: /reset-password.html
+
+Sitemap: https://hogarfast.com/sitemap.xml
