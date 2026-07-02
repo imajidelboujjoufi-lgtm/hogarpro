@@ -254,7 +254,12 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  const _sb = supabase.createClient(
+    'https://ubncebdkqzxxmhhmzcgw.supabase.co',
+    'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py'
+  );
   let currentRole = 'client';
 
   function setRole(el, role) {
@@ -269,18 +274,33 @@
     else { input.type = 'password'; btn.textContent = '👁'; }
   }
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
     const btn = document.getElementById('login-btn');
     btn.textContent = 'Iniciando sesión...';
     btn.classList.add('btn-loading');
     btn.disabled = true;
     document.getElementById('form-error').style.display = 'none';
-    setTimeout(() => {
-      if (currentRole === 'admin') window.location.href = 'dashboard/admin.html';
-      else if (currentRole === 'pro') window.location.href = 'dashboard/pro.html';
+
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-pw').value;
+
+    try {
+      const { data, error } = await _sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+
+      const { data: profile } = await _sb.from('profiles').select('user_type').eq('id', data.user.id).single();
+      const role = profile?.user_type || currentRole;
+
+      if (role === 'pro') window.location.href = 'dashboard/pro.html';
       else window.location.href = 'dashboard/client.html';
-    }, 900);
+
+    } catch (err) {
+      document.getElementById('form-error').style.display = 'flex';
+      btn.textContent = 'Iniciar sesión →';
+      btn.classList.remove('btn-loading');
+      btn.disabled = false;
+    }
   }
 </script>
 </body>

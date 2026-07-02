@@ -360,7 +360,13 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  const _sb = supabase.createClient(
+    'https://ubncebdkqzxxmhhmzcgw.supabase.co',
+    'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py'
+  );
+
   let selectedType = 'client';
 
   function selectType(type) {
@@ -409,22 +415,69 @@
     label.style.color = cls === 'weak' ? '#ef4444' : cls === 'ok' ? '#f59e0b' : '#10b981';
   }
 
-  function handleRegister(e) {
+  async function handleRegister(e) {
     e.preventDefault();
     const btn = document.getElementById('reg-btn');
     btn.textContent = 'Creando tu cuenta...';
     btn.classList.add('btn-loading');
     btn.disabled = true;
-    setTimeout(() => {
+
+    const inputs = e.target.querySelectorAll('input, select, textarea');
+    const nombre = inputs[0].value.trim();
+    const apellidos = inputs[1].value.trim();
+    const email = inputs[2].value.trim();
+    const phone = inputs[3].value.trim();
+    const city = inputs[4].value;
+    const password = document.getElementById('reg-pw').value;
+    const password2 = document.getElementById('reg-pw2').value;
+
+    if (password !== password2) {
+      alert('Las contraseñas no coinciden');
+      btn.textContent = selectedType === 'pro' ? 'Registrarme como profesional →' : 'Crear mi cuenta gratis →';
+      btn.classList.remove('btn-loading');
+      btn.disabled = false;
+      return;
+    }
+
+    try {
+      const { data, error } = await _sb.auth.signUp({ email, password });
+      if (error) throw error;
+
+      if (data.user) {
+        await _sb.from('profiles').insert({
+          id: data.user.id,
+          full_name: nombre + ' ' + apellidos,
+          phone,
+          city,
+          user_type: selectedType
+        });
+
+        if (selectedType === 'pro') {
+          const serviceEl = document.getElementById('pro-service');
+          await _sb.from('pros').insert({
+            user_id: data.user.id,
+            service_type: serviceEl ? serviceEl.value : '',
+            city
+          });
+        }
+      }
+
       const overlay = document.getElementById('success-overlay');
       document.getElementById('success-msg').textContent = selectedType === 'pro'
         ? 'Cuenta profesional creada. Revisaremos tu documentación en 24h. Redirigiendo...'
         : 'Bienvenido a HogarFast. Aquí tienes 10€ de descuento en tu primera reserva. Redirigiendo...';
       overlay.classList.add('show');
+
       setTimeout(() => {
-        window.location.href = selectedType === 'pro' ? 'dashboard/pro.html' : 'dashboard/client.html';
+        window.location.href = selectedType === 'pro' ? '../dashboard/pro.html' : '../dashboard/client.html';
       }, 2000);
-    }, 1000);
+
+    } catch (err) {
+      alert('Error: ' + (err.message || 'Inténtalo de nuevo'));
+      btn.textContent = selectedType === 'pro' ? 'Registrarme como profesional →' : 'Crear mi cuenta gratis →';
+      btn.classList.remove('btn-loading');
+      btn.disabled = false;
+    }
   }
 </script>
 </body>
