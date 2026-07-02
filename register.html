@@ -220,62 +220,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">Ciudad</label>
-          <select class="form-control" required>
-            <option value="">Selecciona tu ciudad...</option>
-            <option>A Coruña</option><option>Aguilar de Campoo</option><option>Albacete</option>
-            <option>Alcalá de Guadaíra</option><option>Alcalá de Henares</option><option>Alcazar de San Juan</option>
-            <option>Alcobendas</option><option>Alcorcón</option><option>Alcoy</option>
-            <option>Algeciras</option><option>Alicante</option><option>Almería</option>
-            <option>Andújar</option><option>Antequera</option><option>Aranjuez</option>
-            <option>Arona</option><option>Arrecife</option><option>Avilés</option>
-            <option>Ávila</option><option>Azuqueca de Henares</option><option>Badajoz</option>
-            <option>Badalona</option><option>Barakaldo</option><option>Barcelona</option>
-            <option>Basauri</option><option>Benalmádena</option><option>Benidorm</option>
-            <option>Bilbao</option><option>Blanes</option><option>Burgos</option>
-            <option>Cáceres</option><option>Cádiz</option><option>Calahorra</option>
-            <option>Calpe</option><option>Cambrils</option><option>Cartagena</option>
-            <option>Castelldefels</option><option>Castellón de la Plana</option><option>Ceuta</option>
-            <option>Chiclana de la Frontera</option><option>Ciudad Real</option><option>Cieza</option>
-            <option>Collado Villalba</option><option>Córdoba</option><option>Cornellà de Llobregat</option>
-            <option>Cuenca</option><option>Dénia</option><option>Don Benito</option>
-            <option>Donostia-San Sebastián</option><option>Dos Hermanas</option><option>Durango</option>
-            <option>Écija</option><option>El Ejido</option><option>El Puerto de Santa María</option>
-            <option>Elche</option><option>Elda</option><option>Estepona</option>
-            <option>Ferrol</option><option>Fuengirola</option><option>Fuenlabrada</option>
-            <option>Gandía</option><option>Getafe</option><option>Getxo</option>
-            <option>Gijón</option><option>Girona</option><option>Granada</option>
-            <option>Granollers</option><option>Guadalajara</option><option>Hellín</option>
-            <option>Hospitalet de Llobregat</option><option>Huelva</option><option>Huesca</option>
-            <option>Ibiza</option><option>Irun</option><option>Jaén</option>
-            <option>Jerez de la Frontera</option><option>La Línea de la Concepción</option>
-            <option>La Orotava</option><option>Las Palmas de Gran Canaria</option>
-            <option>Las Rozas de Madrid</option><option>Leganés</option><option>León</option>
-            <option>Linares</option><option>Lleida</option><option>Lloret de Mar</option>
-            <option>Lorca</option><option>Logroño</option><option>Lugo</option>
-            <option>Madrid</option><option>Mairena del Aljarafe</option><option>Manresa</option>
-            <option>Marbella</option><option>Mataro</option><option>Melilla</option>
-            <option>Mérida</option><option>Mijas</option><option>Molina de Segura</option>
-            <option>Mollet del Vallès</option><option>Motril</option><option>Móstoles</option>
-            <option>Málaga</option><option>Murcia</option><option>Olot</option>
-            <option>Ourense</option><option>Oviedo</option><option>Palencia</option>
-            <option>Palma de Mallorca</option><option>Pamplona</option><option>Parla</option>
-            <option>Paterna</option><option>Plasencia</option><option>Pontevedra</option>
-            <option>Pozuelo de Alarcón</option><option>Puerto Real</option><option>Puertollano</option>
-            <option>Reus</option><option>Roquetas de Mar</option><option>Rubí</option>
-            <option>Sabadell</option><option>Salamanca</option><option>Salou</option>
-            <option>San Cristóbal de La Laguna</option><option>Sanlúcar de Barrameda</option>
-            <option>Santa Cruz de Tenerife</option><option>Santander</option>
-            <option>Santiago de Compostela</option><option>Segovia</option><option>Sevilla</option>
-            <option>Soria</option><option>Talavera de la Reina</option><option>Tarragona</option>
-            <option>Telde</option><option>Terrassa</option><option>Teruel</option>
-            <option>Toledo</option><option>Torrejón de Ardoz</option><option>Torremolinos</option>
-            <option>Torrent</option><option>Torrevieja</option><option>Tudela</option>
-            <option>Utrera</option><option>Valdemoro</option><option>Valencia</option>
-            <option>Valladolid</option><option>Vélez-Málaga</option><option>Vic</option>
-            <option>Vigo</option><option>Vila-real</option><option>Viladecans</option>
-            <option>Vilagarcía de Arousa</option><option>Vitoria-Gasteiz</option>
-            <option>Zamora</option><option>Zaragoza</option>
-          </select>
+          <select class="form-control" id="reg-city" required></select>
         </div>
 
         <!-- PRO EXTRAS -->
@@ -360,12 +305,15 @@
   </div>
 </div>
 
+<script src="js/cities.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const _sb = supabase.createClient(
     'https://ubncebdkqzxxmhhmzcgw.supabase.co',
     'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py'
   );
+
+  populateCitySelect('reg-city', 'Selecciona tu ciudad...');
 
   let selectedType = 'client';
 
