@@ -371,9 +371,168 @@
       .steps-grid, .stats-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── SCROLL ANIMATIONS ──────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left  { opacity:0; transform:translateX(-30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal-left.visible { opacity:1; transform:translateX(0); }
+    .reveal-right { opacity:0; transform:translateX(30px);  transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal-right.visible { opacity:1; transform:translateX(0); }
+    .reveal-scale { opacity:0; transform:scale(0.92); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .reveal-scale.visible { opacity:1; transform:scale(1); }
+
+    /* ── WHATSAPP BUTTON ───────────────────── */
+    .wa-btn {
+      position: fixed; bottom: 5.5rem; right: 1.5rem; z-index: 999;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #25D366;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 20px rgba(37,211,102,0.5);
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+      animation: waPulse 2s infinite;
+    }
+    .wa-btn:hover { transform: scale(1.1); box-shadow: 0 10px 30px rgba(37,211,102,0.6); }
+    .wa-btn svg { width: 30px; height: 30px; fill: white; }
+    .wa-bubble {
+      position: fixed; bottom: 10rem; right: 1.5rem; z-index: 998;
+      background: white; border-radius: 14px 14px 4px 14px;
+      padding: 0.65rem 1rem; font-size: 0.82rem; font-weight: 600;
+      color: var(--gray-800); box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+      white-space: nowrap; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s; transform: translateY(5px);
+    }
+    .wa-btn:hover + .wa-bubble, .wa-bubble:hover { opacity: 1; pointer-events: auto; }
+    @keyframes waPulse {
+      0%,100% { box-shadow: 0 6px 20px rgba(37,211,102,0.5); }
+      50%      { box-shadow: 0 6px 30px rgba(37,211,102,0.8), 0 0 0 8px rgba(37,211,102,0.15); }
+    }
+
+    /* ── BACK TO TOP ───────────────────────── */
+    .btt {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--primary); color: white; border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: 0 4px 15px rgba(13,148,136,0.4);
+      transition: all 0.2s; opacity: 0; pointer-events: none;
+    }
+    .btt.show { opacity: 1; pointer-events: auto; }
+    .btt:hover { transform: translateY(-3px); background: var(--primary-dark); }
+
+    /* ── COOKIE BANNER ─────────────────────── */
+    .cookie-banner {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      background: #1f2937; color: white;
+      padding: 1rem 2rem; display: flex; align-items: center;
+      justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+      transform: translateY(100%); transition: transform 0.4s ease;
+    }
+    .cookie-banner.show { transform: translateY(0); }
+    .cookie-banner p { font-size: 0.85rem; color: #d1d5db; line-height: 1.5; margin: 0; flex: 1; min-width: 200px; }
+    .cookie-banner a { color: #5eead4; text-decoration: underline; }
+    .cookie-btns { display: flex; gap: 0.6rem; flex-shrink: 0; }
+    .cookie-accept { background: var(--primary); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 700; font-size: 0.84rem; cursor: pointer; font-family: inherit; }
+    .cookie-reject { background: transparent; color: #9ca3af; border: 1px solid #374151; padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.84rem; cursor: pointer; font-family: inherit; }
+
+    /* ── PROGRESS BAR ──────────────────────── */
+    .progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px; z-index: 9999;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      width: 0%; transition: width 0.1s linear;
+    }
+
+    /* ── PROMO POPUP ───────────────────────── */
+    .popup-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      z-index: 8888; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+      padding: 1rem;
+    }
+    .popup-overlay.show { opacity: 1; pointer-events: auto; }
+    .popup-card {
+      background: white; border-radius: 24px;
+      max-width: 440px; width: 100%;
+      overflow: hidden; position: relative;
+      transform: scale(0.9); transition: transform 0.3s;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+    }
+    .popup-overlay.show .popup-card { transform: scale(1); }
+    .popup-top {
+      background: linear-gradient(135deg, #0d9488, #0891b2);
+      padding: 2rem; text-align: center; color: white;
+    }
+    .popup-top .pop-ico { font-size: 3.5rem; margin-bottom: 0.5rem; }
+    .popup-top h2 { font-size: 1.6rem; font-weight: 900; margin: 0 0 0.3rem; }
+    .popup-top p { font-size: 0.9rem; opacity: 0.85; margin: 0; }
+    .popup-body { padding: 1.8rem; }
+    .popup-discount {
+      background: #fef3c7; border: 2px dashed #f59e0b;
+      border-radius: 12px; text-align: center; padding: 1rem;
+      margin-bottom: 1.2rem;
+    }
+    .popup-discount .amount { font-size: 2.5rem; font-weight: 900; color: #92400e; }
+    .popup-discount .label { font-size: 0.82rem; color: #92400e; font-weight: 600; }
+    .popup-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: rgba(255,255,255,0.2); border: none; color: white;
+      width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+      font-size: 1rem; display: flex; align-items: center; justify-content: center;
+    }
   </style>
 </head>
 <body>
+
+<!-- Progress bar -->
+<div class="progress-bar" id="progress-bar"></div>
+
+<!-- WhatsApp -->
+<a class="wa-btn" href="https://wa.me/34600000000?text=Hola%20HogarFast%2C%20necesito%20ayuda" target="_blank" rel="noopener" title="WhatsApp">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.773L0 32l8.445-2.013A15.94 15.94 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.28 13.28 0 01-6.773-1.854l-.486-.288-5.013 1.195 1.232-4.88-.317-.5A13.241 13.241 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.273-9.878c-.397-.199-2.352-1.161-2.717-1.293-.364-.133-.629-.199-.893.199-.265.397-1.027 1.293-1.259 1.557-.232.265-.464.298-.861.1-.397-.199-1.676-.618-3.192-1.97-1.18-1.052-1.977-2.351-2.209-2.748-.232-.397-.025-.612.174-.809.18-.178.397-.464.596-.696.199-.232.265-.397.397-.662.133-.265.066-.497-.033-.696-.1-.199-.893-2.153-1.226-2.948-.323-.774-.65-.669-.893-.681l-.761-.013c-.265 0-.696.099-1.061.497-.364.397-1.391 1.36-1.391 3.314s1.425 3.844 1.624 4.109c.199.265 2.803 4.278 6.79 5.998.949.41 1.69.654 2.267.837.953.303 1.82.26 2.505.158.764-.114 2.352-.961 2.683-1.889.332-.928.332-1.724.232-1.889-.099-.165-.364-.265-.761-.464z"/></svg>
+</a>
+<div class="wa-bubble">💬 ¿Necesitas ayuda?</div>
+
+<!-- Back to top -->
+<button class="btt" id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Volver arriba">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- Cookie Banner -->
+<div class="cookie-banner" id="cookie-banner">
+  <p>🍪 Usamos cookies para mejorar tu experiencia y analizar el tráfico. Al continuar, aceptas nuestra <a href="#">política de cookies</a>.</p>
+  <div class="cookie-btns">
+    <button class="cookie-accept" onclick="acceptCookies()">Aceptar todas</button>
+    <button class="cookie-reject" onclick="rejectCookies()">Solo esenciales</button>
+  </div>
+</div>
+
+<!-- Promo Popup -->
+<div class="popup-overlay" id="promo-popup">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closePopup()">✕</button>
+    <div class="popup-top">
+      <div class="pop-ico">🎁</div>
+      <h2>¡Espera! Oferta especial</h2>
+      <p>Solo para nuevos usuarios de HogarFast</p>
+    </div>
+    <div class="popup-body">
+      <div class="popup-discount">
+        <div class="amount">10€</div>
+        <div class="label">DE DESCUENTO EN TU PRIMERA RESERVA</div>
+      </div>
+      <p style="font-size:0.83rem;color:var(--gray-500);margin-bottom:1.2rem;text-align:center;">Crea tu cuenta gratis y usa el código <strong style="color:var(--primary);">BIENVENIDO</strong></p>
+      <a href="register.html" class="btn btn-primary" style="width:100%;justify-content:center;display:flex;font-size:0.95rem;padding:0.9rem;" onclick="closePopup()">
+        Reclamar mi descuento de 10€ →
+      </a>
+      <p style="text-align:center;font-size:0.75rem;color:var(--gray-400);margin-top:0.8rem;cursor:pointer;" onclick="closePopup()">No gracias, prefiero pagar el precio completo</p>
+    </div>
+  </div>
+</div>
 
 <!-- NAV -->
 <nav>
@@ -469,7 +628,7 @@
 <!-- SERVICES -->
 <div class="services-section" id="servicios">
   <div class="services-inner">
-    <div class="services-header">
+    <div class="services-header reveal">
       <h2>¿Qué necesitas hoy?</h2>
       <a href="register.html" class="btn btn-outline btn-sm">Ver todos →</a>
     </div>
@@ -523,26 +682,26 @@
 <!-- HOW IT WORKS -->
 <div class="how-section" id="como-funciona">
   <div class="how-inner section-center">
-    <div class="section-tag">Proceso</div>
-    <h2 class="section-title">¿Cómo funciona HogarFast?</h2>
-    <p class="section-sub">En 4 pasos, tienes un profesional en tu hogar. Sin llamadas, sin complicaciones.</p>
+    <div class="section-tag reveal">Proceso</div>
+    <h2 class="section-title reveal">¿Cómo funciona HogarFast?</h2>
+    <p class="section-sub reveal">En 4 pasos, tienes un profesional en tu hogar. Sin llamadas, sin complicaciones.</p>
     <div class="steps-grid">
-      <div class="step-card">
+      <div class="step-card reveal" style="transition-delay:0s">
         <div class="step-num">1</div>
         <h3>Elige el servicio</h3>
         <p>Selecciona lo que necesitas de nuestro catálogo de 8+ categorías.</p>
       </div>
-      <div class="step-card">
+      <div class="step-card reveal" style="transition-delay:0.1s">
         <div class="step-num">2</div>
         <h3>Elige fecha y hora</h3>
         <p>Ve la disponibilidad en tiempo real y reserva cuando más te convenga.</p>
       </div>
-      <div class="step-card">
+      <div class="step-card reveal" style="transition-delay:0.2s">
         <div class="step-num">3</div>
         <h3>Paga online seguro</h3>
         <p>Pago con tarjeta o Bizum. Solo se cobra cuando el servicio finaliza.</p>
       </div>
-      <div class="step-card">
+      <div class="step-card reveal" style="transition-delay:0.3s">
         <div class="step-num">4</div>
         <h3>¡Listo y valorado!</h3>
         <p>El profesional llega puntual. Después deja tu valoración y repite.</p>
@@ -562,7 +721,7 @@
       <a href="register.html" class="btn btn-outline btn-sm">Ver todos</a>
     </div>
     <div class="pros-grid">
-      <div class="pro-card">
+      <div class="pro-card reveal">
         <div class="pro-card-top">
           <div class="avt-wrap">
             <div class="pro-avatar avt-g1">AM</div>
@@ -674,21 +833,21 @@
 <div class="stats-section">
   <div class="stats-inner">
     <div class="stats-grid">
-      <div class="stat-item">
-        <div class="num">+3,200</div>
+      <div class="stat-item reveal">
+        <div class="num counter" data-target="3200" data-prefix="+" data-suffix="">0</div>
         <div class="lbl">Servicios realizados</div>
       </div>
-      <div class="stat-item">
-        <div class="num">+180</div>
+      <div class="stat-item reveal" style="transition-delay:0.1s">
+        <div class="num counter" data-target="500" data-prefix="+" data-suffix="">0</div>
         <div class="lbl">Profesionales activos</div>
       </div>
-      <div class="stat-item">
-        <div class="num">4.9 ⭐</div>
+      <div class="stat-item reveal" style="transition-delay:0.2s">
+        <div class="num counter" data-target="49" data-prefix="" data-suffix=" ⭐" data-decimal="1">0</div>
         <div class="lbl">Valoración media</div>
       </div>
-      <div class="stat-item">
-        <div class="num">5 ciudades</div>
-        <div class="lbl">Disponible en</div>
+      <div class="stat-item reveal" style="transition-delay:0.3s">
+        <div class="num counter" data-target="250" data-prefix="+" data-suffix="">0</div>
+        <div class="lbl">Ciudades disponibles</div>
       </div>
     </div>
   </div>
@@ -701,7 +860,7 @@
     <h2 class="section-title">Lo que dicen nuestros clientes</h2>
     <p class="section-sub">Más de 3.000 hogares confían en HogarFast cada mes.</p>
     <div class="reviews-grid">
-      <div class="review-card">
+      <div class="review-card reveal">
         <div class="stars">★★★★★</div>
         <p>"Reservé una limpieza a fondo y quedé impresionada. Llegó puntual, fue super profesional y el resultado fue increíble. Repetiré sin duda."</p>
         <div class="reviewer">
@@ -712,7 +871,7 @@
           </div>
         </div>
       </div>
-      <div class="review-card">
+      <div class="review-card reveal">
         <div class="stars">★★★★★</div>
         <p>"El fontanero llegó en 2 horas. Reparó la fuga en menos de 30 minutos y el precio fue muy justo. La plataforma es súper fácil de usar."</p>
         <div class="reviewer">
@@ -723,7 +882,7 @@
           </div>
         </div>
       </div>
-      <div class="review-card">
+      <div class="review-card reveal">
         <div class="stars">★★★★★</div>
         <p>"Usé HogarFast para la mudanza y fue perfecto. El equipo fue muy cuidadoso con los muebles. Sin duda la mejor plataforma de servicios."</p>
         <div class="reviewer">
@@ -798,6 +957,89 @@
     });
   });
   initCityAutocomplete('hero-city', 'hero-city-drop');
+
+  /* ── SCROLL PROGRESS BAR ── */
+  const progressBar = document.getElementById('progress-bar');
+  window.addEventListener('scroll', () => {
+    const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    progressBar.style.width = scrolled + '%';
+  });
+
+  /* ── BACK TO TOP ── */
+  const btt = document.getElementById('btt');
+  window.addEventListener('scroll', () => {
+    btt.classList.toggle('show', window.scrollY > 400);
+  });
+
+  /* ── SCROLL REVEAL ── */
+  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+        revealObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => revealObs.observe(el));
+
+  /* ── ANIMATED COUNTERS ── */
+  function animateCounter(el) {
+    const target = +el.dataset.target;
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const isDecimal = el.dataset.decimal === '1';
+    const duration = 1800;
+    const start = performance.now();
+    const update = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const val = isDecimal ? (target / 10 * ease).toFixed(1) : Math.round(target * ease);
+      el.textContent = prefix + val + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+  const counterObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { animateCounter(e.target); counterObs.unobserve(e.target); }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.counter').forEach(el => counterObs.observe(el));
+
+  /* ── COOKIE BANNER ── */
+  function acceptCookies() {
+    localStorage.setItem('hf_cookies', 'accepted');
+    document.getElementById('cookie-banner').classList.remove('show');
+  }
+  function rejectCookies() {
+    localStorage.setItem('hf_cookies', 'rejected');
+    document.getElementById('cookie-banner').classList.remove('show');
+  }
+  if (!localStorage.getItem('hf_cookies')) {
+    setTimeout(() => document.getElementById('cookie-banner').classList.add('show'), 1500);
+  }
+
+  /* ── PROMO POPUP (exit-intent) ── */
+  function closePopup() {
+    document.getElementById('promo-popup').classList.remove('show');
+    sessionStorage.setItem('hf_popup', '1');
+  }
+  let popupShown = false;
+  if (!sessionStorage.getItem('hf_popup') && !localStorage.getItem('hf_user')) {
+    document.addEventListener('mouseleave', (e) => {
+      if (e.clientY < 10 && !popupShown) {
+        popupShown = true;
+        document.getElementById('promo-popup').classList.add('show');
+      }
+    });
+    setTimeout(() => {
+      if (!popupShown) {
+        popupShown = true;
+        document.getElementById('promo-popup').classList.add('show');
+      }
+    }, 25000);
+  }
 
   function selectPill(btn, service) {
     document.querySelectorAll('.sp').forEach(b => b.classList.remove('active'));
