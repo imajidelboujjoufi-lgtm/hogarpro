@@ -692,13 +692,20 @@
     setTimeout(() => { row.remove(); updatePendingBadge(); showToast('✗ ' + nombre + ' rechazado', 'error'); }, 400);
   }
 
-  async function loadDashboard() {
-    /* ── Auth check ── */
-    const { data: { session } } = await _sb.auth.getSession();
-    if (!session || session.user.email !== ADMIN_EMAIL) {
-      window.location.href = '../login.html';
-      return;
+  function checkAdmin() {
+    const ok = localStorage.getItem('hf_adm');
+    if (ok === 'ok2026') return true;
+    const pw = prompt('🔐 Contraseña de administrador:');
+    if (pw === 'HogarFast2026!') {
+      localStorage.setItem('hf_adm', 'ok2026');
+      return true;
     }
+    window.location.href = '../index.html';
+    return false;
+  }
+
+  async function loadDashboard() {
+    if (!checkAdmin()) return;
 
     /* ── KPI counts ── */
     const [profilesRes, bookingsRes, prosRes, clientsRes, pendingRes] = await Promise.all([
