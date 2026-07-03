@@ -360,16 +360,62 @@
     }
     .whatsapp-fab:hover { transform: scale(1.1); }
 
+    /* HAMBURGER */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 6px;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2.5px;
+      background: var(--gray-700); border-radius: 2px;
+      transition: all 0.25s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+    .mobile-only { display: none !important; }
+    .mobile-only-flex { display: none !important; }
+    .mobile-nav-sep { display: none; }
+
     @media (max-width: 900px) {
-      nav ul { display: none; }
+      .desktop-only { display: none !important; }
+      .mobile-only { display: block !important; }
+      .mobile-only-flex { display: flex !important; }
+      .mobile-nav-sep { display: block; border-top: 1px solid var(--gray-100); margin: 0.8rem 0; }
+
+      nav ul {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%; left: 0; right: 0;
+        background: white;
+        border-bottom: 1px solid var(--gray-200);
+        padding: 1rem 1.5rem 1.5rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        gap: 0;
+      }
+      nav ul.mobile-open { display: flex; }
+      nav ul li { padding: 0.6rem 0; border-bottom: 1px solid var(--gray-100); }
+      nav ul li:last-child { border-bottom: none; }
+      nav ul a { font-size: 1rem; font-weight: 600; }
+      nav { position: relative; }
+
       .steps-grid { grid-template-columns: repeat(2, 1fr); }
       .steps-grid::before { display: none; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .footer-grid { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 600px) {
+      .hero { padding: 3.5rem 4% 3rem; }
+      .hero h1 { font-size: 2rem; }
+      .hero p { font-size: 0.95rem; }
+      .hero-trust { gap: 0.8rem; }
+      .trust-pill { font-size: 0.75rem; }
       .steps-grid, .stats-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; }
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item .num { font-size: 2rem; }
     }
 
     /* ── SCROLL ANIMATIONS ──────────────────── */
@@ -537,18 +583,24 @@
 <!-- NAV -->
 <nav>
   <a href="index.html" class="logo">Hogar<span>Fast</span></a>
-  <ul>
-    <li><a href="#servicios">Servicios</a></li>
-    <li><a href="#como-funciona">Cómo funciona</a></li>
-    <li><a href="#profesionales">Profesionales</a></li>
-    <li><a href="#opiniones">Opiniones</a></li>
-    <li><a href="pricing.html">Precios</a></li>
-    <li><a href="hazte-profesional.html">Hazte Pro</a></li>
+  <ul id="nav-menu">
+    <li><a href="#servicios" onclick="closeMobileMenu()">Servicios</a></li>
+    <li><a href="#como-funciona" onclick="closeMobileMenu()">Cómo funciona</a></li>
+    <li><a href="#profesionales" onclick="closeMobileMenu()">Profesionales</a></li>
+    <li><a href="#opiniones" onclick="closeMobileMenu()">Opiniones</a></li>
+    <li><a href="pricing.html" onclick="closeMobileMenu()">Precios</a></li>
+    <li><a href="hazte-profesional.html" onclick="closeMobileMenu()">Hazte Pro</a></li>
+    <li class="mobile-nav-sep"></li>
+    <li class="mobile-only"><a href="login.html" class="btn btn-secondary btn-sm" style="display:block;text-align:center;margin-bottom:0.5rem;">Iniciar sesión</a></li>
+    <li class="mobile-only"><a href="register.html" class="btn btn-primary btn-sm" style="display:block;text-align:center;">Registrarse gratis</a></li>
   </ul>
-  <div class="nav-btns">
+  <div class="nav-btns desktop-only">
     <a href="login.html" class="btn btn-secondary btn-sm">Iniciar sesión</a>
     <a href="register.html" class="btn btn-primary btn-sm">Registrarse gratis</a>
   </div>
+  <button class="hamburger mobile-only-flex" id="hamburger" onclick="toggleMobileMenu()" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- HERO -->
@@ -950,6 +1002,21 @@
 
 <script src="js/cities.js"></script>
 <script>
+  function toggleMobileMenu() {
+    const menu = document.getElementById('nav-menu');
+    const btn = document.getElementById('hamburger');
+    menu.classList.toggle('mobile-open');
+    btn.classList.toggle('open');
+  }
+  function closeMobileMenu() {
+    document.getElementById('nav-menu').classList.remove('mobile-open');
+    document.getElementById('hamburger').classList.remove('open');
+  }
+  document.addEventListener('click', function(e) {
+    const nav = document.querySelector('nav');
+    if (!nav.contains(e.target)) closeMobileMenu();
+  });
+
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
       const t = document.querySelector(a.getAttribute('href'));
