@@ -289,6 +289,11 @@
       const { data, error } = await _sb.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
+      if (data.user.email === 'imajid.elboujjoufi@gmail.com') {
+        window.location.href = 'dashboard/admin.html';
+        return;
+      }
+
       const { data: profile } = await _sb.from('profiles').select('user_type').eq('id', data.user.id).single();
       const role = profile?.user_type || currentRole;
 
