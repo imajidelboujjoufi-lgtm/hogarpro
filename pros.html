@@ -419,5 +419,39 @@ if (params.get('city')) {
   applyFilters();
 }
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async () => {
+  const _sb = supabase.createClient(
+    'https://ubncebdkqzxxmhhmzcgw.supabase.co',
+    'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py'
+  );
+  const AVT = ['avt-g1','avt-g2','avt-g3','avt-g4','avt-g5','avt-g6'];
+  const { data } = await _sb.from('pros')
+    .select('id,service_type,city,hourly_rate,experience_years,rating,total_jobs,bio,verified,profiles(full_name)')
+    .eq('verified', true)
+    .order('rating', { ascending: false });
+  if (!data || !data.length) return; // keep mock data
+  // Convert to pros format and prepend real pros
+  const realPros = data.map((p, i) => ({
+    id: 'sb-' + p.id,
+    name: p.profiles?.full_name || 'Profesional',
+    initials: (p.profiles?.full_name||'PR').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),
+    grad: AVT[i % AVT.length],
+    service: p.service_type || 'Servicio',
+    city: p.city || 'España',
+    rating: p.rating || 4.8,
+    jobs: p.total_jobs || 0,
+    price: p.hourly_rate || 30,
+    bio: p.bio || 'Profesional verificado en HogarFast.',
+    tags: [p.service_type || 'Servicio'],
+    verified: p.verified
+  }));
+  // Merge real pros at top
+  pros.unshift(...realPros);
+  applyFilters();
+})();
+</script>
 </body>
 </html>

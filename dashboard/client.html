@@ -105,7 +105,7 @@
   <!-- SIDEBAR (desktop) -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <div style="font-size:1.25rem;font-weight:900;color:white;">Hogar<span style="color:var(--accent)">Pro</span></div>
+      <div style="font-size:1.25rem;font-weight:900;color:white;">Hogar<span style="color:var(--accent)">Fast</span></div>
       <div class="role-badge">CLIENTE</div>
     </div>
     <nav class="sidebar-nav">
@@ -201,7 +201,7 @@
             </div>
             <div class="card-body">
               <div class="calendar-strip" id="cal-strip"></div>
-
+              <div id="upcoming-list">
               <div class="booking-card">
                 <div class="bk-icon icon-blue">🧹</div>
                 <div class="bk-info">
@@ -234,6 +234,7 @@
                 </div>
               </div>
 
+              </div><!-- end upcoming-list -->
               <div style="text-align:center;padding-top:0.5rem;">
                 <a href="#" class="btn btn-secondary btn-sm">Ver todas las reservas →</a>
               </div>
@@ -249,7 +250,7 @@
             <div class="table-wrapper">
               <table>
                 <thead><tr><th>Servicio</th><th>Profesional</th><th>Fecha</th><th>Precio</th><th></th></tr></thead>
-                <tbody>
+                <tbody id="history-tbody">
                   <tr>
                     <td>🧹 Limpieza a fondo</td>
                     <td><div style="display:flex;align-items:center;gap:0.4rem;"><div class="avt-wrap"><div class="avatar avatar-sm avt-g1">AM</div><div class="avt-verified" style="width:13px;height:13px;font-size:0.42rem;">✓</div></div> Ana M.</div></td>
@@ -359,7 +360,6 @@
     strip.appendChild(el);
   }
 
-  // Mobile menu
   function openMob() {
     document.getElementById('mob-drawer').classList.add('open');
     document.getElementById('mob-overlay').classList.add('open');
@@ -370,6 +370,110 @@
     document.getElementById('mob-overlay').classList.remove('open');
     document.getElementById('hamburger').classList.remove('open');
   }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const _sb = supabase.createClient(
+  'https://ubncebdkqzxxmhhmzcgw.supabase.co',
+  'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py'
+);
+
+const SVC_ICON = {'Limpieza':'🧹','Fontanería':'🔧','Electricidad':'⚡','Pintura':'🎨','Mudanzas':'🚚','Jardinería':'🌿','Bricolaje':'🪚','Pet Sitting':'🐶'};
+const STATUS_LABEL = {pending:'<span class="badge badge-warning">Pendiente</span>',confirmed:'<span class="badge badge-primary">Confirmado</span>',completed:'<span class="badge badge-success">Completado</span>',cancelled:'<span class="badge badge-danger">Cancelado</span>'};
+
+function fmtDate(d) { if(!d)return'—'; return new Date(d).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}); }
+
+async function initClient() {
+  const { data: { session } } = await _sb.auth.getSession();
+  if (!session) { window.location.href = '../login.html'; return; }
+
+  const uid = session.user.id;
+
+  // Load profile
+  const { data: profile } = await _sb.from('profiles').select('full_name,phone,city').eq('id', uid).single();
+  const name = profile?.full_name || session.user.email.split('@')[0];
+  const firstName = name.split(' ')[0];
+
+  // Update name in UI
+  document.querySelectorAll('[data-user-name]').forEach(el => el.textContent = name);
+  document.querySelector('h1').innerHTML = '¡Hola, ' + firstName + '! 👋';
+  document.querySelector('.sidebar-footer .name').textContent = name;
+  document.querySelector('.sidebar-footer .email').textContent = session.user.email;
+  const ini = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.querySelectorAll('.sidebar-footer .avatar').forEach(a => a.textContent = ini);
+
+  // Load bookings
+  const { data: bookings } = await _sb.from('bookings')
+    .select('id,service_type,city,booking_date,booking_time,total_price,status,hours,created_at')
+    .eq('client_id', uid)
+    .order('booking_date', { ascending: false });
+
+  const all = bookings || [];
+  const upcoming = all.filter(b => b.status === 'pending' || b.status === 'confirmed');
+  const completed = all.filter(b => b.status === 'completed');
+  const totalSpent = completed.reduce((s,b) => s + (b.total_price||0), 0);
+
+  // KPIs
+  document.querySelector('.kpi-card.kpi-blue .kpi-value').textContent = all.length;
+  document.querySelector('.kpi-card.kpi-purple .kpi-value').textContent = upcoming.length;
+  document.querySelector('.kpi-card.kpi-green .kpi-value').textContent = totalSpent + '€';
+  document.querySelector('.kpi-card.kpi-amber .kpi-value').textContent = '—';
+
+  // Upcoming bookings list
+  const bkContainer = document.getElementById('upcoming-list');
+  if (bkContainer) {
+    if (!upcoming.length) {
+      bkContainer.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--gray-400);">No tienes reservas próximas. <a href="../booking.html" style="color:var(--primary);font-weight:700;">¡Reserva ahora!</a></div>';
+    } else {
+      bkContainer.innerHTML = upcoming.slice(0,3).map(b => `
+        <div class="booking-card">
+          <div class="bk-icon icon-blue">${SVC_ICON[b.service_type]||'📋'}</div>
+          <div class="bk-info">
+            <div class="service">${b.service_type||'Servicio'}</div>
+            <div class="meta">📍 ${b.city||'—'} ${b.booking_time ? '· ⏱ '+b.booking_time.slice(0,5) : ''}</div>
+          </div>
+          <div class="bk-right">
+            ${STATUS_LABEL[b.status]||''}
+            <div class="bk-time">${fmtDate(b.booking_date)}</div>
+            <div class="bk-price">${b.total_price?b.total_price+'€':'—'}</div>
+          </div>
+        </div>`).join('');
+    }
+  }
+
+  // History table
+  const histTbody = document.getElementById('history-tbody');
+  if (histTbody) {
+    if (!all.length) {
+      histTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:1.5rem;">Sin historial aún</td></tr>';
+    } else {
+      histTbody.innerHTML = all.slice(0,5).map(b => `
+        <tr>
+          <td>${SVC_ICON[b.service_type]||'📋'} ${b.service_type||'—'}</td>
+          <td style="color:var(--gray-400);">—</td>
+          <td style="font-size:0.82rem;">${fmtDate(b.booking_date)}</td>
+          <td><strong>${b.total_price?b.total_price+'€':'—'}</strong></td>
+          <td>${STATUS_LABEL[b.status]||''}</td>
+        </tr>`).join('');
+    }
+  }
+
+  // Nav badge
+  const navBadge = document.querySelector('.nav-badge');
+  if (navBadge) navBadge.textContent = upcoming.length;
+}
+
+// Logout
+document.querySelectorAll('a[href="../login.html"]').forEach(a => {
+  a.addEventListener('click', async e => {
+    e.preventDefault();
+    await _sb.auth.signOut();
+    window.location.href = '../login.html';
+  });
+});
+
+initClient();
 </script>
 </body>
 </html>

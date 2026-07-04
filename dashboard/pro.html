@@ -106,7 +106,7 @@
   <!-- SIDEBAR (desktop) -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <div style="font-size:1.25rem;font-weight:900;color:white;">Hogar<span style="color:var(--accent)">Pro</span></div>
+      <div style="font-size:1.25rem;font-weight:900;color:white;">Hogar<span style="color:var(--accent)">Fast</span></div>
       <div class="role-badge">PROFESIONAL</div>
     </div>
     <nav class="sidebar-nav">
@@ -191,11 +191,11 @@
           <div class="card" style="margin-bottom:1.5rem;">
             <div class="card-header">
               <span class="card-title">📋 Próximos trabajos</span>
-              <span class="badge badge-primary">3 pendientes</span>
+              <span class="badge badge-primary" id="jobs-badge">—</span>
             </div>
             <div class="card-body">
-
-              <div class="job-card next">
+              <div id="jobs-list-cards"></div>
+              <div class="job-card next" style="display:none">
                 <div class="job-ico icon-blue">🧹</div>
                 <div class="job-info">
                   <div class="job-title">Limpieza estándar</div>
@@ -376,6 +376,107 @@
     document.getElementById('mob-overlay').classList.remove('open');
     document.getElementById('hamburger').classList.remove('open');
   }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const _sb = supabase.createClient(
+  'https://ubncebdkqzxxmhhmzcgw.supabase.co',
+  'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py'
+);
+const SVC_ICON = {'Limpieza':'🧹','Fontanería':'🔧','Electricidad':'⚡','Pintura':'🎨','Mudanzas':'🚚','Jardinería':'🌿','Bricolaje':'🪚','Pet Sitting':'🐶'};
+const STATUS_LABEL = {pending:'<span class="badge badge-warning">Pendiente</span>',confirmed:'<span class="badge badge-primary">Confirmado</span>',completed:'<span class="badge badge-success">Completado</span>',cancelled:'<span class="badge badge-danger">Cancelado</span>'};
+function fmtDate(d){ if(!d)return'—'; return new Date(d).toLocaleDateString('es-ES',{day:'numeric',month:'short'}); }
+
+async function initPro() {
+  const { data: { session } } = await _sb.auth.getSession();
+  if (!session) { window.location.href = '../login.html'; return; }
+  const uid = session.user.id;
+
+  // Profile + pro data
+  const [profRes, proRes] = await Promise.all([
+    _sb.from('profiles').select('full_name,phone,city').eq('id', uid).single(),
+    _sb.from('pros').select('id,service_type,city,hourly_rate,experience_years,rating,total_jobs,verified,bio').eq('user_id', uid).single()
+  ]);
+
+  const name = profRes.data?.full_name || session.user.email.split('@')[0];
+  const pro  = proRes.data;
+  const firstName = name.split(' ')[0];
+  const ini  = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+
+  // Update name/header
+  document.querySelector('h1') && (document.querySelector('h1').textContent = name);
+  document.querySelectorAll('.sidebar-footer .name').forEach(e=>e.textContent=name);
+  document.querySelectorAll('.sidebar-footer .avatar').forEach(a=>a.textContent=ini);
+  if (pro) {
+    document.querySelectorAll('.sidebar-footer .email').forEach(e=>e.textContent=(SVC_ICON[pro.service_type]||'🔧')+' '+(pro.service_type||'Pro')+' · '+(pro.city||'—'));
+  }
+
+  if (!pro) {
+    // Pro profile not found — maybe not registered as pro
+    return;
+  }
+
+  // Bookings assigned to this pro (via city + service match for now)
+  const { data: bookings } = await _sb.from('bookings')
+    .select('id,service_type,city,booking_date,booking_time,total_price,status,hours,created_at,profiles!client_id(full_name)')
+    .eq('service_type', pro.service_type)
+    .eq('city', pro.city)
+    .order('booking_date', { ascending: false })
+    .limit(20);
+
+  const all = bookings || [];
+  const completed = all.filter(b=>b.status==='completed');
+  const pending   = all.filter(b=>b.status==='pending'||b.status==='confirmed');
+  const earnings  = completed.reduce((s,b)=>s+(b.total_price||0)*0.83,0);
+
+  // KPIs
+  const kpis = document.querySelectorAll('.kpi-card .kpi-value');
+  if(kpis[0]) kpis[0].textContent = earnings.toFixed(0)+'€';
+  if(kpis[1]) kpis[1].textContent = completed.length;
+  if(kpis[2]) kpis[2].textContent = pro.rating ? '⭐ '+pro.rating : '—';
+  if(kpis[3]) kpis[3].textContent = pending.length;
+
+  // Jobs cards
+  const jobsEl = document.getElementById('jobs-list-cards');
+  const jobsBadge = document.getElementById('jobs-badge');
+  if(jobsBadge) jobsBadge.textContent = pending.length + ' pendientes';
+  if(jobsEl) {
+    if(!all.length) {
+      jobsEl.innerHTML='<div style="text-align:center;color:var(--gray-400);padding:2rem;">No hay trabajos aún en tu zona</div>';
+    } else {
+      jobsEl.innerHTML=all.slice(0,5).map(b=>`
+        <div class="job-card${b.status==='confirmed'?' next':''}">
+          <div class="job-ico icon-blue">${SVC_ICON[b.service_type]||'📋'}</div>
+          <div class="job-info">
+            <div class="job-title">${b.service_type||'Trabajo'}</div>
+            <div class="job-meta">${b.profiles?.full_name||'Cliente'} · 📍 ${b.city||'—'}</div>
+          </div>
+          <div class="job-right">
+            <div class="job-earn">+${b.total_price?Math.round(b.total_price*0.83)+'€':'—'}</div>
+            <div class="job-time">${fmtDate(b.booking_date)}</div>
+            ${STATUS_LABEL[b.status]||''}
+          </div>
+        </div>`).join('');
+    }
+  }
+
+  // Verified badge
+  if(pro.verified) {
+    document.querySelectorAll('.avt-verified').forEach(v=>v.style.display='flex');
+  }
+}
+
+// Logout
+document.querySelectorAll('a[href="../login.html"]').forEach(a=>{
+  a.addEventListener('click', async e=>{
+    e.preventDefault();
+    await _sb.auth.signOut();
+    window.location.href='../login.html';
+  });
+});
+
+initPro();
 </script>
 </body>
 </html>
