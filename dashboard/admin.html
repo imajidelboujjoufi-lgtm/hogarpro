@@ -4,248 +4,192 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
-  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
-  <meta name="robots" content="index, follow" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin — HogarFast</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/shared.css" />
   <style>
-    /* ── SIDEBAR ICONS ────────────────────────── */
     .nav-icon svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
-
-    /* ── HEADER SEARCH ─────────────────────────── */
-    .header-search {
-      display: flex; align-items: center; gap: 0.6rem;
-      background: var(--gray-50); border: 1.5px solid var(--gray-200);
-      border-radius: var(--radius); padding: 0.45rem 0.9rem;
-      font-size: 0.85rem; color: var(--gray-500);
-      min-width: 220px;
-    }
+    .header-search { display:flex; align-items:center; gap:0.6rem; background:var(--gray-50); border:1.5px solid var(--gray-200); border-radius:var(--radius); padding:0.45rem 0.9rem; font-size:0.85rem; color:var(--gray-500); min-width:220px; }
     .header-search input { border:none; outline:none; background:transparent; font-family:inherit; font-size:0.85rem; color:var(--gray-800); width:100%; }
-    .header-search input::placeholder { color:var(--gray-400); }
 
-    /* ── KPI CARDS ─────────────────────────────── */
-    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:1.2rem; margin-bottom:1.8rem; }
-    .kpi-card {
-      background:white; border-radius:var(--radius-lg);
-      border:1px solid var(--gray-200);
-      padding:1.3rem 1.4rem 1.2rem;
-      display:flex; flex-direction:column; gap:0.5rem;
-      position:relative; overflow:hidden;
-      transition: box-shadow 0.2s, transform 0.2s;
-    }
-    .kpi-card:hover { box-shadow: var(--shadow-md); transform:translateY(-2px); }
-    .kpi-card::before {
-      content:''; position:absolute; top:0; left:0; right:0;
-      height:3px; border-radius:3px 3px 0 0;
-    }
-    .kpi-card.kpi-green::before  { background: linear-gradient(90deg,#10b981,#34d399); }
-    .kpi-card.kpi-blue::before   { background: linear-gradient(90deg,#3b82f6,#60a5fa); }
-    .kpi-card.kpi-purple::before { background: linear-gradient(90deg,#8b5cf6,#a78bfa); }
-    .kpi-card.kpi-amber::before  { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
-    .kpi-card.kpi-pink::before   { background: linear-gradient(90deg,#ec4899,#f472b6); }
-    .kpi-card.kpi-indigo::before { background: linear-gradient(90deg,#0d9488,#818cf8); }
-
+    /* KPI */
+    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:1.2rem; margin-bottom:1.8rem; }
+    .kpi-card { background:white; border-radius:var(--radius-lg); border:1px solid var(--gray-200); padding:1.3rem 1.4rem 1.2rem; display:flex; flex-direction:column; gap:0.5rem; position:relative; overflow:hidden; transition:box-shadow 0.2s,transform 0.2s; }
+    .kpi-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:3px 3px 0 0; }
+    .kpi-card.kpi-green::before  { background:linear-gradient(90deg,#10b981,#34d399); }
+    .kpi-card.kpi-blue::before   { background:linear-gradient(90deg,#3b82f6,#60a5fa); }
+    .kpi-card.kpi-purple::before { background:linear-gradient(90deg,#8b5cf6,#a78bfa); }
+    .kpi-card.kpi-amber::before  { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+    .kpi-card.kpi-pink::before   { background:linear-gradient(90deg,#ec4899,#f472b6); }
+    .kpi-card.kpi-indigo::before { background:linear-gradient(90deg,#0d9488,#818cf8); }
     .kpi-top { display:flex; align-items:center; justify-content:space-between; }
     .kpi-label { font-size:0.78rem; font-weight:600; color:var(--gray-500); letter-spacing:0.3px; }
     .kpi-ico { width:36px; height:36px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:1rem; }
     .kpi-value { font-size:1.9rem; font-weight:900; color:var(--gray-900); line-height:1; }
     .kpi-trend { display:flex; align-items:center; gap:0.3rem; font-size:0.78rem; font-weight:600; }
-    .kpi-trend.up   { color:#10b981; }
+    .kpi-trend.up { color:#10b981; }
     .kpi-trend.down { color:#ef4444; }
 
-    /* ── CHARTS ────────────────────────────────── */
+    /* CHARTS */
     .chart-bar-wrap { margin-top:0.8rem; }
     .chart-bar-item { margin-bottom:0.9rem; }
     .chart-bar-label { display:flex; justify-content:space-between; font-size:0.8rem; color:var(--gray-600); margin-bottom:0.3rem; font-weight:500; }
     .chart-bar-bg { background:var(--gray-100); border-radius:6px; height:9px; overflow:hidden; }
-    .chart-bar-fill { height:100%; border-radius:6px; background: linear-gradient(90deg, var(--primary), var(--secondary)); }
-
+    .chart-bar-fill { height:100%; border-radius:6px; background:linear-gradient(90deg,var(--primary),var(--secondary)); }
     .revenue-chart-wrap { display:flex; gap:0.4rem; align-items:flex-end; height:130px; margin-top:1rem; }
     .rev-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:0.25rem; }
-    .rev-bar {
-      width:100%; border-radius:5px 5px 0 0;
-      background: linear-gradient(to top, var(--primary), var(--secondary));
-      min-height:6px; transition: opacity 0.15s;
-      cursor:default; position:relative;
-    }
+    .rev-bar { width:100%; border-radius:5px 5px 0 0; background:linear-gradient(to top,var(--primary),var(--secondary)); min-height:6px; transition:opacity 0.15s; cursor:default; position:relative; }
     .rev-bar:hover { opacity:0.85; }
-    .rev-bar[data-tip]:hover::after {
-      content: attr(data-tip);
-      position:absolute; top:-28px; left:50%; transform:translateX(-50%);
-      background:var(--gray-900); color:white;
-      font-size:0.68rem; font-weight:700;
-      padding:0.2rem 0.5rem; border-radius:5px; white-space:nowrap;
-    }
+    .rev-bar[data-tip]:hover::after { content:attr(data-tip); position:absolute; top:-28px; left:50%; transform:translateX(-50%); background:var(--gray-900); color:white; font-size:0.68rem; font-weight:700; padding:0.2rem 0.5rem; border-radius:5px; white-space:nowrap; }
     .rev-month { font-size:0.67rem; color:var(--gray-400); font-weight:500; }
-    .rev-current .rev-bar { background: linear-gradient(to top, #f59e0b, #fbbf24); }
+    .rev-current .rev-bar { background:linear-gradient(to top,#f59e0b,#fbbf24); }
 
-    /* ── PENDING VERIFICATION ──────────────────── */
+    /* VERIFY */
     .verify-list { display:flex; flex-direction:column; gap:0.2rem; }
-    .verify-item {
-      display:flex; align-items:center; gap:0.9rem;
-      padding:0.9rem 1.2rem;
-      border-radius:var(--radius);
-      transition: background 0.12s;
-    }
+    .verify-item { display:flex; align-items:center; gap:0.9rem; padding:0.9rem 1.2rem; border-radius:var(--radius); transition:background 0.12s; }
     .verify-item:hover { background:var(--gray-50); }
     .verify-info { flex:1; }
     .verify-name { font-size:0.88rem; font-weight:700; color:var(--gray-900); }
     .verify-meta { font-size:0.77rem; color:var(--gray-500); margin-top:0.15rem; }
     .verify-docs { display:flex; gap:0.4rem; margin-top:0.4rem; flex-wrap:wrap; }
-    .doc-chip {
-      font-size:0.68rem; font-weight:600;
-      padding:0.15rem 0.5rem; border-radius:6px;
-      background:var(--gray-100); color:var(--gray-600);
-    }
+    .doc-chip { font-size:0.68rem; font-weight:600; padding:0.15rem 0.5rem; border-radius:6px; background:var(--gray-100); color:var(--gray-600); }
     .doc-chip.ok { background:#d1fae5; color:#065f46; }
     .verify-time { font-size:0.75rem; color:var(--gray-400); white-space:nowrap; }
     .verify-btns { display:flex; gap:0.4rem; }
 
-    /* ── ACTIVITY ───────────────────────────────── */
+    /* ACTIVITY */
     .activity-item { display:flex; align-items:flex-start; gap:0.9rem; padding:0.75rem 0; border-bottom:1px solid var(--gray-100); }
     .activity-item:last-child { border-bottom:none; }
-    .act-dot {
-      width:34px; height:34px; border-radius:50%;
-      display:flex; align-items:center; justify-content:center;
-      font-size:0.9rem; flex-shrink:0;
-    }
+    .act-dot { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0; }
     .act-info { flex:1; }
     .act-title { font-size:0.84rem; font-weight:600; color:var(--gray-800); }
     .act-sub { font-size:0.76rem; color:var(--gray-500); margin-top:0.1rem; }
     .act-time { font-size:0.73rem; color:var(--gray-400); white-space:nowrap; padding-top:0.1rem; }
 
-    /* ── CITY BARS ──────────────────────────────── */
+    /* CITY */
     .city-item { margin-bottom:1.1rem; }
     .city-header { display:flex; justify-content:space-between; align-items:center; font-size:0.82rem; margin-bottom:0.35rem; }
     .city-name { font-weight:600; color:var(--gray-700); }
     .city-val { font-weight:700; color:var(--primary); }
     .city-sub { font-size:0.72rem; color:var(--gray-400); margin-top:0.1rem; }
 
-    /* ── TABLE ─────────────────────────────────── */
+    /* TABLE FILTERS */
     .table-filters { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; }
-    .filter-chip {
-      padding:0.35rem 0.85rem; border-radius:20px;
-      font-size:0.78rem; font-weight:600; cursor:pointer;
-      border:1.5px solid var(--gray-200); background:white; color:var(--gray-600);
-      transition:all 0.15s; font-family:inherit;
-    }
-    .filter-chip.active, .filter-chip:hover { border-color:var(--primary); background:var(--primary-light); color:var(--primary); }
+    .filter-chip { padding:0.35rem 0.85rem; border-radius:20px; font-size:0.78rem; font-weight:600; cursor:pointer; border:1.5px solid var(--gray-200); background:white; color:var(--gray-600); transition:all 0.15s; font-family:inherit; }
+    .filter-chip.active,.filter-chip:hover { border-color:var(--primary); background:var(--primary-light); color:var(--primary); }
 
-    /* ── GRID ───────────────────────────────────── */
+    /* SECTIONS */
+    .section { display:none; }
+    .section.active { display:block; }
+    .section-title { font-size:1.05rem; font-weight:800; color:var(--gray-900); margin-bottom:1.5rem; display:flex; align-items:center; gap:0.5rem; }
+
+    /* STATUS SELECT */
+    .status-select { font-size:0.75rem; font-weight:600; border:1.5px solid var(--gray-200); border-radius:8px; padding:0.2rem 0.5rem; background:white; font-family:inherit; cursor:pointer; }
+    .status-select:focus { outline:none; border-color:var(--primary); }
+
+    /* SEARCH BAR */
+    .section-search { display:flex; align-items:center; gap:0.6rem; background:var(--gray-50); border:1.5px solid var(--gray-200); border-radius:var(--radius); padding:0.5rem 0.9rem; margin-bottom:1.2rem; }
+    .section-search input { border:none; outline:none; background:transparent; font-family:inherit; font-size:0.88rem; color:var(--gray-800); flex:1; }
+
+    /* PRO STATUS BADGE */
+    .badge-verified { background:#d1fae5; color:#065f46; }
+    .badge-pending  { background:#fef3c7; color:#92400e; }
+
+    /* GRID */
     .grid-3-1 { display:grid; grid-template-columns:1fr 1fr 340px; gap:1.5rem; }
-
     @media (max-width:1200px) { .grid-3-1 { grid-template-columns:1fr 1fr; } }
     @media (max-width:1024px) {
       .sidebar { width:70px; }
-      .sidebar-logo .role-badge, .sidebar-user .user-info, .nav-item > span:not(.nav-badge), .nav-section-label { display:none; }
+      .sidebar-logo .role-badge,.sidebar-user .user-info,.nav-item > span:not(.nav-badge),.nav-section-label { display:none; }
       .nav-item { padding:0.8rem; justify-content:center; }
       .nav-item .nav-icon { margin:0; }
       .dash-main { margin-left:70px; }
-      .grid-2, .grid-3, .grid-3-1 { grid-template-columns:1fr; }
+      .grid-2,.grid-3,.grid-3-1 { grid-template-columns:1fr; }
       .header-search { display:none; }
     }
-    @media (max-width:768px) {
-      .sidebar { display:none; }
-      .dash-main { margin-left:0; }
-    }
+    @media (max-width:768px) { .sidebar { display:none; } .dash-main { margin-left:0; } }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
   </style>
 </head>
 <body>
-
 <div class="dash-layout">
 
-  <!-- ═══ SIDEBAR ═══════════════════════════════════════════════ -->
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div style="font-size:1.25rem;font-weight:900;color:white;">Hogar<span style="color:var(--accent)">Fast</span></div>
       <div class="role-badge">ADMINISTRADOR</div>
     </div>
-
     <nav class="sidebar-nav">
       <div class="nav-section-label">Principal</div>
-      <a href="admin.html" class="nav-item active">
+      <a class="nav-item active" data-sec="dashboard" onclick="showSection('dashboard')">
         <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
         <span>Dashboard</span>
       </a>
-      <a href="#" class="nav-item">
+      <a class="nav-item" data-sec="reservas" onclick="showSection('reservas')">
         <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
         <span>Reservas</span>
-        <span class="nav-badge">14</span>
+        <span class="nav-badge" id="nb-reservas">0</span>
       </a>
-      <a href="#" class="nav-item">
+      <a class="nav-item" data-sec="clientes" onclick="showSection('clientes')">
         <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
         <span>Clientes</span>
       </a>
-      <a href="#" class="nav-item">
+      <a class="nav-item" data-sec="pros" onclick="showSection('pros')">
         <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></span>
         <span>Profesionales</span>
+        <span class="nav-badge" id="nb-pending" style="background:#ef4444;">0</span>
       </a>
-
-      <div class="nav-section-label">Servicios</div>
-      <a href="#" class="nav-item">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
-        <span>Categorías</span>
-      </a>
-      <a href="#" class="nav-item">
+      <div class="nav-section-label">Finanzas</div>
+      <a class="nav-item" data-sec="pagos" onclick="showSection('pagos')">
         <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>
         <span>Pagos</span>
       </a>
-      <a href="#" class="nav-item">
+      <a class="nav-item" data-sec="reviews" onclick="showSection('reviews')">
         <span class="nav-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
         <span>Valoraciones</span>
       </a>
-      <a href="#" class="nav-item">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
-        <span>Notificaciones</span>
-        <span class="nav-badge">3</span>
-      </a>
-
       <div class="nav-section-label">Sistema</div>
-      <a href="#" class="nav-item">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
-        <span>Configuración</span>
-      </a>
-      <a href="../login.html" class="nav-item">
+      <a class="nav-item" onclick="adminLogout()" style="cursor:pointer;">
         <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
         <span>Cerrar sesión</span>
       </a>
     </nav>
-
     <div class="sidebar-footer">
       <div class="sidebar-user">
         <div class="avt-wrap">
-          <div class="avatar avt-g6" style="font-size:0.8rem;">AD</div>
+          <div class="avatar avt-g6" style="font-size:0.8rem;">MA</div>
           <div class="avt-online"></div>
         </div>
         <div class="user-info">
-          <div class="name">Admin</div>
-          <div class="email">admin@hogarfast.es</div>
+          <div class="name">Majid</div>
+          <div class="email">Admin HogarFast</div>
         </div>
       </div>
     </div>
   </aside>
 
-  <!-- ═══ MAIN ════════════════════════════════════════════════ -->
+  <!-- MAIN -->
   <div class="dash-main">
 
     <!-- HEADER -->
     <div class="dash-header">
       <div>
-        <h1 style="font-size:1.1rem;">Dashboard General</h1>
-        <div style="font-size:0.77rem;color:var(--gray-500);margin-top:0.1rem;">Lunes, 30 junio 2026 · Datos en tiempo real</div>
+        <h1 style="font-size:1.1rem;" id="header-title">Dashboard General</h1>
+        <div style="font-size:0.77rem;color:var(--gray-500);margin-top:0.1rem;" id="header-sub">Datos en tiempo real · HogarFast</div>
       </div>
       <div class="header-right">
         <div class="header-search">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Buscar reservas, clientes..." />
+          <input type="text" id="global-search" placeholder="Buscar..." oninput="handleGlobalSearch(this.value)" />
         </div>
-        <button class="notif-btn">
+        <button class="notif-btn" id="notif-btn">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          <span class="notif-dot"></span>
+          <span class="notif-dot" id="notif-dot" style="display:none;"></span>
         </button>
-        <button class="btn btn-primary btn-sm" onclick="alert('Generando informe PDF...')">
+        <button class="btn btn-primary btn-sm" onclick="exportCSV()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Exportar
         </button>
@@ -255,563 +199,710 @@
     <!-- CONTENT -->
     <div class="dash-content">
 
-      <!-- ── KPI ──────────────────────────────────── -->
-      <div class="kpi-grid">
-        <div class="kpi-card kpi-green">
-          <div class="kpi-top">
-            <div class="kpi-label">Ingresos del mes</div>
-            <div class="kpi-ico icon-green">💶</div>
+      <!-- ════ SECTION: DASHBOARD ════ -->
+      <div id="sec-dashboard" class="section active">
+
+        <div class="kpi-grid">
+          <div class="kpi-card kpi-green">
+            <div class="kpi-top"><div class="kpi-label">Ingresos (comisiones)</div><div class="kpi-ico icon-green">💶</div></div>
+            <div class="kpi-value" id="kpi-revenue">—</div>
+            <div class="kpi-trend up" id="kpi-revenue-sub">Cargando...</div>
           </div>
-          <div class="kpi-value" id="kpi-revenue">—</div>
-          <div class="kpi-trend up" id="kpi-revenue-sub">Cargando...</div>
+          <div class="kpi-card kpi-blue">
+            <div class="kpi-top"><div class="kpi-label">Reservas totales</div><div class="kpi-ico icon-blue">📋</div></div>
+            <div class="kpi-value" id="kpi-bookings">—</div>
+            <div class="kpi-trend up" id="kpi-bookings-sub">Cargando...</div>
+          </div>
+          <div class="kpi-card kpi-purple">
+            <div class="kpi-top"><div class="kpi-label">Usuarios registrados</div><div class="kpi-ico icon-purple">👥</div></div>
+            <div class="kpi-value" id="kpi-users">—</div>
+            <div class="kpi-trend up" id="kpi-users-sub">Cargando...</div>
+          </div>
+          <div class="kpi-card kpi-amber">
+            <div class="kpi-top"><div class="kpi-label">Profesionales verificados</div><div class="kpi-ico icon-amber">🔧</div></div>
+            <div class="kpi-value" id="kpi-pros">—</div>
+            <div class="kpi-trend up" id="kpi-pros-sub">Cargando...</div>
+          </div>
+          <div class="kpi-card kpi-pink">
+            <div class="kpi-top"><div class="kpi-label">Pendientes verificar</div><div class="kpi-ico icon-pink">🛡️</div></div>
+            <div class="kpi-value" id="kpi-pending">—</div>
+            <div class="kpi-trend" id="kpi-pending-sub">Cargando...</div>
+          </div>
+          <div class="kpi-card kpi-indigo">
+            <div class="kpi-top"><div class="kpi-label">Clientes activos</div><div class="kpi-ico icon-blue">👤</div></div>
+            <div class="kpi-value" id="kpi-clients">—</div>
+            <div class="kpi-trend up" id="kpi-clients-sub">Cargando...</div>
+          </div>
         </div>
-        <div class="kpi-card kpi-blue">
-          <div class="kpi-top">
-            <div class="kpi-label">Reservas totales</div>
-            <div class="kpi-ico icon-blue">📋</div>
+
+        <div class="grid-2" style="margin-bottom:1.5rem;">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📈 Ingresos (comisiones 17%)</span>
+              <span class="badge badge-success" id="rev-trend-badge">—</span>
+            </div>
+            <div class="card-body">
+              <div class="revenue-chart-wrap" id="rev-chart"></div>
+              <div id="rev-months" style="display:flex;justify-content:space-between;margin-top:0.4rem;font-size:0.68rem;color:var(--gray-400);"></div>
+            </div>
           </div>
-          <div class="kpi-value" id="kpi-bookings">—</div>
-          <div class="kpi-trend up" id="kpi-bookings-sub">Cargando...</div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">🗂️ Servicios por categoría</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-bar-wrap" id="cat-chart">
+                <div style="text-align:center;color:var(--gray-400);padding:1rem;">Cargando...</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="kpi-card kpi-purple">
-          <div class="kpi-top">
-            <div class="kpi-label">Usuarios registrados</div>
-            <div class="kpi-ico icon-purple">👥</div>
+
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="card-header">
+            <span class="card-title">🛡️ Verificaciones pendientes</span>
+            <div style="display:flex;gap:0.6rem;align-items:center;">
+              <span class="badge badge-warning" id="pending-badge-header">0 pendientes</span>
+              <button class="btn btn-secondary btn-sm" onclick="showSection('pros')">Ver todas →</button>
+            </div>
           </div>
-          <div class="kpi-value" id="kpi-users">—</div>
-          <div class="kpi-trend up" id="kpi-users-sub">Cargando...</div>
+          <div class="verify-list" id="pending-list">
+            <div style="text-align:center;color:var(--gray-400);padding:2rem;">Cargando...</div>
+          </div>
         </div>
-        <div class="kpi-card kpi-amber">
-          <div class="kpi-top">
-            <div class="kpi-label">Profesionales</div>
-            <div class="kpi-ico icon-amber">🔧</div>
+
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="card-header">
+            <span class="card-title">📋 Reservas recientes</span>
+            <button class="btn btn-secondary btn-sm" onclick="showSection('reservas')">Ver todas →</button>
           </div>
-          <div class="kpi-value" id="kpi-pros">—</div>
-          <div class="kpi-trend up" id="kpi-pros-sub">Cargando...</div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>#</th><th>Cliente</th><th>Servicio</th><th>Ciudad</th><th>Fecha</th><th>Precio</th><th>Estado</th></tr></thead>
+              <tbody id="dash-bookings-tbody">
+                <tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:2rem;">Cargando...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="kpi-card kpi-pink">
-          <div class="kpi-top">
-            <div class="kpi-label">Pendientes verificar</div>
-            <div class="kpi-ico icon-pink">🛡️</div>
-          </div>
-          <div class="kpi-value" id="kpi-pending">—</div>
-          <div class="kpi-trend" id="kpi-pending-sub">Cargando...</div>
+
+      </div><!-- end dashboard -->
+
+      <!-- ════ SECTION: RESERVAS ════ -->
+      <div id="sec-reservas" class="section">
+        <div class="section-title">📋 Gestión de Reservas</div>
+        <div class="section-search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Buscar por cliente, servicio, ciudad..." oninput="filterReservas(this.value)" />
         </div>
-        <div class="kpi-card kpi-indigo">
-          <div class="kpi-top">
-            <div class="kpi-label">Clientes</div>
-            <div class="kpi-ico icon-blue">👤</div>
+        <div class="table-filters" style="margin-bottom:1rem;">
+          <button class="filter-chip active" onclick="filterByStatus(this,'')">Todas</button>
+          <button class="filter-chip" onclick="filterByStatus(this,'pending')">⏳ Pendientes</button>
+          <button class="filter-chip" onclick="filterByStatus(this,'confirmed')">✅ Confirmadas</button>
+          <button class="filter-chip" onclick="filterByStatus(this,'completed')">🏁 Completadas</button>
+          <button class="filter-chip" onclick="filterByStatus(this,'cancelled')">❌ Canceladas</button>
+        </div>
+        <div class="card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>#ID</th>
+                  <th>Cliente</th>
+                  <th>Servicio</th>
+                  <th>Ciudad</th>
+                  <th>Fecha reserva</th>
+                  <th>Precio</th>
+                  <th>Comisión (17%)</th>
+                  <th>Estado</th>
+                  <th>Cambiar estado</th>
+                </tr>
+              </thead>
+              <tbody id="reservas-tbody">
+                <tr><td colspan="9" style="text-align:center;color:var(--gray-400);padding:2rem;">Cargando...</td></tr>
+              </tbody>
+            </table>
           </div>
-          <div class="kpi-value" id="kpi-clients">—</div>
-          <div class="kpi-trend up" id="kpi-clients-sub">Cargando...</div>
         </div>
       </div>
 
-      <!-- ── CHARTS ROW ──────────────────────────── -->
-      <div class="grid-2" style="margin-bottom:1.5rem;">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">📈 Ingresos mensuales</span>
-            <span class="badge badge-success">+23% ↑</span>
-          </div>
-          <div class="card-body">
-            <div class="revenue-chart-wrap" id="rev-chart"></div>
-            <div style="display:flex;justify-content:space-between;margin-top:0.4rem;">
-              <span id="rev-months"></span>
-            </div>
-          </div>
+      <!-- ════ SECTION: CLIENTES ════ -->
+      <div id="sec-clientes" class="section">
+        <div class="section-title">👥 Gestión de Clientes</div>
+        <div class="section-search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Buscar por nombre, ciudad..." oninput="filterClientes(this.value)" />
         </div>
-
         <div class="card">
-          <div class="card-header">
-            <span class="card-title">🗂️ Servicios por categoría</span>
-            <span style="font-size:0.78rem;color:var(--gray-400);">Junio 2026</span>
-          </div>
-          <div class="card-body">
-            <div class="chart-bar-wrap">
-              <div class="chart-bar-item">
-                <div class="chart-bar-label"><span>🧹 Limpieza</span><span style="font-weight:700;">42% · 90 servicios</span></div>
-                <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:42%"></div></div>
-              </div>
-              <div class="chart-bar-item">
-                <div class="chart-bar-label"><span>🔧 Fontanería</span><span style="font-weight:700;">18% · 38 servicios</span></div>
-                <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:18%"></div></div>
-              </div>
-              <div class="chart-bar-item">
-                <div class="chart-bar-label"><span>🚚 Mudanzas</span><span style="font-weight:700;">15% · 32 servicios</span></div>
-                <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:15%"></div></div>
-              </div>
-              <div class="chart-bar-item">
-                <div class="chart-bar-label"><span>⚡ Electricidad</span><span style="font-weight:700;">12% · 26 servicios</span></div>
-                <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:12%"></div></div>
-              </div>
-              <div class="chart-bar-item">
-                <div class="chart-bar-label"><span>🎨 Pintura</span><span style="font-weight:700;">8% · 17 servicios</span></div>
-                <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:8%"></div></div>
-              </div>
-              <div class="chart-bar-item">
-                <div class="chart-bar-label"><span>🌿 Otros</span><span style="font-weight:700;">5% · 11 servicios</span></div>
-                <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:5%"></div></div>
-              </div>
-            </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Email</th>
+                  <th>Teléfono</th>
+                  <th>Ciudad</th>
+                  <th>Reservas</th>
+                  <th>Registro</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="clientes-tbody">
+                <tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:2rem;">Cargando...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
 
-      <!-- ── PENDING VERIFICATIONS ───────────────── -->
-      <div class="card" style="margin-bottom:1.5rem;">
-        <div class="card-header">
-          <span class="card-title">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-3px;margin-right:4px;stroke:#f59e0b"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Verificaciones pendientes
-          </span>
-          <div style="display:flex;gap:0.6rem;align-items:center;">
-            <span class="badge badge-warning">4 pendientes</span>
-            <button class="btn btn-secondary btn-sm">Ver todas</button>
-          </div>
+      <!-- ════ SECTION: PROFESIONALES ════ -->
+      <div id="sec-pros" class="section">
+        <div class="section-title">🔧 Gestión de Profesionales</div>
+        <div class="section-search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Buscar por nombre, servicio, ciudad..." oninput="filterPros(this.value)" />
         </div>
-        <div class="verify-list" id="pending-list">
-          <div style="text-align:center;color:var(--gray-400);padding:2rem;">Cargando...</div>
+        <div class="table-filters" style="margin-bottom:1rem;">
+          <button class="filter-chip active" onclick="filterProsByStatus(this,'')">Todos</button>
+          <button class="filter-chip" onclick="filterProsByStatus(this,'pending')">⏳ Pendientes</button>
+          <button class="filter-chip" onclick="filterProsByStatus(this,'verified')">✅ Verificados</button>
+        </div>
+        <div class="card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Profesional</th>
+                  <th>Servicio</th>
+                  <th>Ciudad</th>
+                  <th>Tarifa/h</th>
+                  <th>Experiencia</th>
+                  <th>Rating</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="pros-tbody">
+                <tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:2rem;">Cargando...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <!-- ── BOOKINGS TABLE ──────────────────────── -->
-      <div class="card" style="margin-bottom:1.5rem;">
-        <div class="card-header">
-          <span class="card-title">📋 Reservas recientes</span>
-          <div class="table-filters">
-            <button class="filter-chip active" onclick="setFilter(this)">Todas</button>
-            <button class="filter-chip" onclick="setFilter(this)">Pendientes</button>
-            <button class="filter-chip" onclick="setFilter(this)">Confirmadas</button>
-            <button class="filter-chip" onclick="setFilter(this)">Completadas</button>
+      <!-- ════ SECTION: PAGOS ════ -->
+      <div id="sec-pagos" class="section">
+        <div class="section-title">💶 Historial de Pagos & Comisiones</div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.5rem;">
+          <div class="kpi-card kpi-green">
+            <div class="kpi-top"><div class="kpi-label">Total comisiones</div><div class="kpi-ico icon-green">💰</div></div>
+            <div class="kpi-value" id="pago-total">—</div>
+            <div class="kpi-trend up">17% de servicios completados</div>
+          </div>
+          <div class="kpi-card kpi-blue">
+            <div class="kpi-top"><div class="kpi-label">Servicios completados</div><div class="kpi-ico icon-blue">✅</div></div>
+            <div class="kpi-value" id="pago-count">—</div>
+            <div class="kpi-trend up">Pagos confirmados</div>
+          </div>
+          <div class="kpi-card kpi-amber">
+            <div class="kpi-top"><div class="kpi-label">Ticket medio</div><div class="kpi-ico icon-amber">📊</div></div>
+            <div class="kpi-value" id="pago-avg">—</div>
+            <div class="kpi-trend up">Por servicio</div>
           </div>
         </div>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>#ID</th>
-                <th>Cliente</th>
-                <th>Servicio</th>
-                <th>Profesional</th>
-                <th>Ciudad</th>
-                <th>Fecha</th>
-                <th>Precio</th>
-                <th>Estado</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="bookings-tbody">
-              <tr><td colspan="9" style="text-align:center;color:var(--gray-400);padding:2rem;">Cargando reservas...</td></tr>
-            </tbody>
-          </table>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">💳 Pagos por Bizum / Transferencia</span>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Cliente</th>
+                  <th>Servicio</th>
+                  <th>Ciudad</th>
+                  <th>Fecha</th>
+                  <th>Precio cliente</th>
+                  <th>Comisión HogarFast</th>
+                  <th>Pago a Pro</th>
+                </tr>
+              </thead>
+              <tbody id="pagos-tbody">
+                <tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:2rem;">Cargando...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <!-- ── BOTTOM 3 COLS ───────────────────────── -->
-      <div class="grid-3-1">
-
-        <!-- TOP PROS -->
+      <!-- ════ SECTION: VALORACIONES ════ -->
+      <div id="sec-reviews" class="section">
+        <div class="section-title">⭐ Valoraciones de clientes</div>
         <div class="card">
-          <div class="card-header">
-            <span class="card-title">🏆 Top profesionales</span>
-            <button class="btn btn-secondary btn-sm">Ver todos</button>
-          </div>
-          <div style="padding:0.5rem 0;">
-            <div style="display:flex;align-items:center;gap:0.8rem;padding:0.75rem 1.2rem;border-bottom:1px solid var(--gray-100);">
-              <div style="font-size:1.1rem;font-weight:900;color:var(--accent);width:20px;text-align:center;">1</div>
-              <div class="avt-wrap"><div class="avatar avt-g1">AM</div><div class="avt-verified">✓</div></div>
-              <div style="flex:1;">
-                <div style="font-weight:700;font-size:0.85rem;">Ana Martínez</div>
-                <div style="font-size:0.75rem;color:var(--gray-500);">🧹 Limpieza · Madrid</div>
-              </div>
-              <div style="text-align:right;">
-                <div style="font-weight:800;color:var(--success);font-size:0.9rem;">4,680€</div>
-                <div style="font-size:0.72rem;color:var(--gray-400);">⭐ 4.98 · 312 jobs</div>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:0.8rem;padding:0.75rem 1.2rem;border-bottom:1px solid var(--gray-100);">
-              <div style="font-size:1.1rem;font-weight:900;color:var(--gray-400);width:20px;text-align:center;">2</div>
-              <div class="avt-wrap"><div class="avatar avt-g4">LG</div><div class="avt-verified">✓</div></div>
-              <div style="flex:1;">
-                <div style="font-weight:700;font-size:0.85rem;">Laura Gómez</div>
-                <div style="font-size:0.75rem;color:var(--gray-500);">⚡ Electricidad · Valencia</div>
-              </div>
-              <div style="text-align:right;">
-                <div style="font-weight:800;color:var(--success);font-size:0.9rem;">3,645€</div>
-                <div style="font-size:0.72rem;color:var(--gray-400);">⭐ 4.97 · 243 jobs</div>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:0.8rem;padding:0.75rem 1.2rem;border-bottom:1px solid var(--gray-100);">
-              <div style="font-size:1.1rem;font-weight:900;color:var(--gray-400);width:20px;text-align:center;">3</div>
-              <div class="avt-wrap"><div class="avatar avt-g2">CR</div><div class="avt-verified">✓</div></div>
-              <div style="flex:1;">
-                <div style="font-weight:700;font-size:0.85rem;">Carlos Ruiz</div>
-                <div style="font-size:0.75rem;color:var(--gray-500);">🔧 Fontanería · Barcelona</div>
-              </div>
-              <div style="text-align:right;">
-                <div style="font-weight:800;color:var(--success);font-size:0.9rem;">2,805€</div>
-                <div style="font-size:0.72rem;color:var(--gray-400);">⭐ 4.95 · 187 jobs</div>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:0.8rem;padding:0.75rem 1.2rem;">
-              <div style="font-size:1.1rem;font-weight:900;color:var(--gray-400);width:20px;text-align:center;">4</div>
-              <div class="avt-wrap"><div class="avatar avt-g5">PS</div><div class="avt-verified">✓</div></div>
-              <div style="flex:1;">
-                <div style="font-weight:700;font-size:0.85rem;">Pedro Sánchez</div>
-                <div style="font-size:0.75rem;color:var(--gray-500);">🎨 Pintura · Sevilla</div>
-              </div>
-              <div style="text-align:right;">
-                <div style="font-weight:800;color:var(--success);font-size:0.9rem;">2,340€</div>
-                <div style="font-size:0.72rem;color:var(--gray-400);">⭐ 4.92 · 156 jobs</div>
-              </div>
-            </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Profesional</th>
+                  <th>Rating</th>
+                  <th>Comentario</th>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="reviews-tbody">
+                <tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:2rem;">Cargando...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
+      </div>
 
-        <!-- CITY PERFORMANCE -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">🗺️ Rendimiento por ciudad</span>
-            <span style="font-size:0.78rem;color:var(--gray-400);">Junio 2026</span>
-          </div>
-          <div class="card-body">
-            <div class="city-item">
-              <div class="city-header">
-                <span class="city-name">📍 Madrid</span>
-                <span class="city-val">3,240€</span>
-              </div>
-              <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:100%"></div></div>
-              <div class="city-sub">89 servicios · 62 profesionales</div>
-            </div>
-            <div class="city-item">
-              <div class="city-header">
-                <span class="city-name">📍 Barcelona</span>
-                <span class="city-val">2,180€</span>
-              </div>
-              <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:67%"></div></div>
-              <div class="city-sub">57 servicios · 41 profesionales</div>
-            </div>
-            <div class="city-item">
-              <div class="city-header">
-                <span class="city-name">📍 Valencia</span>
-                <span class="city-val">1,560€</span>
-              </div>
-              <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:48%"></div></div>
-              <div class="city-sub">40 servicios · 28 profesionales</div>
-            </div>
-            <div class="city-item">
-              <div class="city-header">
-                <span class="city-name">📍 Sevilla</span>
-                <span class="city-val">880€</span>
-              </div>
-              <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:27%"></div></div>
-              <div class="city-sub">22 servicios · 18 profesionales</div>
-            </div>
-            <div class="city-item">
-              <div class="city-header">
-                <span class="city-name">📍 Málaga</span>
-                <span class="city-val">480€</span>
-              </div>
-              <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:15%"></div></div>
-              <div class="city-sub">14 servicios · 9 profesionales</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ACTIVITY FEED -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">🔔 Actividad</span>
-            <span class="badge badge-primary" style="animation:pulse 2s infinite;">En vivo</span>
-          </div>
-          <div class="card-body" style="padding-top:0.5rem;">
-            <div class="activity-item">
-              <div class="act-dot icon-green">✅</div>
-              <div class="act-info">
-                <div class="act-title">Servicio completado</div>
-                <div class="act-sub">Carlos R. finalizó fontanería</div>
-              </div>
-              <div class="act-time">5 min</div>
-            </div>
-            <div class="activity-item">
-              <div class="act-dot icon-blue">📅</div>
-              <div class="act-info">
-                <div class="act-title">Nueva reserva #1089</div>
-                <div class="act-sub">María L. reservó limpieza</div>
-              </div>
-              <div class="act-time">18 min</div>
-            </div>
-            <div class="activity-item">
-              <div class="act-dot" style="background:#f0fdfa;font-size:0.9rem;">👤</div>
-              <div class="act-info">
-                <div class="act-title">Nuevo cliente</div>
-                <div class="act-sub">Roberto García — Madrid</div>
-              </div>
-              <div class="act-time">32 min</div>
-            </div>
-            <div class="activity-item">
-              <div class="act-dot icon-amber">⭐</div>
-              <div class="act-info">
-                <div class="act-title">Valoración 5★</div>
-                <div class="act-sub">Carmen S. valoró a Ana M.</div>
-              </div>
-              <div class="act-time">1h</div>
-            </div>
-            <div class="activity-item">
-              <div class="act-dot icon-green">💶</div>
-              <div class="act-info">
-                <div class="act-title">Pago recibido</div>
-                <div class="act-sub">250€ — Mudanza Valencia</div>
-              </div>
-              <div class="act-time">2h</div>
-            </div>
-            <div class="activity-item">
-              <div class="act-dot icon-amber" style="background:#fef3c7;">🛡️</div>
-              <div class="act-info">
-                <div class="act-title">Verificación solicitada</div>
-                <div class="act-sub">Miguel R. — Fontanería</div>
-              </div>
-              <div class="act-time">2h</div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- end grid-3-1 -->
-
-    </div><!-- end dash-content -->
-  </div><!-- end dash-main -->
-</div><!-- end dash-layout -->
-
-<style>
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
-</style>
+    </div><!-- dash-content -->
+  </div><!-- dash-main -->
+</div><!-- dash-layout -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const ADMIN_EMAIL = 'imajid.elboujjoufi@gmail.com';
-  const _sb = supabase.createClient(
-    'https://ubncebdkqzxxmhhmzcgw.supabase.co',
-    'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py'
-  );
+const _sb = supabase.createClient(
+  'https://ubncebdkqzxxmhhmzcgw.supabase.co',
+  'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py'
+);
 
-  const SERVICE_ICONS = {
-    'Limpieza':'🧹','Fontanería':'🔧','Electricidad':'⚡','Pintura':'🎨',
-    'Mudanzas':'🚚','Jardinería':'🌿','Bricolaje':'🪚','Pet Sitting':'🐶'
-  };
-  const STATUS_BADGES = {
-    'pending':'<span class="badge badge-warning">Pendiente</span>',
-    'confirmed':'<span class="badge badge-primary">Confirmado</span>',
-    'completed':'<span class="badge badge-success">Completado</span>',
-    'cancelled':'<span class="badge badge-danger">Cancelado</span>'
-  };
-  const AVT_COLORS = ['avt-g1','avt-g2','avt-g3','avt-g4','avt-g5','avt-g6'];
+const SVC = {'Limpieza':'🧹','Fontanería':'🔧','Electricidad':'⚡','Pintura':'🎨','Mudanzas':'🚚','Jardinería':'🌿','Bricolaje':'🪚','Pet Sitting':'🐶'};
+const AVT = ['avt-g1','avt-g2','avt-g3','avt-g4','avt-g5','avt-g6'];
 
-  function initials(name) {
-    if (!name) return '?';
-    return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+/* ── AUTH ── */
+function checkAdmin() {
+  if (localStorage.getItem('hf_adm') === 'ok2026') return true;
+  const pw = prompt('🔐 Contraseña de administrador:');
+  if (pw === 'HogarFast2026!') { localStorage.setItem('hf_adm','ok2026'); return true; }
+  window.location.href = '../index.html';
+  return false;
+}
+function adminLogout() {
+  localStorage.removeItem('hf_adm');
+  window.location.href = '../index.html';
+}
+
+/* ── HELPERS ── */
+function ini(name) { if(!name)return'?'; return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
+function avt(id)   { return AVT[id?id.charCodeAt(0)%AVT.length:0]; }
+function ago(d)    { const s=Math.floor((Date.now()-new Date(d))/1000); if(s<60)return'Ahora'; if(s<3600)return Math.floor(s/60)+'min'; if(s<86400)return Math.floor(s/3600)+'h'; return Math.floor(s/86400)+'d'; }
+function fmtD(d)   { if(!d)return'—'; return new Date(d).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}); }
+function stars(n)  { return '⭐'.repeat(Math.round(n||0)); }
+
+function toast(msg, type='success') {
+  const t=document.createElement('div');
+  t.style.cssText=`position:fixed;bottom:1.5rem;right:1.5rem;background:${type==='success'?'#10b981':'#ef4444'};color:white;padding:0.75rem 1.4rem;border-radius:10px;font-size:0.85rem;font-weight:700;box-shadow:0 8px 25px rgba(0,0,0,0.2);z-index:9999;transition:opacity 0.3s;`;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300);},3000);
+}
+
+/* ── SECTION NAV ── */
+const SECTIONS = ['dashboard','reservas','clientes','pros','pagos','reviews'];
+const HEADERS  = {dashboard:'Dashboard General',reservas:'Reservas',clientes:'Clientes',pros:'Profesionales',pagos:'Pagos & Comisiones',reviews:'Valoraciones'};
+const loaded   = {};
+
+function showSection(name) {
+  SECTIONS.forEach(s=>{
+    document.getElementById('sec-'+s).classList.toggle('active', s===name);
+  });
+  document.querySelectorAll('.nav-item[data-sec]').forEach(n=>{
+    n.classList.toggle('active', n.dataset.sec===name);
+  });
+  document.getElementById('header-title').textContent = HEADERS[name]||name;
+  if (!loaded[name]) { loaded[name]=true; loadSection(name); }
+}
+
+async function loadSection(name) {
+  if (name==='dashboard')  await loadDashboard();
+  if (name==='reservas')   await loadReservas();
+  if (name==='clientes')   await loadClientes();
+  if (name==='pros')       await loadPros();
+  if (name==='pagos')      await loadPagos();
+  if (name==='reviews')    await loadReviews();
+}
+
+/* ── DASHBOARD ── */
+async function loadDashboard() {
+  const [pR,bR,proR,cliR,penR] = await Promise.all([
+    _sb.from('profiles').select('*',{count:'exact',head:true}),
+    _sb.from('bookings').select('*',{count:'exact',head:true}),
+    _sb.from('pros').select('*',{count:'exact',head:true}).eq('verified',true),
+    _sb.from('profiles').select('*',{count:'exact',head:true}).eq('user_type','client'),
+    _sb.from('pros').select('*',{count:'exact',head:true}).eq('verified',false)
+  ]);
+
+  const set=(id,v)=>{document.getElementById(id).textContent=v;};
+  set('kpi-users', pR.count??0);  set('kpi-users-sub','Total registrados');
+  set('kpi-bookings',bR.count??0); set('kpi-bookings-sub','Todas las reservas');
+  set('kpi-pros', proR.count??0);  set('kpi-pros-sub','Pros activos');
+  set('kpi-clients',cliR.count??0); set('kpi-clients-sub','Clientes activos');
+  set('kpi-pending',penR.count??0);
+  const pn=penR.count??0;
+  document.getElementById('kpi-pending-sub').textContent = pn>0?'⚠️ Requieren acción':'✅ Todo al día';
+  document.getElementById('kpi-pending-sub').className='kpi-trend '+(pn>0?'down':'up');
+  document.getElementById('nb-pending').textContent=pn;
+  document.getElementById('nb-reservas').textContent=bR.count??0;
+
+  /* Revenue */
+  const {data:done} = await _sb.from('bookings').select('total_price').eq('status','completed');
+  const rev=(done||[]).reduce((s,b)=>s+(b.total_price||0)*0.17,0);
+  set('kpi-revenue', rev.toFixed(0)+'€');
+  set('kpi-revenue-sub', rev>0?'✅ Comisiones cobradas':'Sin completadas aún');
+  renderRevChart(rev);
+
+  /* Category chart */
+  const {data:allB}=await _sb.from('bookings').select('service_type');
+  renderCatChart(allB||[]);
+
+  /* Pending pros */
+  const {data:pPros}=await _sb.from('pros')
+    .select('id,service_type,city,created_at,profiles(full_name)')
+    .eq('verified',false).order('created_at',{ascending:false}).limit(5);
+  renderPendingList(pPros||[]);
+
+  /* Recent bookings */
+  const {data:bks}=await _sb.from('bookings')
+    .select('id,service_type,city,booking_date,total_price,status,created_at,profiles!client_id(full_name)')
+    .order('created_at',{ascending:false}).limit(8);
+  renderDashBookings(bks||[]);
+}
+
+function renderRevChart(total) {
+  const months=['Ene','Feb','Mar','Abr','May','Jun','Jul'];
+  const vals=[0,0,0,0,0,0,Math.round(total)];
+  const maxV=Math.max(...vals,1);
+  const c=document.getElementById('rev-chart');
+  const m=document.getElementById('rev-months');
+  c.innerHTML=''; m.innerHTML='';
+  vals.forEach((v,i)=>{
+    const col=document.createElement('div');
+    col.className='rev-col'+(i===vals.length-1?' rev-current':'');
+    const bar=document.createElement('div');
+    bar.className='rev-bar';
+    bar.style.height=(v/maxV*100)+'%';
+    bar.setAttribute('data-tip',v+'€');
+    const lbl=document.createElement('div');
+    lbl.className='rev-month'; lbl.textContent=months[i];
+    col.appendChild(bar); col.appendChild(lbl); c.appendChild(col);
+    const ml=document.createElement('span'); ml.textContent=months[i]; m.appendChild(ml);
+  });
+}
+
+function renderCatChart(bookings) {
+  const counts={};
+  bookings.forEach(b=>{ const s=b.service_type||'Otro'; counts[s]=(counts[s]||0)+1; });
+  const total=bookings.length||1;
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const el=document.getElementById('cat-chart');
+  if(!sorted.length){el.innerHTML='<div style="text-align:center;color:var(--gray-400);padding:1rem;">Sin datos aún</div>';return;}
+  el.innerHTML=sorted.map(([svc,n])=>`
+    <div class="chart-bar-item">
+      <div class="chart-bar-label"><span>${SVC[svc]||'📋'} ${svc}</span><span style="font-weight:700;">${Math.round(n/total*100)}% · ${n} servicios</span></div>
+      <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${Math.round(n/total*100)}%"></div></div>
+    </div>`).join('');
+}
+
+function renderPendingList(pros) {
+  const el=document.getElementById('pending-list');
+  const badge=document.getElementById('pending-badge-header');
+  if(badge) badge.textContent=pros.length+' pendiente'+(pros.length!==1?'s':'');
+  if(!pros.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--gray-400);">✅ No hay verificaciones pendientes</div>';return;}
+  el.innerHTML=pros.map(p=>{
+    const name=p.profiles?.full_name||'Sin nombre';
+    return `<div class="verify-item" id="pi-${p.id}">
+      <div class="avt-wrap"><div class="avatar ${avt(p.id)}">${ini(name)}</div></div>
+      <div class="verify-info">
+        <div class="verify-name">${name}</div>
+        <div class="verify-meta">${SVC[p.service_type]||'🔧'} ${p.service_type||'—'} · 📍 ${p.city||'—'} · hace ${ago(p.created_at)}</div>
+        <div class="verify-docs"><span class="doc-chip ok">✓ Registrado</span><span class="doc-chip">⏳ Pendiente</span></div>
+      </div>
+      <div class="verify-btns">
+        <button class="btn btn-success btn-sm" onclick="verificar(this,'${p.id}','${name}')">✓ Aprobar</button>
+        <button class="btn btn-danger btn-sm" onclick="rechazar(this,'${p.id}','${name}')">✗</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderDashBookings(bks) {
+  const el=document.getElementById('dash-bookings-tbody');
+  if(!bks.length){el.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:2rem;">Sin reservas aún</td></tr>';return;}
+  el.innerHTML=bks.map((b,i)=>`
+    <tr>
+      <td style="color:var(--gray-400);font-size:0.78rem;font-weight:600;">#${1000+i}</td>
+      <td><div style="display:flex;align-items:center;gap:0.5rem;"><div class="avatar avatar-sm ${avt(b.id)}">${ini(b.profiles?.full_name)}</div><span style="font-weight:600;font-size:0.85rem;">${b.profiles?.full_name||'—'}</span></div></td>
+      <td>${SVC[b.service_type]||'📋'} ${b.service_type||'—'}</td>
+      <td>📍 ${b.city||'—'}</td>
+      <td style="font-size:0.82rem;">${fmtD(b.booking_date)}</td>
+      <td><strong>${b.total_price?b.total_price+'€':'—'}</strong></td>
+      <td>${statusBadge(b.status)}</td>
+    </tr>`).join('');
+}
+
+/* ── RESERVAS ── */
+let allReservas=[], reservaStatusFilter='', reservaTextFilter='';
+
+async function loadReservas() {
+  const {data}=await _sb.from('bookings')
+    .select('id,service_type,city,booking_date,booking_time,total_price,status,created_at,notes,profiles!client_id(full_name,phone)')
+    .order('created_at',{ascending:false});
+  allReservas=data||[];
+  renderReservas();
+}
+
+function renderReservas() {
+  const el=document.getElementById('reservas-tbody');
+  let rows=allReservas;
+  if(reservaStatusFilter) rows=rows.filter(r=>r.status===reservaStatusFilter);
+  if(reservaTextFilter)   rows=rows.filter(r=>{
+    const q=reservaTextFilter.toLowerCase();
+    return (r.profiles?.full_name||'').toLowerCase().includes(q)||(r.service_type||'').toLowerCase().includes(q)||(r.city||'').toLowerCase().includes(q);
+  });
+  if(!rows.length){el.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--gray-400);padding:2rem;">Sin resultados</td></tr>';return;}
+  el.innerHTML=rows.map((b,i)=>{
+    const com=b.total_price?(b.total_price*0.17).toFixed(0)+'€':'—';
+    return `<tr>
+      <td style="color:var(--gray-400);font-size:0.78rem;font-weight:600;">#${1000+i}</td>
+      <td><div style="font-weight:600;font-size:0.85rem;">${b.profiles?.full_name||'—'}</div><div style="font-size:0.75rem;color:var(--gray-400);">${b.profiles?.phone||''}</div></td>
+      <td>${SVC[b.service_type]||'📋'} ${b.service_type||'—'}</td>
+      <td>📍 ${b.city||'—'}</td>
+      <td style="font-size:0.82rem;">${fmtD(b.booking_date)}</td>
+      <td><strong>${b.total_price?b.total_price+'€':'—'}</strong></td>
+      <td style="color:#10b981;font-weight:700;">${com}</td>
+      <td>${statusBadge(b.status)}</td>
+      <td>
+        <select class="status-select" onchange="changeStatus('${b.id}',this.value,this)">
+          <option value="pending"   ${b.status==='pending'   ?'selected':''}>⏳ Pendiente</option>
+          <option value="confirmed" ${b.status==='confirmed' ?'selected':''}>✅ Confirmada</option>
+          <option value="completed" ${b.status==='completed' ?'selected':''}>🏁 Completada</option>
+          <option value="cancelled" ${b.status==='cancelled' ?'selected':''}>❌ Cancelada</option>
+        </select>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterByStatus(btn, status) {
+  document.querySelectorAll('#sec-reservas .filter-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  reservaStatusFilter=status;
+  renderReservas();
+}
+function filterReservas(q) { reservaTextFilter=q; renderReservas(); }
+
+async function changeStatus(id, status, sel) {
+  const {error}=await _sb.from('bookings').update({status}).eq('id',id);
+  if(error){ toast('Error al actualizar','error'); return; }
+  toast('✅ Estado actualizado');
+  const i=allReservas.findIndex(b=>b.id===id);
+  if(i>-1) allReservas[i].status=status;
+  sel.closest('td').previousElementSibling.innerHTML=statusBadge(status);
+}
+
+/* ── CLIENTES ── */
+let allClientes=[], clienteTextFilter='';
+
+async function loadClientes() {
+  const {data}=await _sb.from('profiles')
+    .select('id,full_name,phone,city,created_at,user_id')
+    .eq('user_type','client')
+    .order('created_at',{ascending:false});
+  allClientes=data||[];
+  renderClientes();
+}
+
+function renderClientes() {
+  const el=document.getElementById('clientes-tbody');
+  let rows=allClientes;
+  if(clienteTextFilter){
+    const q=clienteTextFilter.toLowerCase();
+    rows=rows.filter(c=>(c.full_name||'').toLowerCase().includes(q)||(c.city||'').toLowerCase().includes(q));
   }
-  function avtClass(id) {
-    return AVT_COLORS[id ? id.charCodeAt(0) % AVT_COLORS.length : 0];
+  if(!rows.length){el.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:2rem;">Sin clientes aún</td></tr>';return;}
+  el.innerHTML=rows.map(c=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:0.7rem;">
+        <div class="avatar avatar-sm ${avt(c.id)}">${ini(c.full_name)}</div>
+        <div style="font-weight:600;font-size:0.85rem;">${c.full_name||'—'}</div>
+      </div></td>
+      <td style="font-size:0.82rem;color:var(--gray-500);">—</td>
+      <td style="font-size:0.82rem;">${c.phone||'—'}</td>
+      <td>📍 ${c.city||'—'}</td>
+      <td>—</td>
+      <td style="font-size:0.82rem;">${fmtD(c.created_at)}</td>
+      <td><button class="btn btn-secondary btn-sm" onclick="toast('📧 Función próximamente')">Contactar</button></td>
+    </tr>`).join('');
+}
+function filterClientes(q){ clienteTextFilter=q; renderClientes(); }
+
+/* ── PROFESIONALES ── */
+let allPros=[], prosTextFilter='', prosStatusFilter='';
+
+async function loadPros() {
+  const {data}=await _sb.from('pros')
+    .select('id,service_type,city,hourly_rate,experience_years,rating,total_jobs,verified,created_at,profiles(full_name,phone)')
+    .order('created_at',{ascending:false});
+  allPros=data||[];
+  renderPros();
+}
+
+function renderPros() {
+  const el=document.getElementById('pros-tbody');
+  let rows=allPros;
+  if(prosStatusFilter==='pending')  rows=rows.filter(p=>!p.verified);
+  if(prosStatusFilter==='verified') rows=rows.filter(p=>p.verified);
+  if(prosTextFilter){
+    const q=prosTextFilter.toLowerCase();
+    rows=rows.filter(p=>(p.profiles?.full_name||'').toLowerCase().includes(q)||(p.service_type||'').toLowerCase().includes(q)||(p.city||'').toLowerCase().includes(q));
   }
-  function timeAgo(dateStr) {
-    const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
-    if (diff < 60) return 'Ahora';
-    if (diff < 3600) return Math.floor(diff/60) + ' min';
-    if (diff < 86400) return Math.floor(diff/3600) + 'h';
-    return Math.floor(diff/86400) + 'd';
-  }
-  function fmtDate(d) {
-    if (!d) return '—';
-    return new Date(d).toLocaleDateString('es-ES', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-  }
-  function showToast(msg, type) {
-    const t = document.createElement('div');
-    t.style.cssText = `position:fixed;bottom:1.5rem;right:1.5rem;background:${type==='success'?'#10b981':'#ef4444'};color:white;padding:0.75rem 1.2rem;border-radius:10px;font-size:0.85rem;font-weight:600;box-shadow:0 8px 25px rgba(0,0,0,0.2);z-index:9999;transition:opacity 0.3s;`;
-    t.textContent = msg;
-    document.body.appendChild(t);
-    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
-  }
-  function setFilter(btn) {
-    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-  function updatePendingBadge() {
-    const n = document.querySelectorAll('.verify-item').length;
-    const badge = document.querySelector('.badge-warning');
-    if (badge) badge.textContent = n + ' pendiente' + (n !== 1 ? 's' : '');
-    document.getElementById('kpi-pending').textContent = n;
-  }
+  if(!rows.length){el.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:2rem;">Sin resultados</td></tr>';return;}
+  el.innerHTML=rows.map(p=>{
+    const name=p.profiles?.full_name||'—';
+    const badge=p.verified?'<span class="badge badge-verified">✅ Verificado</span>':'<span class="badge badge-pending">⏳ Pendiente</span>';
+    const btns=p.verified
+      ? `<button class="btn btn-danger btn-sm" onclick="rechazar(this,'${p.id}','${name}')">✗ Dar de baja</button>`
+      : `<button class="btn btn-success btn-sm" onclick="verificar(this,'${p.id}','${name}')">✓ Aprobar</button>
+         <button class="btn btn-danger btn-sm" onclick="rechazar(this,'${p.id}','${name}')">✗</button>`;
+    return `<tr id="prorow-${p.id}">
+      <td><div style="display:flex;align-items:center;gap:0.7rem;">
+        <div class="avatar avatar-sm ${avt(p.id)}">${ini(name)}</div>
+        <div><div style="font-weight:600;font-size:0.85rem;">${name}</div><div style="font-size:0.75rem;color:var(--gray-400);">${p.profiles?.phone||''}</div></div>
+      </div></td>
+      <td>${SVC[p.service_type]||'🔧'} ${p.service_type||'—'}</td>
+      <td>📍 ${p.city||'—'}</td>
+      <td><strong>${p.hourly_rate?p.hourly_rate+'€/h':'—'}</strong></td>
+      <td>${p.experience_years?p.experience_years+' años':'—'}</td>
+      <td>${p.rating?'⭐ '+p.rating:'—'}</td>
+      <td>${badge}</td>
+      <td><div style="display:flex;gap:0.4rem;">${btns}</div></td>
+    </tr>`;
+  }).join('');
+}
+function filterPros(q){ prosTextFilter=q; renderPros(); }
+function filterProsByStatus(btn,s){
+  document.querySelectorAll('#sec-pros .filter-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); prosStatusFilter=s; renderPros();
+}
 
-  /* Revenue chart (keep nice visual with real total) */
-  function renderChart(totalRevenue) {
-    const months = ['Dic','Ene','Feb','Mar','Abr','May','Jun'];
-    const values = [0,0,0,0,0,0, Math.round(totalRevenue * 100) / 100];
-    const maxV = Math.max(...values, 1);
-    const chart = document.getElementById('rev-chart');
-    const monthsEl = document.getElementById('rev-months');
-    monthsEl.style.cssText = 'display:flex;justify-content:space-between;font-size:0.68rem;color:var(--gray-400);margin-top:0.25rem;width:100%;';
-    chart.innerHTML = '';
-    monthsEl.innerHTML = '';
-    values.forEach((v, i) => {
-      const col = document.createElement('div');
-      col.className = 'rev-col' + (i === values.length-1 ? ' rev-current' : '');
-      const bar = document.createElement('div');
-      bar.className = 'rev-bar';
-      bar.style.height = (v / maxV * 100) + '%';
-      bar.setAttribute('data-tip', v.toFixed(0) + '€');
-      const lbl = document.createElement('div');
-      lbl.className = 'rev-month';
-      lbl.textContent = months[i];
-      col.appendChild(bar); col.appendChild(lbl);
-      chart.appendChild(col);
-      const ml = document.createElement('span');
-      ml.textContent = months[i];
-      monthsEl.appendChild(ml);
-    });
-  }
+/* ── VERIFY / REJECT ── */
+async function verificar(btn, id, nombre) {
+  btn.disabled=true;
+  const {error}=await _sb.from('pros').update({verified:true}).eq('id',id);
+  if(error){toast('Error','error');btn.disabled=false;return;}
+  const row=document.getElementById('prorow-'+id)||btn.closest('.verify-item')||btn.closest('tr');
+  if(row){ row.style.transition='opacity 0.4s'; row.style.opacity='0'; setTimeout(()=>{row.remove();},400); }
+  const i=allPros.findIndex(p=>p.id===id);
+  if(i>-1) allPros[i].verified=true;
+  const pn=document.getElementById('nb-pending');
+  if(pn) pn.textContent=Math.max(0,(parseInt(pn.textContent)||0)-1);
+  toast('✅ '+nombre+' verificado');
+}
 
-  async function verificar(btn, proId, nombre) {
-    btn.disabled = true;
-    const { error } = await _sb.from('pros').update({ verified: true }).eq('id', proId);
-    if (error) { showToast('Error al verificar', 'error'); btn.disabled = false; return; }
-    const row = btn.closest('.verify-item');
-    row.style.transition = 'opacity 0.4s';
-    row.style.opacity = '0';
-    setTimeout(() => { row.remove(); updatePendingBadge(); showToast('✓ ' + nombre + ' verificado', 'success'); }, 400);
-  }
+async function rechazar(btn, id, nombre) {
+  if(!confirm('¿Eliminar a '+nombre+'?')) return;
+  btn.disabled=true;
+  const {error}=await _sb.from('pros').delete().eq('id',id);
+  if(error){toast('Error','error');btn.disabled=false;return;}
+  const row=document.getElementById('prorow-'+id)||btn.closest('.verify-item')||btn.closest('tr');
+  if(row){ row.style.transition='opacity 0.4s'; row.style.opacity='0'; setTimeout(()=>{row.remove();},400); }
+  allPros=allPros.filter(p=>p.id!==id);
+  toast('🗑️ '+nombre+' eliminado','error');
+}
 
-  async function rechazar(btn, proId, nombre) {
-    if (!confirm('¿Rechazar la solicitud de ' + nombre + '?')) return;
-    btn.disabled = true;
-    const { error } = await _sb.from('pros').delete().eq('id', proId);
-    if (error) { showToast('Error', 'error'); btn.disabled = false; return; }
-    const row = btn.closest('.verify-item');
-    row.style.transition = 'opacity 0.4s';
-    row.style.opacity = '0';
-    setTimeout(() => { row.remove(); updatePendingBadge(); showToast('✗ ' + nombre + ' rechazado', 'error'); }, 400);
-  }
+/* ── PAGOS ── */
+async function loadPagos() {
+  const {data}=await _sb.from('bookings')
+    .select('id,service_type,city,booking_date,total_price,created_at,profiles!client_id(full_name)')
+    .eq('status','completed')
+    .order('created_at',{ascending:false});
+  const rows=data||[];
+  const total=rows.reduce((s,b)=>s+(b.total_price||0)*0.17,0);
+  const avg=rows.length?rows.reduce((s,b)=>s+(b.total_price||0),0)/rows.length:0;
+  document.getElementById('pago-total').textContent=total.toFixed(0)+'€';
+  document.getElementById('pago-count').textContent=rows.length;
+  document.getElementById('pago-avg').textContent=avg.toFixed(0)+'€';
+  const el=document.getElementById('pagos-tbody');
+  if(!rows.length){el.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:2rem;">Sin pagos completados aún</td></tr>';return;}
+  el.innerHTML=rows.map((b,i)=>{
+    const com=(b.total_price||0)*0.17;
+    const pro=(b.total_price||0)-com;
+    return `<tr>
+      <td style="color:var(--gray-400);font-size:0.78rem;">#${1000+i}</td>
+      <td style="font-weight:600;font-size:0.85rem;">${b.profiles?.full_name||'—'}</td>
+      <td>${SVC[b.service_type]||'📋'} ${b.service_type||'—'}</td>
+      <td>📍 ${b.city||'—'}</td>
+      <td style="font-size:0.82rem;">${fmtD(b.booking_date)}</td>
+      <td><strong>${b.total_price?b.total_price+'€':'—'}</strong></td>
+      <td style="color:#10b981;font-weight:800;">${com.toFixed(0)}€</td>
+      <td style="color:var(--gray-600);font-weight:600;">${pro.toFixed(0)}€</td>
+    </tr>`;
+  }).join('');
+}
 
-  function checkAdmin() {
-    const ok = localStorage.getItem('hf_adm');
-    if (ok === 'ok2026') return true;
-    const pw = prompt('🔐 Contraseña de administrador:');
-    if (pw === 'HogarFast2026!') {
-      localStorage.setItem('hf_adm', 'ok2026');
-      return true;
-    }
-    window.location.href = '../index.html';
-    return false;
-  }
+/* ── REVIEWS ── */
+async function loadReviews() {
+  const {data}=await _sb.from('reviews')
+    .select('id,rating,comment,created_at,profiles!client_id(full_name),pros(profiles(full_name))')
+    .order('created_at',{ascending:false});
+  const el=document.getElementById('reviews-tbody');
+  const rows=data||[];
+  if(!rows.length){el.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:2rem;">Sin valoraciones aún</td></tr>';return;}
+  el.innerHTML=rows.map(r=>`
+    <tr>
+      <td style="font-weight:600;font-size:0.85rem;">${r.profiles?.full_name||'—'}</td>
+      <td style="font-size:0.85rem;">${r.pros?.profiles?.full_name||'—'}</td>
+      <td>${'⭐'.repeat(Math.round(r.rating||0))} <strong>${r.rating||0}/5</strong></td>
+      <td style="font-size:0.82rem;color:var(--gray-600);max-width:220px;">${r.comment||'—'}</td>
+      <td style="font-size:0.82rem;">${fmtD(r.created_at)}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteReview('${r.id}',this)">🗑️</button></td>
+    </tr>`).join('');
+}
 
-  async function loadDashboard() {
-    if (!checkAdmin()) return;
+async function deleteReview(id, btn) {
+  if(!confirm('¿Eliminar esta valoración?')) return;
+  await _sb.from('reviews').delete().eq('id',id);
+  btn.closest('tr').remove();
+  toast('Valoración eliminada');
+}
 
-    /* ── KPI counts ── */
-    const [profilesRes, bookingsRes, prosRes, clientsRes, pendingRes] = await Promise.all([
-      _sb.from('profiles').select('*', { count: 'exact', head: true }),
-      _sb.from('bookings').select('*', { count: 'exact', head: true }),
-      _sb.from('pros').select('*', { count: 'exact', head: true }).eq('verified', true),
-      _sb.from('profiles').select('*', { count: 'exact', head: true }).eq('user_type', 'client'),
-      _sb.from('pros').select('*', { count: 'exact', head: true }).eq('verified', false)
-    ]);
+/* ── EXPORT CSV ── */
+function exportCSV() {
+  let csv='ID,Cliente,Servicio,Ciudad,Fecha,Precio,Estado\n';
+  allReservas.forEach((b,i)=>{
+    csv+=`#${1000+i},"${b.profiles?.full_name||'—'}","${b.service_type||'—'}","${b.city||'—'}","${fmtD(b.booking_date)}","${b.total_price||0}€","${b.status}"\n`;
+  });
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='hogarfast-reservas.csv';
+  a.click();
+  toast('✅ CSV descargado');
+}
 
-    document.getElementById('kpi-users').textContent = profilesRes.count ?? 0;
-    document.getElementById('kpi-users-sub').textContent = 'Total registrados';
-    document.getElementById('kpi-bookings').textContent = bookingsRes.count ?? 0;
-    document.getElementById('kpi-bookings-sub').textContent = 'Todas las reservas';
-    document.getElementById('kpi-pros').textContent = prosRes.count ?? 0;
-    document.getElementById('kpi-pros-sub').textContent = 'Pros verificados';
-    document.getElementById('kpi-clients').textContent = clientsRes.count ?? 0;
-    document.getElementById('kpi-clients-sub').textContent = 'Clientes activos';
-    document.getElementById('kpi-pending').textContent = pendingRes.count ?? 0;
-    const pn = pendingRes.count ?? 0;
-    document.getElementById('kpi-pending-sub').textContent = pn > 0 ? '⚠️ Requieren acción' : '✅ Todo al día';
-    document.getElementById('kpi-pending-sub').className = 'kpi-trend ' + (pn > 0 ? 'down' : 'up');
+/* ── GLOBAL SEARCH ── */
+function handleGlobalSearch(q) {
+  if(!q) return;
+  if(allReservas.length){ reservaTextFilter=q; if(loaded['reservas'])renderReservas(); }
+  if(allClientes.length){ clienteTextFilter=q; if(loaded['clientes'])renderClientes(); }
+  if(allPros.length){ prosTextFilter=q; if(loaded['pros'])renderPros(); }
+}
 
-    /* ── Revenue (17% commission on completed bookings) ── */
-    const { data: completedBookings } = await _sb.from('bookings')
-      .select('total_price').eq('status', 'completed');
-    const revenue = (completedBookings || []).reduce((s, b) => s + (b.total_price || 0) * 0.17, 0);
-    document.getElementById('kpi-revenue').textContent = revenue.toFixed(0) + '€';
-    document.getElementById('kpi-revenue-sub').textContent = revenue > 0 ? '✅ Comisiones cobradas' : 'Sin reservas completadas aún';
-    renderChart(revenue);
+/* ── STATUS BADGE ── */
+function statusBadge(s) {
+  const m={pending:'<span class="badge badge-warning">⏳ Pendiente</span>',confirmed:'<span class="badge badge-primary">✅ Confirmada</span>',completed:'<span class="badge badge-success">🏁 Completada</span>',cancelled:'<span class="badge badge-danger">❌ Cancelada</span>'};
+  return m[s]||`<span class="badge">${s||'—'}</span>`;
+}
 
-    /* ── Pending verifications ── */
-    const { data: pendingPros } = await _sb.from('pros')
-      .select('id, service_type, city, created_at, profiles(full_name)')
-      .eq('verified', false)
-      .order('created_at', { ascending: false })
-      .limit(10);
-
-    const pendingList = document.getElementById('pending-list');
-    if (!pendingPros || !pendingPros.length) {
-      pendingList.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--gray-400);">✅ No hay verificaciones pendientes</div>';
-    } else {
-      pendingList.innerHTML = pendingPros.map(pro => {
-        const name = pro.profiles?.full_name || 'Sin nombre';
-        const ini = initials(name);
-        const cls = avtClass(pro.id);
-        const svc = pro.service_type || 'Servicio';
-        const icon = SERVICE_ICONS[svc] || '🔧';
-        const ago = timeAgo(pro.created_at);
-        return `
-          <div class="verify-item" id="pro-${pro.id}">
-            <div class="avt-wrap"><div class="avatar ${cls}">${ini}</div></div>
-            <div class="verify-info">
-              <div class="verify-name">${name}</div>
-              <div class="verify-meta">${icon} ${svc} · ${pro.city || '—'} · Solicitado hace ${ago}</div>
-              <div class="verify-docs">
-                <span class="doc-chip ok">✓ Registrado</span>
-                <span class="doc-chip">⏳ Verificación pendiente</span>
-              </div>
-            </div>
-            <div class="verify-btns">
-              <button class="btn btn-success btn-sm" onclick="verificar(this,'${pro.id}','${name}')">✓ Aprobar</button>
-              <button class="btn btn-danger btn-sm" onclick="rechazar(this,'${pro.id}','${name}')">✗</button>
-            </div>
-          </div>`;
-      }).join('');
-    }
-
-    /* ── Recent bookings ── */
-    const { data: bookings } = await _sb.from('bookings')
-      .select('id, service_type, city, booking_date, booking_time, total_price, status, created_at, profiles!client_id(full_name)')
-      .order('created_at', { ascending: false })
-      .limit(10);
-
-    const tbody = document.getElementById('bookings-tbody');
-    if (!bookings || !bookings.length) {
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--gray-400);padding:2rem;">Sin reservas aún</td></tr>';
-    } else {
-      tbody.innerHTML = bookings.map((b, idx) => {
-        const clientName = b.profiles?.full_name || 'Cliente';
-        const ini = initials(clientName);
-        const cls = avtClass(b.id);
-        const svc = b.service_type || '—';
-        const icon = SERVICE_ICONS[svc] || '📋';
-        const statusBadge = STATUS_BADGES[b.status] || `<span class="badge">${b.status}</span>`;
-        const dateStr = b.booking_date ? new Date(b.booking_date).toLocaleDateString('es-ES', {day:'numeric',month:'short'}) + (b.booking_time ? ' ' + b.booking_time.slice(0,5) : '') : '—';
-        return `
-          <tr>
-            <td style="color:var(--gray-400);font-size:0.78rem;font-weight:600;">#${String(1000+idx).padStart(4,'0')}</td>
-            <td><div style="display:flex;align-items:center;gap:0.55rem;">
-              <div class="avt-wrap"><div class="avatar avatar-sm ${cls}">${ini}</div></div>
-              <div><div style="font-weight:600;font-size:0.85rem;">${clientName}</div></div>
-            </div></td>
-            <td>${icon} ${svc}</td>
-            <td><span style="color:var(--gray-500);font-size:0.82rem;">—</span></td>
-            <td>📍 ${b.city || '—'}</td>
-            <td style="font-size:0.82rem;">${dateStr}</td>
-            <td><strong style="color:var(--gray-900);">${b.total_price ? b.total_price + '€' : '—'}</strong></td>
-            <td>${statusBadge}</td>
-            <td><button class="btn btn-secondary btn-sm">Ver</button></td>
-          </tr>`;
-      }).join('');
-    }
-  }
-
+/* ── INIT ── */
+if (checkAdmin()) {
+  loaded['dashboard'] = true;
   loadDashboard();
+}
 </script>
 </body>
 </html>
