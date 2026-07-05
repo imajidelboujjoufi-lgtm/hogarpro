@@ -463,7 +463,7 @@
     .single();
   if (!pro) return;
 
-  const SVC_ICONS = { Limpieza:'🧹', Fontanería:'🔧', Electricidad:'⚡', Mudanzas:'📦', Jardinería:'🌿', Pintura:'🎨' };
+  const SVC_ICONS = { Limpieza:'🧹', Fontanería:'🔧', Electricidad:'⚡', Mudanzas:'📦', Jardinería:'🌿', Pintura:'🎨', Carpintería:'🪵', Bricolaje:'🪚' };
   const name = pro.profiles?.full_name || 'Profesional';
   const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   const icon = SVC_ICONS[pro.service_type] || '🏠';
