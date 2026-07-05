@@ -443,5 +443,80 @@
     btn.textContent = btn.textContent.includes('🤍') ? '❤️ Favorito' : '🤍 Favorito';
   }
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async () => {
+  const params = new URLSearchParams(location.search);
+  const proId = params.get('id');
+  if (!proId || proId.startsWith('sb-') === false && !parseInt(proId)) return;
+  const realId = proId.startsWith('sb-') ? proId.replace('sb-','') : proId;
+
+  const _sb = supabase.createClient(
+    'https://ubncebdkqzxxmhhmzcgw.supabase.co',
+    'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py'
+  );
+
+  const { data: pro } = await _sb.from('pros')
+    .select('id,service_type,city,hourly_rate,experience_years,rating,total_jobs,bio,verified,profiles(full_name,phone)')
+    .eq('id', realId)
+    .single();
+  if (!pro) return;
+
+  const SVC_ICONS = { Limpieza:'🧹', Fontanería:'🔧', Electricidad:'⚡', Mudanzas:'📦', Jardinería:'🌿', Pintura:'🎨' };
+  const name = pro.profiles?.full_name || 'Profesional';
+  const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const icon = SVC_ICONS[pro.service_type] || '🏠';
+
+  // Update hero
+  document.querySelector('.breadcrumb').innerHTML = `<a href="index.html">Inicio</a> › <a href="pros.html">Profesionales</a> › ${name}`;
+  document.querySelector('.profile-avt').textContent = initials;
+  document.querySelector('.service-badge').textContent = `${icon} ${pro.service_type||'Servicio'}`;
+  document.querySelector('.profile-info h1').textContent = name;
+  const stats = document.querySelectorAll('.p-stat strong');
+  if(stats[0]) stats[0].textContent = (pro.rating||4.8) + ' ⭐';
+  if(stats[1]) stats[1].textContent = pro.total_jobs||0;
+  if(stats[2]) stats[2].textContent = (pro.experience_years||1) + ' años';
+  if(stats[3]) stats[3].textContent = '📍 ' + (pro.city||'España');
+  if(stats[4]) stats[4].textContent = pro.verified ? '✅ Verificado' : '⏳ Pendiente';
+
+  // Update about
+  const aboutH = document.querySelector('.section-card-header h3');
+  if(aboutH) aboutH.textContent = `Sobre ${name}`;
+  const aboutAvt = document.querySelector('.section-card-header .avatar');
+  if(aboutAvt) aboutAvt.textContent = initials;
+  const paras = document.querySelectorAll('.section-card-body p');
+  if(paras[0] && pro.bio) paras[0].textContent = pro.bio;
+
+  // Update price in booking sidebar
+  if(pro.hourly_rate) {
+    document.querySelectorAll('#subtotal, [id=subtotal]').forEach(el => el.textContent = (pro.hourly_rate*3)+'€');
+    const hRows = document.querySelectorAll('.price-row span');
+    hRows.forEach(el => { if(el.textContent.includes('×')) el.textContent = `${pro.hourly_rate}€ × 3 horas`; });
+    window._proRate = pro.hourly_rate;
+  }
+
+  // Update WhatsApp with real phone if exists
+  if(pro.profiles?.phone) {
+    const wa = document.querySelector('a[href*="wa.me"]');
+    if(wa) wa.href = 'https://wa.me/34' + pro.profiles.phone.replace(/\D/g,'').replace(/^34/,'');
+  }
+
+  // Patch updatePrice to use real rate
+  const origUpdate = window.updatePrice;
+  window.updatePrice = function() {
+    const rate = window._proRate || 25;
+    const h = parseInt(document.getElementById('duration').value);
+    const sub = h * rate;
+    const fee = sub * 0.17;
+    const total = sub + fee;
+    document.getElementById('h-count').textContent = h;
+    document.getElementById('subtotal').textContent = sub + '€';
+    document.getElementById('fee').textContent = fee.toFixed(2) + '€';
+    document.getElementById('total').textContent = total.toFixed(2) + '€';
+  };
+  window.updatePrice();
+})();
+</script>
 </body>
 </html>

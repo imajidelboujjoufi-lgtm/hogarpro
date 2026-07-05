@@ -316,6 +316,10 @@
   populateCitySelect('reg-city', 'Selecciona tu ciudad...');
 
   let selectedType = 'client';
+  // Auto-select pro if coming from hazte-profesional
+  if (new URLSearchParams(location.search).get('type') === 'pro') {
+    document.addEventListener('DOMContentLoaded', () => selectType('pro'));
+  }
 
   function selectType(type) {
     selectedType = type;
@@ -388,37 +392,43 @@
     }
 
     try {
-      const { data, error } = await _sb.auth.signUp({ email, password });
+      /* 1. SignUp */
+      const { data: signUpData, error } = await _sb.auth.signUp({ email, password });
       if (error) throw error;
 
-      if (data.user) {
-        await _sb.from('profiles').insert({
-          id: data.user.id,
+      /* 2. Auto-login (works when email confirm is disabled in Supabase) */
+      const { data: loginData } = await _sb.auth.signInWithPassword({ email, password });
+      const uid = loginData?.user?.id || signUpData?.user?.id;
+
+      if (uid) {
+        await _sb.from('profiles').upsert({
+          id: uid,
           full_name: nombre + ' ' + apellidos,
-          phone,
-          city,
+          phone, city,
           user_type: selectedType
         });
 
         if (selectedType === 'pro') {
           const serviceEl = document.getElementById('pro-service');
-          await _sb.from('pros').insert({
-            user_id: data.user.id,
-            service_type: serviceEl ? serviceEl.value : '',
-            city
+          await _sb.from('pros').upsert({
+            user_id: uid,
+            service_type: serviceEl ? serviceEl.value : 'Limpieza',
+            city, verified: false
           });
         }
       }
 
       const overlay = document.getElementById('success-overlay');
       document.getElementById('success-msg').textContent = selectedType === 'pro'
-        ? 'Cuenta profesional creada. Revisaremos tu documentación en 24h. Redirigiendo...'
-        : 'Bienvenido a HogarFast. Aquí tienes 10€ de descuento en tu primera reserva. Redirigiendo...';
+        ? 'Cuenta profesional creada. Revisaremos tu perfil en 24h. Redirigiendo...'
+        : '¡Bienvenido a HogarFast! Tienes 10€ de descuento en tu primera reserva. Redirigiendo...';
       overlay.classList.add('show');
 
-      setTimeout(() => {
-        window.location.href = selectedType === 'pro' ? '../dashboard/pro.html' : '../dashboard/client.html';
-      }, 2000);
+      const dest = email === 'imajid.elboujjoufi@gmail.com'
+        ? 'dashboard/hf-ctrl-x9k2m7.html'
+        : selectedType === 'pro' ? 'dashboard/pro.html' : 'dashboard/client.html';
+
+      setTimeout(() => { window.location.href = dest; }, 2000);
 
     } catch (err) {
       alert('Error: ' + (err.message || 'Inténtalo de nuevo'));
