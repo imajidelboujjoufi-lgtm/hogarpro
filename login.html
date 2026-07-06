@@ -244,7 +244,13 @@
             <button type="button" class="pw-toggle" onclick="togglePw('login-pw',this)" title="Mostrar contraseña">👁</button>
           </div>
         </div>
-        <div class="forgot"><a href="forgot-password.html">¿Olvidaste tu contraseña?</a></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.85rem;color:var(--gray-600);">
+            <input type="checkbox" id="remember-me" style="accent-color:var(--primary);width:16px;height:16px;" />
+            Recuérdame
+          </label>
+          <a href="forgot-password.html" style="font-size:0.83rem;color:var(--primary);">¿Olvidaste tu contraseña?</a>
+        </div>
         <button type="submit" class="btn btn-primary btn-block btn-lg" id="login-btn">Iniciar sesión →</button>
       </form>
 
@@ -269,6 +275,15 @@
     currentRole = role;
   }
 
+  // Auto-fill email if remembered
+  window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('hf_remembered_email');
+    if (saved) {
+      document.getElementById('login-email').value = saved;
+      document.getElementById('remember-me').checked = true;
+    }
+  });
+
   function togglePw(id, btn) {
     const input = document.getElementById(id);
     if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
@@ -285,6 +300,11 @@
 
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-pw').value;
+    const remember = document.getElementById('remember-me').checked;
+
+    // Save or clear email
+    if (remember) localStorage.setItem('hf_remembered_email', email);
+    else localStorage.removeItem('hf_remembered_email');
 
     try {
       const { data, error } = await _sb.auth.signInWithPassword({ email, password });
