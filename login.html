@@ -258,7 +258,8 @@
 <script>
   const _sb = supabase.createClient(
     'https://ubncebdkqzxxmhhmzcgw.supabase.co',
-    'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py'
+    'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py',
+    { auth: { persistSession: true, storageKey: 'hf_session', autoRefreshToken: true } }
   );
   let currentRole = 'client';
 

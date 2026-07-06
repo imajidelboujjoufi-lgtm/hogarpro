@@ -382,14 +382,24 @@
 <script>
 const _sb = supabase.createClient(
   'https://ubncebdkqzxxmhhmzcgw.supabase.co',
-  'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py'
+  'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py',
+  { auth: { persistSession: true, storageKey: 'hf_session', autoRefreshToken: true } }
 );
 const SVC_ICON = {'Limpieza':'🧹','Fontanería':'🔧','Electricidad':'⚡','Pintura':'🎨','Mudanzas':'🚚','Jardinería':'🌿','Bricolaje':'🪚','Carpintería':'🪵','Pet Sitting':'🐶'};
 const STATUS_LABEL = {pending:'<span class="badge badge-warning">Pendiente</span>',confirmed:'<span class="badge badge-primary">Confirmado</span>',completed:'<span class="badge badge-success">Completado</span>',cancelled:'<span class="badge badge-danger">Cancelado</span>'};
 function fmtDate(d){ if(!d)return'—'; return new Date(d).toLocaleDateString('es-ES',{day:'numeric',month:'short'}); }
 
 async function initPro() {
-  const { data: { session } } = await _sb.auth.getSession();
+  let session = (await _sb.auth.getSession()).data.session;
+  if (!session) {
+    session = await new Promise(resolve => {
+      const { data: { subscription } } = _sb.auth.onAuthStateChange((_e, s) => {
+        subscription.unsubscribe();
+        resolve(s);
+      });
+      setTimeout(() => { subscription.unsubscribe(); resolve(null); }, 3000);
+    });
+  }
   if (!session) { window.location.href = '../login.html'; return; }
   const uid = session.user.id;
 
