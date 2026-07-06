@@ -266,9 +266,35 @@
               <input type="number" class="form-control" placeholder="Ej: 25" min="10" max="200" />
             </div>
           </div>
-          <div class="form-group" style="margin-bottom:0;">
+          <div class="form-group">
             <label class="form-label">Breve descripción de tus servicios</label>
             <textarea class="form-control" rows="2" placeholder="Ej: Especialista en limpieza del hogar con 8 años de experiencia..." style="resize:vertical;"></textarea>
+          </div>
+
+          <!-- VERIFICACIÓN DE IDENTIDAD -->
+          <div style="background:white;border:1.5px solid #e2e8f0;border-radius:10px;padding:1rem;margin-top:0.5rem;">
+            <div style="font-weight:800;font-size:0.85rem;color:#0f172a;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.4rem;">
+              🛡️ Verificación de identidad
+              <span style="background:#fef3c7;color:#92400e;font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:auto;">REQUERIDO</span>
+            </div>
+            <div class="form-group" style="margin-bottom:0.8rem;">
+              <label class="form-label">Número de DNI, NIE o Pasaporte</label>
+              <input type="text" class="form-control" id="pro-dni"
+                placeholder="Ej: 12345678A / X1234567B / AB123456"
+                maxlength="20"
+                style="letter-spacing:0.05em;text-transform:uppercase;"
+                oninput="this.value=this.value.toUpperCase()"
+                required />
+              <div style="font-size:0.74rem;color:var(--gray-500);margin-top:0.3rem;">
+                Solo visible para el equipo de HogarFast. Nunca se publica.
+              </div>
+            </div>
+            <label style="display:flex;align-items:flex-start;gap:0.6rem;cursor:pointer;font-size:0.82rem;color:var(--gray-700);line-height:1.4;">
+              <input type="checkbox" id="pro-antecedentes" style="accent-color:var(--primary);width:15px;height:15px;margin-top:2px;flex-shrink:0;" required />
+              <span>
+                <strong>Declaro bajo mi responsabilidad</strong> que no tengo antecedentes penales y que la información proporcionada es veraz. Entiendo que HogarFast puede verificar estos datos y que proporcionar información falsa supone la cancelación inmediata de mi cuenta.
+              </span>
+            </label>
           </div>
         </div>
 
@@ -408,6 +434,21 @@
     const password = document.getElementById('reg-pw').value;
     const password2 = document.getElementById('reg-pw2').value;
 
+    if (selectedType === 'pro') {
+      const dni = document.getElementById('pro-dni')?.value.trim();
+      const antecedentes = document.getElementById('pro-antecedentes')?.checked;
+      if (!dni) {
+        alert('Por favor introduce tu número de DNI, NIE o Pasaporte.');
+        btn.textContent = 'Registrarme como profesional →';
+        btn.classList.remove('btn-loading'); btn.disabled = false; return;
+      }
+      if (!antecedentes) {
+        alert('Debes aceptar la declaración de antecedentes penales para continuar.');
+        btn.textContent = 'Registrarme como profesional →';
+        btn.classList.remove('btn-loading'); btn.disabled = false; return;
+      }
+    }
+
     if (password !== password2) {
       alert('Las contraseñas no coinciden');
       btn.textContent = selectedType === 'pro' ? 'Registrarme como profesional →' : 'Crear mi cuenta gratis →';
@@ -435,10 +476,13 @@
 
         if (selectedType === 'pro') {
           const serviceEl = document.getElementById('pro-service');
+          const dniEl = document.getElementById('pro-dni');
           await _sb.from('pros').upsert({
             user_id: uid,
             service_type: serviceEl ? serviceEl.value : 'Limpieza',
-            city, verified: false
+            city,
+            verified: false,
+            dni: dniEl ? dniEl.value.trim() : null
           });
         }
       }

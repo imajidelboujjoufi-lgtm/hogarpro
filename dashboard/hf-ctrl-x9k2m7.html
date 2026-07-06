@@ -770,7 +770,7 @@ let allPros=[], prosTextFilter='', prosStatusFilter='';
 
 async function loadPros() {
   const {data}=await _sb.from('pros')
-    .select('id,service_type,city,hourly_rate,experience_years,rating,total_jobs,verified,created_at,profiles(full_name,phone)')
+    .select('id,service_type,city,hourly_rate,experience_years,rating,total_jobs,verified,created_at,dni,profiles(full_name,phone)')
     .order('created_at',{ascending:false});
   allPros=data||[];
   renderPros();
@@ -796,7 +796,11 @@ function renderPros() {
     return `<tr id="prorow-${p.id}">
       <td><div style="display:flex;align-items:center;gap:0.7rem;">
         <div class="avatar avatar-sm ${avt(p.id)}">${ini(name)}</div>
-        <div><div style="font-weight:600;font-size:0.85rem;">${name}</div><div style="font-size:0.75rem;color:var(--gray-400);">${p.profiles?.phone||''}</div></div>
+        <div>
+          <div style="font-weight:600;font-size:0.85rem;">${name}</div>
+          <div style="font-size:0.75rem;color:var(--gray-400);">${p.profiles?.phone||''}</div>
+          ${p.dni?`<div style="font-size:0.72rem;color:#0f766e;font-weight:700;background:#f0fdfa;border-radius:4px;padding:1px 5px;margin-top:2px;display:inline-block;">🪪 ${p.dni}</div>`:'<div style="font-size:0.72rem;color:#dc2626;">⚠️ Sin DNI</div>'}
+        </div>
       </div></td>
       <td>${SVC[p.service_type]||'🔧'} ${p.service_type||'—'}</td>
       <td>📍 ${p.city||'—'}</td>
