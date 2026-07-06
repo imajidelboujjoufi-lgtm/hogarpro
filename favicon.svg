@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Background -->
+  <rect width="100" height="100" rx="20" fill="#0d9488"/>
+  <!-- House body -->
+  <rect x="26" y="54" width="48" height="34" rx="3" fill="white"/>
+  <!-- Roof -->
+  <polygon points="18,56 50,24 82,56" fill="white"/>
+  <!-- Door -->
+  <rect x="38" y="67" width="14" height="21" rx="7" fill="#0d9488"/>
+  <!-- Lightning bolt -->
+  <polygon points="56,26 47,41 53,41 44,54 63,37 56,37" fill="#f59e0b"/>
+</svg>

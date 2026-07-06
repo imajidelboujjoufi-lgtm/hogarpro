@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background rounded square -->
+  <rect width="200" height="200" rx="40" fill="#0d9488"/>
+
+  <!-- House body -->
+  <rect x="52" y="108" width="96" height="68" rx="6" fill="white"/>
+
+  <!-- House roof -->
+  <polygon points="36,112 100,48 164,112" fill="white"/>
+
+  <!-- Roof highlight -->
+  <polygon points="36,112 100,48 164,112" fill="none" stroke="#0d9488" stroke-width="0" />
+
+  <!-- Door -->
+  <rect x="80" y="135" width="26" height="41" rx="13" fill="#0d9488"/>
+
+  <!-- Window left -->
+  <rect x="57" y="118" width="18" height="18" rx="4" fill="#0d9488" opacity="0.6"/>
+
+  <!-- Window right -->
+  <rect x="125" y="118" width="18" height="18" rx="4" fill="#0d9488" opacity="0.6"/>
+
+  <!-- Lightning bolt (Fast) on roof area -->
+  <polygon points="108,52 94,82 104,82 90,108 122,75 110,75" fill="#f59e0b"/>
+</svg>
