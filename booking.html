@@ -604,7 +604,15 @@
   <a href="index.html" class="btn btn-secondary" style="width:100%;justify-content:center;display:flex;">Volver al inicio</a>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/cities.js"></script>
+<script>
+const _sb = supabase.createClient(
+  'https://ubncebdkqzxxmhhmzcgw.supabase.co',
+  'sb_publishable_mIPl86ERFL0HHsr1T4SL0A_GGFTo-py',
+  { auth: { persistSession: true, storageKey: 'hf_session', autoRefreshToken: true } }
+);
+</script>
 <script>
   populateCitySelect('book-city', 'Selecciona ciudad...');
   const COMMISSION = 0.17;
@@ -728,31 +736,49 @@
     input.value = v.replace(/(.{4})/g, '$1 ').trim();
   }
 
-  function confirmBooking() {
+  async function confirmBooking() {
     document.getElementById('main-layout').style.display = 'none';
     document.querySelector('.progress-bar').style.display = 'none';
 
-    const total = document.getElementById('sum-total')?.textContent || '—';
+    const totalText = document.getElementById('sum-total')?.textContent || '0€';
+    const total = parseFloat(totalText.replace('€','').replace(',','.')) || 0;
     const service = document.querySelector('.service-opt.selected .s-name')?.textContent || '—';
     const date = document.getElementById('book-date')?.value || '';
     const time = document.getElementById('book-time')?.value || '';
-    const ref = '#HF' + Date.now().toString().slice(-6);
+    const cityEl = document.getElementById('book-city');
+    const city = cityEl ? cityEl.value : '';
+    const ref = 'HF' + Date.now().toString().slice(-6);
 
     document.getElementById('conf-service').textContent = service;
     document.getElementById('conf-date').textContent = date + (time ? ' a las ' + time : '');
-    document.getElementById('conf-total').textContent = total;
-    document.getElementById('conf-ref').textContent = ref;
+    document.getElementById('conf-total').textContent = totalText;
+    document.getElementById('conf-ref').textContent = '#' + ref;
 
     const bizumRef = 'HogarFast ' + ref;
     ['bizum-ref','bizum-concept','transfer-ref'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.textContent = bizumRef;
     });
-    const amountEls = ['bizum-amount','transfer-amount'];
-    amountEls.forEach(id => {
+    ['bizum-amount','transfer-amount'].forEach(id => {
       const el = document.getElementById(id);
-      if (el) el.textContent = total;
+      if (el) el.textContent = totalText;
     });
+
+    // Save to Supabase
+    try {
+      const { data: { session } } = await _sb.auth.getSession();
+      const uid = session?.user?.id || null;
+      await _sb.from('bookings').insert({
+        user_id: uid,
+        service_type: service,
+        booking_date: date || null,
+        booking_time: time || null,
+        city: city || null,
+        total_price: total,
+        status: 'pending',
+        notes: ref
+      });
+    } catch(e) { /* sin sesión = guest booking, se guarda igual */ }
 
     document.getElementById('success-page').style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
