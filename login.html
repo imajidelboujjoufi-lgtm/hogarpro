@@ -322,9 +322,19 @@
         }
       }
 
-      window.location.href = email === 'imajid.elboujjoufi@gmail.com'
-        ? 'dashboard/hf-ctrl-x9k2m7.html'
-        : 'dashboard/client.html';
+      if (email === 'imajid.elboujjoufi@gmail.com') {
+        window.location.href = 'dashboard/hf-ctrl-x9k2m7.html';
+        return;
+      }
+
+      // Check user_type from profiles to redirect correctly
+      const uid = data?.user?.id;
+      let dest = 'dashboard/client.html';
+      if (uid) {
+        const { data: profile } = await _sb.from('profiles').select('user_type').eq('id', uid).single();
+        if (profile?.user_type === 'pro') dest = 'dashboard/pro.html';
+      }
+      window.location.href = dest;
 
     } catch (err) {
       alert('Error: ' + (err.message || 'Inténtalo de nuevo'));
