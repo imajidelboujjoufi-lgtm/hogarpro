@@ -269,6 +269,19 @@
 
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script>
+  const _fbConfig = {
+    apiKey: "AIzaSyDjPhjVAU1jQ_CkrBY86uyiWhF4TPx_hnY",
+    authDomain: "hogarfast.firebaseapp.com",
+    projectId: "hogarfast",
+    storageBucket: "hogarfast.firebasestorage.app",
+    messagingSenderId: "506195734967",
+    appId: "1:506195734967:web:1d94d672d97244413e3832"
+  };
+  if (!firebase.apps.length) firebase.initializeApp(_fbConfig);
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const _sb = supabase.createClient(
@@ -286,16 +299,36 @@
 
   async function loginGoogle() {
     const btn = document.getElementById('btn-google');
-    btn.disabled = true;
-    btn.style.opacity = '0.7';
-    const { error } = await _sb.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: 'https://hogarfast.com/dashboard/client.html' }
-    });
-    if (error) {
-      alert('Google login no configurado aún. Usa email y contraseña.');
-      btn.disabled = false;
-      btn.style.opacity = '1';
+    btn.disabled = true; btn.style.opacity = '0.7';
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      const result = await firebase.auth().signInWithPopup(provider);
+      const fbUser = result.user;
+      const email = fbUser.email;
+      const pass = 'hf_g_' + fbUser.uid;
+      const name = fbUser.displayName || email.split('@')[0];
+
+      // Try Supabase login
+      let { data, error } = await _sb.auth.signInWithPassword({ email, password: pass });
+
+      if (error) {
+        // First time — create account
+        const { data: sd, error: se } = await _sb.auth.signUp({ email, password: pass });
+        if (se) throw se;
+        data = sd;
+        const uid = data.user?.id;
+        if (uid) {
+          await _sb.from('profiles').upsert({ id: uid, full_name: name, user_type: 'client' });
+        }
+      }
+
+      window.location.href = email === 'imajid.elboujjoufi@gmail.com'
+        ? 'dashboard/hf-ctrl-x9k2m7.html'
+        : 'dashboard/client.html';
+
+    } catch (err) {
+      alert('Error: ' + (err.message || 'Inténtalo de nuevo'));
+      btn.disabled = false; btn.style.opacity = '1';
     }
   }
 
