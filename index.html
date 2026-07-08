@@ -25,6 +25,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="img/logo.png"/>
   <link rel="apple-touch-icon" href="img/logo.svg" />
   <meta name="theme-color" content="#0d9488" />
 
@@ -58,6 +59,7 @@
   }
   </script>
 
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" as="style"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/shared.css" />
   <link rel="stylesheet" href="css/autocomplete.css" />
@@ -622,7 +624,7 @@
 <div class="hero">
   <div class="hero-inner">
     <div class="hero-content">
-      <div class="hero-tag">⚡ Servicio disponible en 5+ ciudades de España</div>
+      <div class="hero-tag">⚡ Servicio disponible en 250+ ciudades de España</div>
       <h1>Todos los servicios<br/>de tu hogar,<br/><span class="highlight">en un solo lugar</span></h1>
       <p>Limpieza, fontanería, electricidad, mudanzas y más. Profesionales verificados a tu puerta en menos de 24h.</p>
 
@@ -927,19 +929,19 @@
   <div class="stats-inner">
     <div class="stats-grid">
       <div class="stat-item reveal">
-        <div class="num counter" data-target="3200" data-prefix="+" data-suffix="">0</div>
+        <div class="num counter" data-target="3200" data-prefix="+" data-suffix="">+3200</div>
         <div class="lbl">Servicios realizados</div>
       </div>
       <div class="stat-item reveal" style="transition-delay:0.1s">
-        <div class="num counter" data-target="500" data-prefix="+" data-suffix="">0</div>
+        <div class="num counter" data-target="500" data-prefix="+" data-suffix="">+500</div>
         <div class="lbl">Profesionales activos</div>
       </div>
       <div class="stat-item reveal" style="transition-delay:0.2s">
-        <div class="num counter" data-target="49" data-prefix="" data-suffix=" ⭐" data-decimal="1">0</div>
+        <div class="num counter" data-target="49" data-prefix="" data-suffix=" ⭐" data-decimal="1">4.9 ⭐</div>
         <div class="lbl">Valoración media</div>
       </div>
       <div class="stat-item reveal" style="transition-delay:0.3s">
-        <div class="num counter" data-target="250" data-prefix="+" data-suffix="">0</div>
+        <div class="num counter" data-target="250" data-prefix="+" data-suffix="">+250</div>
         <div class="lbl">Ciudades disponibles</div>
       </div>
     </div>
@@ -1004,26 +1006,26 @@
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <div class="logo" style="font-size:1.3rem;">Hogar<span style="color:var(--accent)">Pro</span></div>
+      <a href="index.html" class="logo"><img src="img/logo.png" alt="HogarFast" style="height:32px;width:auto;"/></a>
       <p>La plataforma de servicios del hogar más completa de España. Profesionales verificados, pago seguro, garantía de satisfacción.</p>
     </div>
     <div class="footer-col">
       <h4>Servicios</h4>
       <ul>
-        <li><a href="#">Limpieza</a></li>
-        <li><a href="#">Fontanería</a></li>
-        <li><a href="#">Electricidad</a></li>
-        <li><a href="#">Mudanzas</a></li>
-        <li><a href="#">Ver todos</a></li>
+        <li><a href="servicios/limpieza.html">Limpieza</a></li>
+        <li><a href="servicios/fontaneria.html">Fontanería</a></li>
+        <li><a href="servicios/electricidad.html">Electricidad</a></li>
+        <li><a href="servicios/mudanzas.html">Mudanzas</a></li>
+        <li><a href="pros.html">Ver todos</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h4>Empresa</h4>
       <ul>
-        <li><a href="#">Sobre nosotros</a></li>
-        <li><a href="#">Cómo funciona</a></li>
-        <li><a href="#">Ser profesional</a></li>
-        <li><a href="#">Blog</a></li>
+        <li><a href="sobre-nosotros.html">Sobre nosotros</a></li>
+        <li><a href="hazte-profesional.html">Cómo funciona</a></li>
+        <li><a href="hazte-profesional.html">Ser profesional</a></li>
+        <li><a href="blog.html">Blog</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -1031,8 +1033,8 @@
       <ul>
         <li><a href="privacidad.html">Privacidad</a></li>
         <li><a href="terminos.html">Términos</a></li>
-        <li><a href="#">Cookies</a></li>
-        <li><a href="#">Contacto</a></li>
+        <li><a href="privacidad.html">Cookies</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
       </ul>
     </div>
   </div>
@@ -1145,7 +1147,7 @@
         popupShown = true;
         document.getElementById('promo-popup').classList.add('show');
       }
-    }, 25000);
+    }, 30000);
   }
 
   function selectPill(btn, service) {
@@ -1172,4 +1174,7 @@
 </script>
 </body>
 </html>
+
+
+
 
